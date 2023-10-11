@@ -1,5 +1,6 @@
+import 'package:collectify/VentanaChat.dart';
 import 'package:flutter/material.dart';
-
+import 'package:collectify/VentanaAnadirProducto.dart';
 void main() {
   runApp(const MyApp());
 }
@@ -99,7 +100,29 @@ class NavigationBar extends StatelessWidget{
     return BottomNavigationBar(
       selectedItemColor: Colors.black,
       unselectedItemColor: Colors.green,
-      items:  const <BottomNavigationBarItem>[
+      onTap: (int index) {
+        switch(index){
+          case 0:
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const AnadirProducto()),
+            );
+            break;
+          case 1:
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const VentanaChat()),
+            );
+            break;
+          case 2:
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const MyHomePage()),
+            );
+            break;
+        }
+      },
+      items:  const [
 
         BottomNavigationBarItem(
 
