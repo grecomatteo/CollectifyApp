@@ -10,7 +10,27 @@ class VentanaChat extends StatelessWidget{
       appBar: AppBar(backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text("Chat"),
       ),
-      body: const ChatList(),
+      body: const TextAndChat(),
+    );
+  }
+}
+
+class TextAndChat extends StatelessWidget {
+  const TextAndChat({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Column(
+      children: [
+        TextField(
+          decoration: InputDecoration(
+            border: OutlineInputBorder(),
+            hintText: 'UserID',
+          ),
+        ),
+        Expanded(child:
+        ChatList())
+      ],
     );
   }
 }
@@ -20,16 +40,15 @@ class ChatList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: const [
-        TextField(
-          decoration: InputDecoration(
-            border: OutlineInputBorder(),
-            hintText: 'UserID',
-          ),
-        ),
-      ],
-    );
+    return GridView.count(
+        crossAxisCount: 1,
+        childAspectRatio: 5,
+        children: List.generate(20, (index) {
+          return Container(
+            padding: const EdgeInsets.all(10),
+            child: const Chat(),
+          );
+        }));
   }
 }
 
