@@ -97,10 +97,15 @@ class NavigationBar extends StatelessWidget{
   @override
   Widget build(BuildContext context){
     return BottomNavigationBar(
-      items: const <BottomNavigationBarItem>[
+      selectedItemColor: Colors.black,
+      unselectedItemColor: Colors.green,
+      items:  const <BottomNavigationBarItem>[
+
         BottomNavigationBarItem(
+
           icon: Icon(Icons.home),
           label: "Home",
+
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.search),
@@ -110,6 +115,9 @@ class NavigationBar extends StatelessWidget{
           icon: Icon(Icons.person),
           label: "Profile",
         ),
+
+
+
       ],
     );
   }
