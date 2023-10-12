@@ -1,6 +1,6 @@
-import 'package:collectify/VentanaChat.dart';
+//import 'package:collectify/VentanaChat.dart';
 import 'package:flutter/material.dart';
-import 'package:collectify/VentanaAnadirProducto.dart';
+//import 'package:collectify/VentanaAnadirProducto.dart';
 import 'package:collectify/VentanaListaProductos.dart';
 void main() {
   runApp(const MyApp());

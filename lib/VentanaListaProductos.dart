@@ -1,13 +1,10 @@
-
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'VentanaAnadirProducto.dart';
 import 'VentanaChat.dart';
-import 'main.dart';
 
-class ListaProductos extends StatelessWidget{
+
+class ListaProductos extends StatelessWidget {
   const ListaProductos({super.key});
 
   @override
@@ -21,7 +18,6 @@ class ListaProductos extends StatelessWidget{
       bottomNavigationBar: const NavigationBar(),
     );
   }
-
 }
 
 class ProductList extends StatelessWidget {
@@ -36,8 +32,7 @@ class ProductList extends StatelessWidget {
             padding: const EdgeInsets.all(10),
             child: const Product(),
           );
-        })
-    );
+        }));
   }
 }
 
@@ -54,7 +49,7 @@ class Product extends StatelessWidget {
           ),
           //minimumSize: const Size(1, 100),
         ),
-        onPressed: (){},
+        onPressed: () {},
         child: Center(
           child: Column(
             children: [
@@ -63,61 +58,56 @@ class Product extends StatelessWidget {
               const Text("Precio"),
             ],
           ),
-
-        )
-    );
+        ));
   }
-
 }
-class NavigationBar extends StatelessWidget{
+
+class NavigationBar extends StatelessWidget {
   const NavigationBar({super.key});
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return BottomNavigationBar(
       selectedItemColor: Colors.black,
       unselectedItemColor: Colors.green,
       onTap: (int index) {
-        switch(index){
+        switch (index) {
           case 0:
+            //Se queda en la misma ventana
+            break;
+          case 1: //Articulos con me gusta, por implementar
+            break;
+          case 2:
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const AnadirProducto()),
             );
             break;
-          case 1:
+          case 3:
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const VentanaChat()),
             );
             break;
-          case 2:
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const MyHomePage()),
-            );
+          case 4: //Perfil, por implementar
             break;
         }
       },
-      items:  const [
-
+      items: const [
+        BottomNavigationBarItem(icon: Icon(Icons.home), label: "productos"),
         BottomNavigationBarItem(
-
-          icon: Icon(Icons.home),
+          icon: Icon(Icons.favorite),
           label: "Home",
-
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.search),
+          icon: Icon(Icons.add_circle),
           label: "Search",
         ),
+        BottomNavigationBarItem(icon: Icon(Icons.chat_rounded), label: "chat"),
         BottomNavigationBarItem(
           icon: Icon(Icons.person),
           label: "Profile",
         ),
-
-
-
       ],
     );
   }
