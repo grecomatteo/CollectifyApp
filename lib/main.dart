@@ -2,8 +2,12 @@
 import 'package:flutter/material.dart';
 //import 'package:collectify/VentanaAnadirProducto.dart';
 import 'package:collectify/VentanaListaProductos.dart';
+import 'package:collectify/ConexionBD.dart';
+
+
 void main() {
   runApp(const MyApp());
+  Conexion().conectar();
 }
 
 class MyApp extends StatelessWidget { //Punto inicial, no tocar
