@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:mysql1/mysql1.dart';
 import 'package:path/path.dart';
+import 'package:collectify/VentanaMensajesChat.dart';
+import 'package:collectify/Message.dart';
+
+
+int myID = 0;
+MySqlConnection? conn;
 
 class VentanaChat extends StatelessWidget {
   const VentanaChat({Key? key}) : super(key: key);
@@ -22,29 +28,6 @@ class TextAndChat extends StatefulWidget {
 
   @override
   _TextAndChatState createState() => _TextAndChatState();
-}
-
-class Message {
-  final int senderID;
-  final int receiverID;
-  final String message;
-  final DateTime sendDate;
-
-  Message(this.senderID, this.receiverID, this.message, this.sendDate);
-
-  Map<String, dynamic> toMap() {
-    return {
-      'senderID': senderID,
-      'receiverID': receiverID,
-      'message': message,
-      'sendDate': sendDate,
-    };
-  }
-
-  @override
-  String toString() {
-    return 'Message{senderID: $senderID, receiverID: $receiverID, message: $message, sendDate: $sendDate}';
-  }
 }
 
 class _TextAndChatState extends State<TextAndChat> {
@@ -72,32 +55,31 @@ class _TextAndChatState extends State<TextAndChat> {
     );
   }
 
-  Future<Database> createDatabase() async {
-    WidgetsFlutterBinding.ensureInitialized();
-    final databasePath = await getDatabasesPath();
-    final database = await openDatabase(
-      join(databasePath, 'chat_database.db'),
-      onOpen: (db) async {
-        await db.execute('DROP TABLE IF EXISTS chat_messages');
-        await db.execute('CREATE TABLE chat_messages(id INT PRIMARY KEY, senderID INT, receiverID INT, message TEXT, sendDate DATE )');
+  Future<void> connectToDatabase() async {
+    try{
 
-        // Insert initial messages into the database
-        await db.insert('chat_messages', {'senderID': 0, 'receiverID': 1, 'message': 'Hello', 'sendDate': '2023-10-10'});
-        await db.insert('chat_messages', {'senderID': 2, 'receiverID': 1, 'message': 'Quiero 20€', 'sendDate': '2023-09-10'});
-        await db.insert('chat_messages', {'senderID': 0, 'receiverID': 1, 'message': 'How are you?', 'sendDate': '2023-10-11'});
-        await db.insert('chat_messages', {'senderID': 1, 'receiverID': 0, 'message': 'Fine!', 'sendDate': '2023-10-12'});
-      }
-    );
-
-    return database;
+      conn = await MySqlConnection.connect(
+          ConnectionSettings(
+            host: "collectify-server-mysql.mysql.database.azure.com",
+            port: 3306,
+            user: "pin2023",
+            password: "AsLpqR_23",
+            db: "collectifyDB",
+          ));
+    }catch(e){
+      debugPrint(e.toString() + "Error");
+    }
   }
 
 
   Future<void> UpdateMessages(int id) async {
-    final Database database = await createDatabase();
-
-    // Query the table for all the messages from the user with id
-    final List<Map<String, dynamic>> maps = await database.query('chat_messages', where: 'receiverID = ?', whereArgs: [id]);
+    myID = id;
+    List<ResultRow> maps = [];
+    await conn?.query('select * from chat_messages').then((results) {
+      for (var row in results) {
+        maps.add(row);
+      }
+    });
 
     List<Message> messages = List.generate(maps.length, (i) {
       return Message(
@@ -135,60 +117,95 @@ class ChatList extends StatelessWidget {
     //Get all senderIDs
     List<int> senderIDs = [];
     for(int i = 0; i < chatList.length; i++) {
-      senderIDs.add(chatList[i].senderID);
+      if(chatList[i].senderID != myID) {
+        senderIDs.add(chatList[i].senderID);
+      }
     }
     //Remove duplicates
     senderIDs = senderIDs.toSet().toList();
 
-    //Get the last message from each sender
-    List<Message> lastMessages = [];
+    //Create a dictionary with the senderID as key and the message list as value
+    List<(int, List<Message>)> messagesFromSender = [];
     for(int i = 0; i < senderIDs.length; i++) {
-      List<Message> messagesFromSender = [];
+      List<Message> messages = [];
       for(int j = 0; j < chatList.length; j++) {
-        if(chatList[j].senderID == senderIDs[i]) {
-          messagesFromSender.add(chatList[j]);
+        if(chatList[j].senderID == senderIDs[i] || chatList[j].receiverID == senderIDs[i]) {
+          messages.add(chatList[j]);
         }
       }
-      lastMessages.add(messagesFromSender.last);
+      messagesFromSender.add((senderIDs[i], messages));
     }
 
-    return GridView.count(
-      crossAxisCount: 1,
-      childAspectRatio: 2,
-      children: List.generate(lastMessages.length, (index) {
-        return Container(
-          padding: const EdgeInsets.all(10),
-          child: Chat(name: lastMessages[index].senderID.toString(), lastMessage: lastMessages[index].message.toString()),
-        );
-      }),
+    return ListView.builder(
+      shrinkWrap: false,
+      //add space between cards
+      padding: const EdgeInsets.all(10),
+      //itemCount: chatTileCount,
+      itemCount:  messagesFromSender.length,
+        itemBuilder: (context, index) =>
+            Chat(messagesFromSender[index].$1, messagesFromSender[index].$2)
     );
   }
 }
 
 class Chat extends StatelessWidget {
-  final String name;
-  final String lastMessage;
+  final int senderID;
+  final List<Message> messages;
 
-  const Chat({Key? key, required this.name, required this.lastMessage}) : super(key: key);
+  const Chat(this.senderID, this.messages, {super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
+    String name = "User $senderID";
+    String lastMessage = "${messages[messages.length - 1].senderID}: ${messages[messages.length - 1].message}";
+    return Column(
+      children: [
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            alignment: Alignment.centerLeft,
+            backgroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => VentanaMensajesChat(messages, myID)),
+            );
+          },
+          //Horizontal list
+          child: Column(
+              children: [
+                const SizedBox(height: 2,),
+                Row(
+                  //Align the children to the left
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    //Small image resize to fit the button, add margin and make it circular
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(50),
+                      child: Image.network("https://picsum.photos/250?image=9", width: 50, height: 50,),
+                    ),
+                    //Separate the image from the text
+                    const SizedBox(width: 10,),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(name, style: const TextStyle(fontWeight: FontWeight.bold), textAlign: TextAlign.left, softWrap: false, overflow: TextOverflow.fade,),
+                          Text(lastMessage, textAlign: TextAlign.left, softWrap: false, overflow: TextOverflow.fade,),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 2,),
+              ]
+          ),
         ),
-      ),
-      onPressed: () {},
-      child: Center(
-        child: Column(
-          children: [
-            Text(name),
-            Text(lastMessage),
-          ],
-        ),
-      ),
+        const SizedBox(height: 10,),
+      ],
     );
   }
 }
