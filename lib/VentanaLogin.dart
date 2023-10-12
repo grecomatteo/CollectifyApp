@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:collectify/main.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const VentanaLogin());
 }
 
-class MyApp extends StatelessWidget { //Punto inicial, no tocar
-  const MyApp({super.key});
+
+
+bool validateFields() {
+  return true;
+}
+
+class VentanaLogin extends StatelessWidget { //Punto inicial, no tocar
+  const VentanaLogin({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -50,18 +57,26 @@ class Login extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-              return const Column(
+              return Column(
                 children: [
                   Text("Nombre de usuario"),
                   TextField(
-                      maxLength: 100,
                       textAlign: TextAlign.center
                   ),
                   Text("Contraseña"),
                   TextField(
-                      maxLength: 100,
                       textAlign: TextAlign.center,
                       obscureText: true
+                  ),
+                  TextButton(
+                    child: Text("Iniciar sesión"),
+                    onPressed: () {
+                      if(validateFields()){
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => MyApp()));
+                      }
+                    }
                   ),
                 ],
               );
