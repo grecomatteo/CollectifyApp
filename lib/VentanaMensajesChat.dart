@@ -1,11 +1,11 @@
+import 'package:collectify/VentanaChat.dart';
 import 'package:flutter/material.dart';
 import 'package:collectify/Message.dart';
 
 class VentanaMensajesChat extends StatelessWidget {
-  VentanaMensajesChat(this.chatList, this.myID);
+  VentanaMensajesChat(this.chatList);
 
   final List<Message> chatList;
-  int myID;
 
   @override
   Widget build(BuildContext context) {
@@ -54,8 +54,12 @@ class NavigationBar extends StatelessWidget {
 
   String message = "";
 
-  void SendMessage(){
-
+  Future<void> SendMessage() async{
+    await conn?.query('select * from usuario').then((results) {
+    for (var row in results) {
+    debugPrint(row.toString());
+    }
+    });
   }
 
   @override

@@ -31,6 +31,12 @@ class TextAndChat extends StatefulWidget {
 }
 
 class _TextAndChatState extends State<TextAndChat> {
+  //When this is created execute the function
+  @override
+  void initState() {
+    super.initState();
+    connectToDatabase();
+  }
 
   int chatTileCount = 0; // Initial number of chat tiles
   List<Message> chatList = [];
@@ -46,7 +52,8 @@ class _TextAndChatState extends State<TextAndChat> {
           ),
           onSubmitted: (String str) {
             setState(() {
-              UpdateMessages(int.parse(str));
+              myID = int.parse(str);
+              UpdateMessages(myID);
             });
           },
         ),
@@ -66,6 +73,8 @@ class _TextAndChatState extends State<TextAndChat> {
             password: "AsLpqR_23",
             db: "collectifyDB",
           ));
+
+      UpdateMessages(myID);
     }catch(e){
       debugPrint(e.toString() + "Error");
     }
@@ -73,11 +82,11 @@ class _TextAndChatState extends State<TextAndChat> {
 
 
   Future<void> UpdateMessages(int id) async {
-    myID = id;
     List<ResultRow> maps = [];
-    await conn?.query('select * from chat_messages').then((results) {
+    await conn?.query('select * from chat_messages where senderID=$id OR receiverID=$id').then((results) {
       for (var row in results) {
         maps.add(row);
+        debugPrint(row.toString());
       }
     });
 
@@ -85,8 +94,8 @@ class _TextAndChatState extends State<TextAndChat> {
       return Message(
         maps[i]['senderID'],
         maps[i]['receiverID'],
-        maps[i]['message'],
-        DateTime.parse(maps[i]['sendDate']),
+        maps[i]['message'].toString(),
+        maps[i]['sendDate'],
       );
     });
 
@@ -117,15 +126,13 @@ class ChatList extends StatelessWidget {
     //Get all senderIDs
     List<int> senderIDs = [];
     for(int i = 0; i < chatList.length; i++) {
-      if(chatList[i].senderID != myID) {
-        senderIDs.add(chatList[i].senderID);
-      }
+      senderIDs.add(chatList[i].senderID);
     }
     //Remove duplicates
     senderIDs = senderIDs.toSet().toList();
 
     //Create a dictionary with the senderID as key and the message list as value
-    List<(int, List<Message>)> messagesFromSender = [];
+    List<List<Message>> messagesFromSender = [];
     for(int i = 0; i < senderIDs.length; i++) {
       List<Message> messages = [];
       for(int j = 0; j < chatList.length; j++) {
@@ -133,7 +140,7 @@ class ChatList extends StatelessWidget {
           messages.add(chatList[j]);
         }
       }
-      messagesFromSender.add((senderIDs[i], messages));
+      messagesFromSender.add(messages);
     }
 
     return ListView.builder(
@@ -143,20 +150,19 @@ class ChatList extends StatelessWidget {
       //itemCount: chatTileCount,
       itemCount:  messagesFromSender.length,
         itemBuilder: (context, index) =>
-            Chat(messagesFromSender[index].$1, messagesFromSender[index].$2)
+            Chat(messagesFromSender[index])
     );
   }
 }
 
 class Chat extends StatelessWidget {
-  final int senderID;
   final List<Message> messages;
 
-  const Chat(this.senderID, this.messages, {super.key});
+  const Chat(this.messages, {super.key});
 
   @override
   Widget build(BuildContext context) {
-    String name = "User $senderID";
+    String name = messages[0].senderID == myID ? messages[0].receiverID.toString() : messages[0].senderID.toString();
     String lastMessage = "${messages[messages.length - 1].senderID}: ${messages[messages.length - 1].message}";
     return Column(
       children: [
@@ -171,7 +177,7 @@ class Chat extends StatelessWidget {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => VentanaMensajesChat(messages, myID)),
+              MaterialPageRoute(builder: (context) => VentanaMensajesChat(messages)),
             );
           },
           //Horizontal list
