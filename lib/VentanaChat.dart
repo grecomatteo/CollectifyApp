@@ -5,7 +5,7 @@ import 'package:collectify/VentanaMensajesChat.dart';
 import 'package:collectify/Message.dart';
 
 
-int myID = 1;
+int myID = 0;
 MySqlConnection? conn;
 
 Future<List<Message>> connectToDatabase() async {
@@ -125,7 +125,7 @@ class Chat extends StatelessWidget {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => VentanaMensajesChat(message.senderID, message.receiverID)),
+              MaterialPageRoute(builder: (context) => VentanaMensajesChat(message.senderID == myID ? message.receiverID : message.senderID, myID)),
             );
           },
           //Horizontal list

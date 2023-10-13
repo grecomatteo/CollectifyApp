@@ -4,9 +4,10 @@ import 'package:collectify/Message.dart';
 import 'package:mysql1/mysql1.dart';
 
 String toSendMessage = "";
-int chatIndex = 0;
+List<Message> messages = [];
 
-Future<List<Message>> getMessages(int myID) async{
+
+Future<List<Message>> getMessages(int myID, int chatIndex) async{
   List<ResultRow> maps = [];
   await conn?.query('select * from chat_messages where (senderID=$myID AND receiverID=$chatIndex) OR (receiverID=$myID AND senderID=$chatIndex)').then((results) {
     for (var row in results) {
@@ -15,7 +16,7 @@ Future<List<Message>> getMessages(int myID) async{
     }
   });
 
-  List<Message> messages = List.generate(maps.length, (i) {
+  List<Message> messageList = List.generate(maps.length, (i) {
     return Message(
       maps[i]['senderID'],
       maps[i]['receiverID'],
@@ -24,7 +25,8 @@ Future<List<Message>> getMessages(int myID) async{
     );
   });
 
-  return messages;
+  messages = messageList;
+  return messageList;
 }
 
 //List view controller
@@ -32,12 +34,11 @@ final listViewController = ScrollController();
 class VentanaMensajesChat extends StatelessWidget {
   const VentanaMensajesChat(this.otherID, this.myID, {super.key});
 
-  final int otherID;
   final int myID;
+  final int otherID;
 
   @override
   Widget build(BuildContext context) {
-    chatIndex = otherID;
     String name = otherID.toString();
     return Scaffold(
       appBar: AppBar(
@@ -45,7 +46,7 @@ class VentanaMensajesChat extends StatelessWidget {
         title: Text("$name's Chat"),
       ),
       body: FutureBuilder (
-        future: getMessages(myID),
+        future: getMessages(myID, otherID),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Text('${snapshot.error}');
@@ -53,11 +54,10 @@ class VentanaMensajesChat extends StatelessWidget {
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           }
-          List<Message> messages = snapshot.data!;
           return ListView.builder(
             itemCount: messages.length,
             itemBuilder: (context, index) {
-              return MessageDisplay(message: messages[index], myID: myID);
+              return MessageDisplay(message: messages[index], myID: myID, otherID: otherID);
             },
             controller: listViewController,
           );
@@ -65,17 +65,18 @@ class VentanaMensajesChat extends StatelessWidget {
       ),
       resizeToAvoidBottomInset: false,
       //When the keyboard is open put the NavigationBar on top of the keyboard
-      bottomNavigationBar: NavigationBar(myID),
+      bottomNavigationBar: NavigationBar(myID, otherID),
     );
   }
 }
 
 class MessageDisplay extends StatelessWidget {
-  const MessageDisplay({Key? key, required this.message, required this.myID})
+  const MessageDisplay({Key? key, required this.message, required this.myID, required this.otherID})
       : super(key: key);
 
   final Message message;
   final int myID;
+  final int otherID;
 
   @override
   Widget build(BuildContext context) {
@@ -91,24 +92,17 @@ class MessageDisplay extends StatelessWidget {
   }
 }
 
-class NavigationBar extends StatefulWidget {
-  const NavigationBar(this.myID, {Key? key}) : super(key: key);
+class NavigationBar extends StatelessWidget {
+  NavigationBar(this.myID, this.otherID, {Key? key}) : super(key: key);
 
   final int myID;
+  final int otherID;
 
-  @override
-  State<NavigationBar> createState() => NavigationBarState();
-}
-
-class NavigationBarState extends State<NavigationBar> {
-
-  Future<void> sendMessage(int myID) async{
-    int receiverID = chatIndex;
-    await conn?.query("insert into chat_messages(senderID, receiverID, message, sendDate) values($myID, $receiverID, '$toSendMessage', now())");
-    getMessages(myID);
+  Future<void> sendMessage(int myID, int otherID) async{
+    await conn?.query("insert into chat_messages(senderID, receiverID, message, sendDate) values($myID, $otherID, '$toSendMessage', now())");
+    getMessages(myID, otherID);
   }
 
-  final int myID = 0;
   final textField = TextEditingController();
 
   @override
@@ -149,9 +143,7 @@ class NavigationBarState extends State<NavigationBar> {
                       {
                         if(toSendMessage.replaceAll(' ', '').isEmpty) return;
                         //send message, clear text field, scroll to the bottom, close keyboard and refresh the page
-                        setState(() {
-                          sendMessage(myID);
-                        });
+                        sendMessage(myID, otherID);
                         //empty the text field
                         textField.clear();
                         toSendMessage = "";
