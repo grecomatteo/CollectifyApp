@@ -81,17 +81,19 @@ class ProductoWidget extends StatelessWidget {
           child: Column(
             children: [
               const Spacer(),
-              Container(
-                padding: const EdgeInsets.all(70),
-                decoration: BoxDecoration(
-                  shape: BoxShape.rectangle,
-                  image: DecorationImage(
-                    image: AssetImage(imagePath!),
-                    fit: BoxFit.fill,
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                ),
+              Flexible(
+                  flex: 15,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.rectangle,
+                      image: DecorationImage(
+                        image: Image.asset(imagePath!).image,
+                        fit: BoxFit.cover,
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
 
+                  )
               ),
 
               Text(nombre!,
@@ -101,7 +103,6 @@ class ProductoWidget extends StatelessWidget {
               ),
               ),
 
-
               Text(
                 "$precio €",
                 style: const TextStyle(
@@ -109,6 +110,7 @@ class ProductoWidget extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
+              const Spacer(),
             ],
           ),
         ));
