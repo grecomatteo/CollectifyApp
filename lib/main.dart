@@ -6,8 +6,10 @@ import 'package:collectify/ConexionBD.dart';
 
 
 void main() {
+  //WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
   Conexion().conectar();
+
 }
 
 class MyApp extends StatelessWidget { //Punto inicial, no tocar
@@ -39,6 +41,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return const ListaProductos();
+    return  ListaProductos();
   }
 }

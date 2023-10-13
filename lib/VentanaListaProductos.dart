@@ -2,42 +2,65 @@ import 'package:flutter/material.dart';
 
 import 'VentanaAnadirProducto.dart';
 import 'VentanaChat.dart';
-
+import 'package:collectify/ConexionBD.dart';
 
 class ListaProductos extends StatelessWidget {
-  const ListaProductos({super.key});
+  ListaProductos({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text("Collectify?"),
+        title: Text("Collectify"),
       ),
-      body: const ProductList(),
+      body: ProductList(),
       bottomNavigationBar: const NavigationBar(),
     );
   }
 }
 
-class ProductList extends StatelessWidget {
+class ProductList extends StatefulWidget {
   const ProductList({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return GridView.count(
-        crossAxisCount: 2,
-        children: List.generate(20, (index) {
-          return Container(
-            padding: const EdgeInsets.all(10),
-            child: const Product(),
-          );
-        }));
+  State<StatefulWidget> createState() {
+    return ProductListState();
   }
 }
 
-class Product extends StatelessWidget {
-  const Product({super.key});
+class ProductListState extends State<ProductList> {
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: Conexion().getProductos(),
+      builder: (BuildContext context, AsyncSnapshot<List<Producto>> snapshot) {
+        if (snapshot.hasData) {
+          debugPrint(snapshot.data!.length.toString());
+          return GridView.count(
+            crossAxisCount: 2,
+            children: snapshot.data!
+                .map((e) => ProductoWidget(
+                    nombre: e.nombre, precio: e.precio, imagePath: e.imagePath))
+                .toList(),
+          );
+        } else {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+      },
+    );
+  }
+}
+
+
+class ProductoWidget extends StatelessWidget {
+  String? nombre;
+  double? precio;
+  String? imagePath;
+
+  ProductoWidget({super.key, this.nombre, this.precio, this.imagePath});
 
   @override
   Widget build(BuildContext context) {
@@ -47,15 +70,26 @@ class Product extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
-          //minimumSize: const Size(1, 100),
         ),
         onPressed: () {},
         child: Center(
           child: Column(
             children: [
-              Image.network("https://picsum.photos/250?image=9"),
-              const Text("Producto"),
-              const Text("Precio"),
+
+              Container(
+                padding: const EdgeInsets.all(70),
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(imagePath!),
+                    fit: BoxFit.cover,
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+
+              ),
+
+              Text(nombre!),
+              Text(precio.toString() + " €"),
             ],
           ),
         ));
@@ -68,8 +102,8 @@ class NavigationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-      selectedItemColor: Colors.black,
-      unselectedItemColor: Colors.green,
+      selectedItemColor: Colors.purple,
+      unselectedItemColor: Colors.purpleAccent,
       onTap: (int index) {
         switch (index) {
           case 0:
@@ -94,7 +128,10 @@ class NavigationBar extends StatelessWidget {
         }
       },
       items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.home), label: "productos"),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          label: "productos",
+        ),
         BottomNavigationBarItem(
           icon: Icon(Icons.favorite),
           label: "Home",
