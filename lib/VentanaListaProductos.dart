@@ -69,7 +69,7 @@ class ProductoWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: Color.fromARGB(250, 240, 217, 248),
+          backgroundColor: const Color.fromARGB(250, 240, 217, 248),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
           ),
@@ -96,19 +96,34 @@ class ProductoWidget extends StatelessWidget {
                   )
               ),
 
-              Text(nombre!,
-              style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
-              ),
-              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(nombre!,
+                      style: const TextStyle(
+                        color: Color.fromARGB(255, 50, 50, 50),
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
 
-              Text(
-                "$precio €",
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                ),
+                      Text(
+                        "$precio €",
+                        style: const TextStyle(
+                          color: Colors.blueGrey,
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ]
+                  ),
+                  Spacer(),
+                  Icon(Icons.favorite_border_outlined),
+
+                ]
               ),
               const Spacer(),
             ],
