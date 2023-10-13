@@ -5,165 +5,113 @@ import 'package:collectify/VentanaMensajesChat.dart';
 import 'package:collectify/Message.dart';
 
 
-int myID = 0;
+int myID = 1;
 MySqlConnection? conn;
+
+Future<List<Message>> connectToDatabase() async {
+  try{
+    conn = await MySqlConnection.connect(
+        ConnectionSettings(
+          host: "collectify-server-mysql.mysql.database.azure.com",
+          port: 3306,
+          user: "pin2023",
+          password: "AsLpqR_23",
+          db: "collectifyDB",
+        ));
+
+    List<ResultRow> maps = [];
+    await conn?.query('select * from chat_messages where (senderID=$myID OR receiverID=$myID) ORDER BY sendDate DESC LIMIT 1').then((results) {
+      for (var row in results) {
+        maps.add(row);
+      }
+    });
+
+    List<Message> messages = List.generate(maps.length, (i) {
+      Message m = Message(
+        maps[i]['senderID'],
+        maps[i]['receiverID'],
+        maps[i]['message'].toString(),
+        maps[i]['sendDate'],
+      );
+      debugPrint(m.toString());
+      return m;
+
+    });
+
+
+    return messages;
+  }catch(e){
+    debugPrint("${e} Error");
+  }
+  return [];
+}
 
 class VentanaChat extends StatelessWidget {
   const VentanaChat({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text("Chat"),
+        title: Text("$myID Chat"),
       ),
       body: const TextAndChat(),
     );
   }
 }
 
-class TextAndChat extends StatefulWidget {
+class TextAndChat extends StatelessWidget
+{
   const TextAndChat({Key? key}) : super(key: key);
 
   @override
-  _TextAndChatState createState() => _TextAndChatState();
-}
-
-class _TextAndChatState extends State<TextAndChat> {
-  //When this is created execute the function
-  @override
-  void initState() {
-    super.initState();
-    connectToDatabase();
-  }
-
-  int chatTileCount = 0; // Initial number of chat tiles
-  List<Message> chatList = [];
-
-  @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        TextField(
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            hintText: 'UserID',
-          ),
-          onSubmitted: (String str) {
-            setState(() {
-              myID = int.parse(str);
-              UpdateMessages(myID);
-            });
-          },
-        ),
-        Expanded(child: ChatList(chatList: chatList)),
-      ],
+    ;
+    return FutureBuilder<List<Message>>(
+      future: connectToDatabase(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          List<Message> messages = snapshot.data!;
+          return ChatList(messages: messages);
+        } else if (snapshot.hasError) {
+          return Text('${snapshot.error}');
+        }
+        return const CircularProgressIndicator();
+      },
     );
-  }
-
-  Future<void> connectToDatabase() async {
-    try{
-
-      conn = await MySqlConnection.connect(
-          ConnectionSettings(
-            host: "collectify-server-mysql.mysql.database.azure.com",
-            port: 3306,
-            user: "pin2023",
-            password: "AsLpqR_23",
-            db: "collectifyDB",
-          ));
-
-      UpdateMessages(myID);
-    }catch(e){
-      debugPrint(e.toString() + "Error");
-    }
-  }
-
-
-  Future<void> UpdateMessages(int id) async {
-    List<ResultRow> maps = [];
-    await conn?.query('select * from chat_messages where senderID=$id OR receiverID=$id').then((results) {
-      for (var row in results) {
-        maps.add(row);
-        debugPrint(row.toString());
-      }
-    });
-
-    List<Message> messages = List.generate(maps.length, (i) {
-      return Message(
-        maps[i]['senderID'],
-        maps[i]['receiverID'],
-        maps[i]['message'].toString(),
-        maps[i]['sendDate'],
-      );
-    });
-
-    // Get the number of messages
-    int messageCount = messages.length;
-
-    // Create a list of messages (text)
-    List<Message> messageTexts = [];
-    for(int i = 0; i < messageCount; i++) {
-      messageTexts.add(messages[i]);
-    }
-
-    setState(() {
-      chatTileCount = messageCount;
-      chatList = messageTexts;
-    });
   }
 }
 
 class ChatList extends StatelessWidget {
-  final List<Message> chatList;
+  final List<Message> messages;
 
-  const ChatList({Key? key, required this.chatList}) : super(key: key);
+  const ChatList({required this.messages, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    if(chatList.isEmpty) return const Text("No messages");
-    //Get all senderIDs
-    List<int> senderIDs = [];
-    for(int i = 0; i < chatList.length; i++) {
-      senderIDs.add(chatList[i].senderID);
-    }
-    //Remove duplicates
-    senderIDs = senderIDs.toSet().toList();
-
-    //Create a dictionary with the senderID as key and the message list as value
-    List<List<Message>> messagesFromSender = [];
-    for(int i = 0; i < senderIDs.length; i++) {
-      List<Message> messages = [];
-      for(int j = 0; j < chatList.length; j++) {
-        if(chatList[j].senderID == senderIDs[i] || chatList[j].receiverID == senderIDs[i]) {
-          messages.add(chatList[j]);
-        }
-      }
-      messagesFromSender.add(messages);
-    }
+    if(messages.isEmpty) return const Text("No messages");
 
     return ListView.builder(
       shrinkWrap: false,
       //add space between cards
       padding: const EdgeInsets.all(10),
       //itemCount: chatTileCount,
-      itemCount:  messagesFromSender.length,
-        itemBuilder: (context, index) =>
-            Chat(messagesFromSender[index])
+      itemCount:  messages.length,
+      itemBuilder: (context, index) =>
+          Chat(messages[index]),
     );
   }
 }
 
 class Chat extends StatelessWidget {
-  final List<Message> messages;
+  final Message message;
 
-  const Chat(this.messages, {super.key});
+  const Chat(this.message, {super.key});
 
   @override
   Widget build(BuildContext context) {
-    String name = messages[0].senderID == myID ? messages[0].receiverID.toString() : messages[0].senderID.toString();
-    String lastMessage = "${messages[messages.length - 1].senderID}: ${messages[messages.length - 1].message}";
+    String name = message.senderID == myID ? message.receiverID.toString() : message.senderID.toString();
+    String lastMessage = "${message.senderID}: ${message.message}";
     return Column(
       children: [
         ElevatedButton(
@@ -177,7 +125,7 @@ class Chat extends StatelessWidget {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => VentanaMensajesChat(messages)),
+              MaterialPageRoute(builder: (context) => VentanaMensajesChat(message.senderID, message.receiverID)),
             );
           },
           //Horizontal list
