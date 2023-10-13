@@ -38,6 +38,9 @@ class ProductListState extends State<ProductList> {
         if (snapshot.hasData) {
           debugPrint(snapshot.data!.length.toString());
           return GridView.count(
+            mainAxisSpacing: 10,
+            crossAxisSpacing: 10,
+            padding: const EdgeInsets.all(10),
             crossAxisCount: 2,
             children: snapshot.data!
                 .map((e) => ProductoWidget(
@@ -56,40 +59,56 @@ class ProductListState extends State<ProductList> {
 
 
 class ProductoWidget extends StatelessWidget {
-  String? nombre;
-  double? precio;
-  String? imagePath;
+  final String? nombre;
+  final double? precio;
+  final String? imagePath;
 
-  ProductoWidget({super.key, this.nombre, this.precio, this.imagePath});
+  const ProductoWidget({super.key, this.nombre, this.precio, this.imagePath});
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white,
+          backgroundColor: Color.fromARGB(250, 240, 217, 248),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(15),
           ),
         ),
-        onPressed: () {},
+        onPressed: () {
+          //Aqui irá la descripcion detallada de producto
+        },
         child: Center(
           child: Column(
             children: [
-
+              const Spacer(),
               Container(
                 padding: const EdgeInsets.all(70),
                 decoration: BoxDecoration(
+                  shape: BoxShape.rectangle,
                   image: DecorationImage(
                     image: AssetImage(imagePath!),
-                    fit: BoxFit.cover,
+                    fit: BoxFit.fill,
                   ),
                   borderRadius: BorderRadius.circular(20),
                 ),
 
               ),
 
-              Text(nombre!),
-              Text(precio.toString() + " €"),
+              Text(nombre!,
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+              ),
+              ),
+
+
+              Text(
+                "$precio €",
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ],
           ),
         ));
@@ -140,7 +159,10 @@ class NavigationBar extends StatelessWidget {
           icon: Icon(Icons.add_circle),
           label: "Search",
         ),
-        BottomNavigationBarItem(icon: Icon(Icons.chat_rounded), label: "chat"),
+        BottomNavigationBarItem(
+            icon: Icon(Icons.chat_rounded),
+            label: "chat",
+        ),
         BottomNavigationBarItem(
           icon: Icon(Icons.person),
           label: "Profile",
