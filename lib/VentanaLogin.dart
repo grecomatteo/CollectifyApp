@@ -1,14 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:collectify/main.dart';
+import 'package:collectify/VentanaRegister.dart';
+import 'package:mysql1/mysql1.dart';
+
+MySqlConnection? conn;
+String nick = "";
+String pswrd = "";
 
 void main() {
-  runApp(const VentanaLogin());
+  runApp(VentanaLogin());
 }
 
 
+Future<bool> validateFields() async{
+  conn = await MySqlConnection.connect(
+      ConnectionSettings(
+        host: "collectify-server-mysql.mysql.database.azure.com",
+        port: 3306,
+        user: "pin2023",
+        password: "AsLpqR_23",
+        db: "collectifyDB",
+      ));
 
-bool validateFields() {
-  return true;
+  await conn?.query('select * from users where (nick = $nick AND contrasena = $pswrd)').then((result) {
+    if (result != null) return true;
+  }
+  );
+  return false;
+  //return true;
 }
 
 class VentanaLogin extends StatelessWidget { //Punto inicial, no tocar
@@ -47,13 +66,17 @@ class _LoginPageState extends State<LoginPage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text("¡Bienvenido a Collectify!"),
       ),
-      body: const Login()
+      body: Login()
     );
   }
 }
 
 class Login extends StatelessWidget {
-  const Login({super.key});
+   Login({super.key});
+
+  final TextEditingController usernameText = TextEditingController();
+  final TextEditingController passwordText = TextEditingController();
+  String errorText = "";
 
   @override
   Widget build(BuildContext context) {
@@ -61,24 +84,42 @@ class Login extends StatelessWidget {
                 children: [
                   Text("Nombre de usuario"),
                   TextField(
+                    controller: usernameText,
                       textAlign: TextAlign.center
                   ),
                   Text("Contraseña"),
                   TextField(
+                    controller: passwordText,
                       textAlign: TextAlign.center,
                       obscureText: true
                   ),
                   TextButton(
                     child: Text("Iniciar sesión"),
-                    onPressed: () {
-                      if(validateFields()){
+                    onPressed: () async{
+                      nick = usernameText.text;
+                      pswrd = passwordText.text;
+                      if(await validateFields()){
                         Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => MyApp()));
                       }
-                    }
+                      else{
+                          errorText = "Usuario o contraseña incorrectos";
+                        }
+                      }
+                  ),
+                  TextButton(
+                      child: Text("Registrarse"),
+                      onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => VentanaRegister()));
+                      }
                   ),
                 ],
               );
+
   }
+
+
 }
