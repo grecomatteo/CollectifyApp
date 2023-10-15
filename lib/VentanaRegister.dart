@@ -1,12 +1,18 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:collectify/ConexionBD.dart';
+import 'package:collectify/VentanaLogin.dart';
+
 void main() {
   runApp(VentanaRegister());
+  Conexion().conectar();
 }
 
 class VentanaRegister extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: RegistroUsuariosScreen(),
     );
   }
@@ -42,7 +48,7 @@ class _RegistroFormState extends State<RegistroForm> {
     if (picked != null && picked != selectedDate)
       setState(() {
         selectedDate = picked;
-        dateNacController.text= "${selectedDate.toLocal()}".split(' ')[0];
+        birthdateController.text = "${selectedDate.toLocal()}".split(' ')[0];
       });
   }
 
@@ -51,7 +57,9 @@ class _RegistroFormState extends State<RegistroForm> {
   final TextEditingController mailController = TextEditingController();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController surnameController = TextEditingController();
-  final TextEditingController dateNacController = TextEditingController();
+  final TextEditingController birthdateController = TextEditingController();
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +70,9 @@ class _RegistroFormState extends State<RegistroForm> {
 
           TextFormField(
             controller: nameController,
-            decoration: InputDecoration(labelText: 'Nombre'),
+            decoration: InputDecoration(
+                labelText: 'Nombre'
+            ),
           ),
           TextFormField(
             controller: surnameController,
@@ -82,26 +92,36 @@ class _RegistroFormState extends State<RegistroForm> {
             obscureText: true,
           ),
           TextFormField(
-            controller: dateNacController,
+            controller: birthdateController,
+            readOnly: true,
             decoration: InputDecoration(
                 labelText: 'Fecha de nacimiento',
-                hintText : "${selectedDate.toLocal()}".split(' ')[0]
+                suffixIcon: ElevatedButton(
+                  onPressed: () => _selectDate(context),
+                  child: Text('Seleccionar Fecha'),
+                ),
+
             ),
           ),
-          ElevatedButton(
-            onPressed: () => _selectDate(context),
-            child: Text('Seleccionar Fecha'),
-          ),
-          //SizedBox(height: 16.0),
+          const SizedBox(height: 50.0),
           ElevatedButton(
             onPressed: () {
-              // Aquí puedes realizar el registro del usuario
-              final nick = nickController.text;
-              final password = passwordController.text;
-              final name = nameController.text;
-              final surname = surnameController.text;
-
-              // Realiza acciones de registro aquí
+              String nick = nickController.text;
+              String password = passwordController.text;
+              String name = nameController.text;
+              String surname = surnameController.text;
+              String mail = mailController.text;
+              DateTime birthdate = selectedDate;
+              if(true){ //Comprueba si los datos del nuevo usuario son validos
+                Usuario user = Usuario(
+                  usuarioID : 1,
+                  nombre: name,
+                  apellidos : surname,
+                  nick : nick,
+                  correo : mail,
+                  contrasena : password,
+                  fechaNacimiento : birthdate);
+              } else {}//mostrar mensaje de error
             },
             child: Text('Registrar'),
           ),
@@ -109,5 +129,4 @@ class _RegistroFormState extends State<RegistroForm> {
       ),
     );
   }
-
 }
