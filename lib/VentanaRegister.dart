@@ -1,3 +1,4 @@
+import 'package:collectify/ConexionBD.dart';
 import 'package:flutter/material.dart';
 void main() {
   runApp(VentanaRegister());
