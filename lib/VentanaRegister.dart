@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:collectify/ConexionBD.dart';
 import 'package:collectify/VentanaLogin.dart';
@@ -129,4 +128,5 @@ class _RegistroFormState extends State<RegistroForm> {
       ),
     );
   }
+
 }
