@@ -6,11 +6,13 @@ import 'package:flutter/services.dart';
 
 
 class VentanaAnadirProducto extends StatelessWidget {
+  const VentanaAnadirProducto({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Aggiungi un nuovo prodotto'),
+        title: Text('Anadir nuevo producto'),
       ),
       body: AddProductForm(),
     );
@@ -18,6 +20,8 @@ class VentanaAnadirProducto extends StatelessWidget {
 }
 
 class AddProductForm extends StatefulWidget {
+  const AddProductForm({super.key});
+
   @override
   _AddProductFormState createState() => _AddProductFormState();
 }
@@ -49,7 +53,7 @@ class _AddProductFormState extends State<AddProductForm> {
             controller: descriptionController,
             decoration: InputDecoration(labelText: 'Descripción'),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           ElevatedButton(
             onPressed: () {
               final productName = nameController.text;
