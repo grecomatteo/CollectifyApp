@@ -4,7 +4,7 @@ import 'package:collectify/VentanaLogin.dart';
 
 void main() {
   runApp(VentanaRegister());
-  Conexion().conectar();
+  //Conexion().conectar();
 }
 
 class VentanaRegister extends StatelessWidget {
@@ -105,13 +105,13 @@ class _RegistroFormState extends State<RegistroForm> {
           const SizedBox(height: 50.0),
           ElevatedButton(
             onPressed: () {
-              String nick = nickController.text;
-              String password = passwordController.text;
-              String name = nameController.text;
-              String surname = surnameController.text;
-              String mail = mailController.text;
-              DateTime birthdate = selectedDate;
-              if(true){ //Comprueba si los datos del nuevo usuario son validos
+              final nick = nickController.text;
+              final password = passwordController.text;
+              final name = nameController.text;
+              final surname = surnameController.text;
+              final mail = mailController.text;
+              final birthdate = selectedDate;
+              /*if(true){ //Comprueba si los datos del nuevo usuario son validos
                 Usuario user = Usuario(
                   usuarioID : 1,
                   nombre: name,
@@ -120,7 +120,7 @@ class _RegistroFormState extends State<RegistroForm> {
                   correo : mail,
                   contrasena : password,
                   fechaNacimiento : birthdate);
-              } else {}//mostrar mensaje de error
+              } //else {}//mostrar mensaje de error*/
             },
             child: Text('Registrar'),
           ),
