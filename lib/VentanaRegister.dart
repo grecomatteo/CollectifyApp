@@ -2,39 +2,35 @@ import 'package:collectify/VentanaListaProductos.dart';
 import 'package:flutter/material.dart';
 
 import 'ConexionBD.dart';
+
 void main() {
-  runApp(const VentanaRegister());
+  runApp(VentanaRegister());
+  //Conexion().conectar();
 }
 
 class VentanaRegister extends StatelessWidget {
-  const VentanaRegister({super.key});
-
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: RegistroUsuariosScreen(),
     );
   }
 }
 
 class RegistroUsuariosScreen extends StatelessWidget {
-  const RegistroUsuariosScreen({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Registro de usuarios'),
+        title: Text('Registro de usuarios'),
       ),
       body: RegistroForm(),
-
     );
   }
 }
 
 class RegistroForm extends StatefulWidget {
-  const RegistroForm({super.key});
-
   @override
   _RegistroFormState createState() => _RegistroFormState();
 }
@@ -49,12 +45,11 @@ class _RegistroFormState extends State<RegistroForm> {
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
     );
-    if (picked != null && picked != selectedDate) {
+    if (picked != null && picked != selectedDate)
       setState(() {
         selectedDate = picked;
-        dateNacController.text= "${selectedDate.toLocal()}".split(' ')[0];
+        birthdateController.text = "${selectedDate.toLocal()}".split(' ')[0];
       });
-    }
   }
 
   final TextEditingController nickController = TextEditingController();
@@ -62,7 +57,9 @@ class _RegistroFormState extends State<RegistroForm> {
   final TextEditingController mailController = TextEditingController();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController surnameController = TextEditingController();
-  final TextEditingController dateNacController = TextEditingController();
+  final TextEditingController birthdateController = TextEditingController();
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +70,9 @@ class _RegistroFormState extends State<RegistroForm> {
 
           TextFormField(
             controller: nameController,
-            decoration: InputDecoration(labelText: 'Nombre'),
+            decoration: InputDecoration(
+                labelText: 'Nombre'
+            ),
           ),
           TextFormField(
             controller: surnameController,
@@ -93,32 +92,42 @@ class _RegistroFormState extends State<RegistroForm> {
             obscureText: true,
           ),
           TextFormField(
-            controller: dateNacController,
+            controller: birthdateController,
+            readOnly: true,
             decoration: InputDecoration(
                 labelText: 'Fecha de nacimiento',
-                hintText : "${selectedDate.toLocal()}".split(' ')[0]
+                suffixIcon: ElevatedButton(
+                  onPressed: () => _selectDate(context),
+                  child: Text('Seleccionar Fecha'),
+                ),
+
             ),
           ),
-          ElevatedButton(
-            onPressed: () => _selectDate(context),
-            child: Text('Seleccionar Fecha'),
-          ),
-          //SizedBox(height: 16.0),
+          const SizedBox(height: 50.0),
           ElevatedButton(
             onPressed: () async {
-              // Aquí puedes realizar el registro del usuario
               final nick = nickController.text;
               final password = passwordController.text;
               final name = nameController.text;
               final surname = surnameController.text;
               final mail = mailController.text;
-              final dateNac = dateNacController.text;
+              final birthdate = selectedDate;
+              /*if(true){ //Comprueba si los datos del nuevo usuario son validos
+                Usuario user = Usuario(
+                  usuarioID : 1,
+                  nombre: name,
+                  apellidos : surname,
+                  nick : nick,
+                  correo : mail,
+                  contrasena : password,
+                  fechaNacimiento : birthdate);
+              } //else {}//mostrar mensaje de error*/
 
-              if(await Conexion().registrarUsuario(name, surname, nick, mail, password, DateTime.parse(dateNac))){
-                //Arreglar problemas de asincronia (Se hereda un context asincrono)
-                Navigator.push(context, MaterialPageRoute(builder: (context) =>  const ListaProductos()));
-              };
-              // Realiza acciones de registro aquí
+              if(await Conexion().registrarUsuario(name, surname, nick, mail, password, birthdate)) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ListaProductos()));
+              }
             },
             child: Text('Registrar'),
           ),

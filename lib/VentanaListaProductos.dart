@@ -150,7 +150,7 @@ class NavigationBar extends StatelessWidget {
           case 2:
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const AnadirProducto()),
+              MaterialPageRoute(builder: (context) => VentanaAnadirProducto()),
             );
             break;
           case 3:
