@@ -1,5 +1,6 @@
+import 'package:collectify/ConexionBD.dart';
+import 'package:collectify/VentanaListaProductos.dart';
 import 'package:flutter/material.dart';
-import 'package:collectify/main.dart';
 import 'package:collectify/VentanaRegister.dart';
 import 'package:mysql1/mysql1.dart';
 
@@ -98,10 +99,10 @@ class Login extends StatelessWidget {
                     onPressed: () async{
                       nick = usernameText.text;
                       pswrd = passwordText.text;
-                      if(await validateFields()){
+                      if(await Conexion().login(nick, pswrd) !=null){
                         Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => MyApp()));
+                            MaterialPageRoute(builder: (context) => ListaProductos()));
                       }
                       else{
                           errorText = "Usuario o contraseña incorrectos";

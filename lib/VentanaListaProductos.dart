@@ -5,16 +5,16 @@ import 'VentanaChat.dart';
 import 'package:collectify/ConexionBD.dart';
 
 class ListaProductos extends StatelessWidget {
-  ListaProductos({super.key});
+  const ListaProductos({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text("Collectify"),
+        title: const Text("Collectify"),
       ),
-      body: ProductList(),
+      body: const ProductList(),
       bottomNavigationBar: const NavigationBar(),
     );
   }
@@ -120,8 +120,8 @@ class ProductoWidget extends StatelessWidget {
                       ),
                     ]
                   ),
-                  Spacer(),
-                  Icon(Icons.favorite_border_outlined),
+                  const Spacer(),
+                  const Icon(Icons.favorite_border_outlined),
 
                 ]
               ),

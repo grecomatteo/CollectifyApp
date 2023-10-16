@@ -1,3 +1,5 @@
+
+
 import 'package:mysql1/mysql1.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -92,8 +94,8 @@ class Conexion {
     return usuarios;
 
   }
-  Future<Usuario> getUsuarioByID(int id) async{
-    Usuario usuario = Usuario();
+  Future<Usuario?> getUsuarioByID(int id) async{
+    Usuario? usuario;
     if(conn==null) await conectar();
 
     await conn?.query("select * from usuario where userID = $id limit 1").then((results) {
@@ -110,9 +112,67 @@ class Conexion {
 
       }
     });
+    if(usuario==null) throw new Exception("Usuario no encontrado");
+    return usuario;
+  }
+  Future<Usuario?> getUsuarioByNick(String nick) async{
+    Usuario? usuario;
+    if(conn==null) await conectar();
+
+    await conn?.query("select * from usuario where nick = '$nick' limit 1").then((results) {
+      for (var row in results) {
+        usuario = Usuario(
+          usuarioID : row[0],
+          nombre: row[1],
+          apellidos :row[2],
+          nick : row[3],
+          correo : row[4],
+          contrasena : row[5],
+          fechaNacimiento : row[6],
+        );
+
+      }
+    });
+    if(usuario==null) return null;
     return usuario;
   }
 
+  Future<Usuario?> login(String nick, String contrasena) async {
+    if(conn==null) await conectar();
+
+    Usuario? usuario = await getUsuarioByNick(nick);
+
+
+    if(usuario == null) throw Exception("Usuario no encontrado");
+
+    if(usuario.contrasena == contrasena) return usuario;
+    else throw Exception("Contraseña incorrecta");
+
+  }
+  Future<int> getNumeroUsuarios() async{
+    if (conn==null )await conectar();
+    int numeroUsuarios = 0;
+    await conn?.query('select count(*) from usuario').then((results) {
+      for (var row in results) {
+        numeroUsuarios = row[0];
+      }
+    });
+    return numeroUsuarios;
+  }
+
+  Future<bool> registrarUsuario(String nombre, String apellido, String nick, String correo, String contrasena, DateTime fechaNac) async{
+    if(conn==null) await conectar();
+    int id = await getNumeroUsuarios();
+    try {
+      await conn?.query("insert into usuario values($id, '$nombre', '$apellido', '$nick', '$correo', '$contrasena', '$fechaNac')");
+
+  }
+    catch(e){
+      debugPrint(e.toString());
+    }
+    return true;
+
+  }
 
 
 

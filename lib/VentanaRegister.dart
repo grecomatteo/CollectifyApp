@@ -1,30 +1,40 @@
+import 'package:collectify/VentanaListaProductos.dart';
 import 'package:flutter/material.dart';
+
+import 'ConexionBD.dart';
 void main() {
-  runApp(VentanaRegister());
+  runApp(const VentanaRegister());
 }
 
 class VentanaRegister extends StatelessWidget {
+  const VentanaRegister({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       home: RegistroUsuariosScreen(),
     );
   }
 }
 
 class RegistroUsuariosScreen extends StatelessWidget {
+  const RegistroUsuariosScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Registro de usuarios'),
+        title: const Text('Registro de usuarios'),
       ),
       body: RegistroForm(),
+
     );
   }
 }
 
 class RegistroForm extends StatefulWidget {
+  const RegistroForm({super.key});
+
   @override
   _RegistroFormState createState() => _RegistroFormState();
 }
@@ -39,11 +49,12 @@ class _RegistroFormState extends State<RegistroForm> {
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
     );
-    if (picked != null && picked != selectedDate)
+    if (picked != null && picked != selectedDate) {
       setState(() {
         selectedDate = picked;
         dateNacController.text= "${selectedDate.toLocal()}".split(' ')[0];
       });
+    }
   }
 
   final TextEditingController nickController = TextEditingController();
@@ -94,13 +105,19 @@ class _RegistroFormState extends State<RegistroForm> {
           ),
           //SizedBox(height: 16.0),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               // Aquí puedes realizar el registro del usuario
               final nick = nickController.text;
               final password = passwordController.text;
               final name = nameController.text;
               final surname = surnameController.text;
+              final mail = mailController.text;
+              final dateNac = dateNacController.text;
 
+              if(await Conexion().registrarUsuario(name, surname, nick, mail, password, DateTime.parse(dateNac))){
+                //Arreglar problemas de asincronia (Se hereda un context asincrono)
+                Navigator.push(context, MaterialPageRoute(builder: (context) =>  const ListaProductos()));
+              };
               // Realiza acciones de registro aquí
             },
             child: Text('Registrar'),

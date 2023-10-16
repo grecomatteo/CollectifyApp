@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:collectify/VentanaListaProductos.dart';
 import 'package:collectify/ConexionBD.dart';
 
+import 'VentanaInicio.dart';
+
 
 void main() {
   //WidgetsFlutterBinding.ensureInitialized();
@@ -25,7 +27,7 @@ class MyApp extends StatelessWidget { //Punto inicial, no tocar
       ),
       debugShowCheckedModeBanner: false,
 
-      home: const MyHomePage(),
+      home:  const VentanaInicio(),
     );
   }
 }
