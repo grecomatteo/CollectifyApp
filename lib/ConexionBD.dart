@@ -1,5 +1,7 @@
 
 
+import 'dart:ffi';
+
 import 'package:mysql1/mysql1.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -160,6 +162,15 @@ class Conexion {
     return numeroUsuarios;
   }
 
+  Future<int> getNumeroProductos() async{
+    if (conn==null )await conectar();
+    int numeroProductos = 0;
+    await conn?.query('select count(*) as product_count from producto').then((results) {
+      numeroProductos = results.first['product_count'];
+    });
+    return numeroProductos;
+  }
+
   Future<bool> registrarUsuario(String nombre, String apellido, String nick, String correo, String contrasena, DateTime fechaNac) async{
     if(conn==null) await conectar();
     int id = await getNumeroUsuarios();
@@ -171,7 +182,22 @@ class Conexion {
       debugPrint(e.toString());
     }
     return true;
+  }
 
+  Future<bool> anadirProducto(Producto product) async{
+    if(conn==null) await conectar();
+    int id = await getNumeroProductos() + 1;
+    String? nombre = product.nombre;
+    String? descripcion = product.descripcion;
+    String? image = product.imagePath;
+    double? precio = product.precio;
+    try {
+      await conn?.query("insert into producto values('$id', '$nombre', '$descripcion', '$precio', '$image')");
+    }
+    catch(e){
+      debugPrint(e.toString());
+    }
+    return true;
   }
 
 
