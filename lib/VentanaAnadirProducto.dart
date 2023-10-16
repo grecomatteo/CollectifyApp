@@ -2,6 +2,31 @@
 import 'package:flutter/material.dart';
 import 'package:collectify/ConexionBD.dart';
 import 'package:flutter/services.dart';
+import 'package:mysql1/mysql1.dart';
+
+import 'VentanaListaProductos.dart';
+
+
+MySqlConnection? conn;
+String nombre = "";
+String description = "";
+
+Future<bool> validateFields() async {
+  conn = await MySqlConnection.connect(
+      ConnectionSettings(
+        host: "collectify-server-mysql.mysql.database.azure.com",
+        port: 3306,
+        user: "pin2023",
+        password: "AsLpqR_23",
+        db: "collectifyDB",
+      ));
+  await conn?.query('select * from producto where (nombre = $nombre AND descripcion = $description)').then((result) {
+    if (result != null) return true;
+  }
+  );
+  return false;
+  //return true;
+}
 
 
 class VentanaAnadirProducto extends StatelessWidget {
@@ -54,7 +79,7 @@ class _AddProductFormState extends State<AddProductForm> {
           ),
           const SizedBox(height: 16),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               final productName = nameController.text;
               final productPrice = priceController.text;
               final productDescription = descriptionController.text;
@@ -64,9 +89,14 @@ class _AddProductFormState extends State<AddProductForm> {
               prod.precio = double.parse(productPrice);
               prod.descripcion = productDescription;
               prod.imagePath = "lib/assets/productos/$productName.png";
-
-              // Qui puoi utilizzare i dati del prodotto per eseguire l'invio al tuo server o database
-              // E poi tornare alla pagina principale.
+              if(await Conexion().anadirProducto(prod) !=null){
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ListaProductos()));
+              }
+              else{
+                var errorText = "Falta details";
+              }
               Navigator.pop(context);
             },
             child: Text('Anadir Producto'),
