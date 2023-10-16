@@ -1,11 +1,11 @@
 import 'package:collectify/VentanaListaProductos.dart';
+import 'package:collectify/VentanaLogin.dart';
 import 'package:flutter/material.dart';
 
 import 'ConexionBD.dart';
 
 void main() {
   runApp(VentanaRegister());
-  //Conexion().conectar();
 }
 
 class VentanaRegister extends StatelessWidget {
@@ -35,8 +35,13 @@ class RegistroForm extends StatefulWidget {
   _RegistroFormState createState() => _RegistroFormState();
 }
 
+
+
 class _RegistroFormState extends State<RegistroForm> {
   DateTime selectedDate = DateTime.now();
+  bool _isValidEmail = true;
+  bool _isValidNick = true;
+  bool ok = true;
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -50,6 +55,20 @@ class _RegistroFormState extends State<RegistroForm> {
         selectedDate = picked;
         birthdateController.text = "${selectedDate.toLocal()}".split(' ')[0];
       });
+  }
+
+  void _validateEmail(String email){
+    final emailRegExp = RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
+    setState(() {
+      _isValidEmail = emailRegExp.hasMatch(email);
+    });
+  }
+  void _validateNick(String nick){
+    final user = Conexion().getUsuarioByNick(nick);
+    setState(() {
+      if(user == null) _isValidNick = true ;
+      else _isValidNick = false;
+    });
   }
 
   final TextEditingController nickController = TextEditingController();
@@ -70,9 +89,7 @@ class _RegistroFormState extends State<RegistroForm> {
 
           TextFormField(
             controller: nameController,
-            decoration: InputDecoration(
-                labelText: 'Nombre'
-            ),
+            decoration: InputDecoration(labelText: 'Nombre'),
           ),
           TextFormField(
             controller: surnameController,
@@ -80,12 +97,25 @@ class _RegistroFormState extends State<RegistroForm> {
           ),
           TextFormField(
             controller: mailController,
-            decoration: InputDecoration(labelText: 'Correo'),
+            onChanged: _validateEmail,
+            decoration: InputDecoration(
+                labelText: 'Correo',
+            ),
           ),
+          if (!_isValidEmail)
+            Text('Por favor, ingrese un correo electrónico válido.',
+                textAlign: TextAlign.left,
+                style: TextStyle(color: Colors.red)
+            ),
           TextFormField(
             controller: nickController,
             decoration: InputDecoration(labelText: 'Nombre de usuario'),
           ),
+          if (!_isValidNick)
+            Text('Este Nick ya esta en uso. Pruebe con otro',
+                textAlign: TextAlign.left,
+                style: TextStyle(color: Colors.red)
+            ),
           TextFormField(
             controller: passwordController,
             decoration: InputDecoration(labelText: 'Contraseña'),
@@ -112,25 +142,23 @@ class _RegistroFormState extends State<RegistroForm> {
               final surname = surnameController.text;
               final mail = mailController.text;
               final birthdate = selectedDate;
-              /*if(true){ //Comprueba si los datos del nuevo usuario son validos
-                Usuario user = Usuario(
-                  usuarioID : 1,
-                  nombre: name,
-                  apellidos : surname,
-                  nick : nick,
-                  correo : mail,
-                  contrasena : password,
-                  fechaNacimiento : birthdate);
-              } //else {}//mostrar mensaje de error*/
 
-              if(await Conexion().registrarUsuario(name, surname, nick, mail, password, birthdate)) {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ListaProductos()));
+              //Comprueba si los campos del nuevo usuario son correctos
+              if(_isValidEmail == true && _isValidNick == true && birthdateController.text!= '' && nameController.text!= '' && surnameController.text!= '' && passwordController.text!= ''  && birthdateController.text!= ''){
+                 if(await Conexion().registrarUsuario(name, surname, nick, mail, password, birthdate)) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => VentanaLogin()));
+                }
               }
+              else ok = false;
             },
             child: Text('Registrar'),
           ),
+          if (!ok)
+            Text('Alguno de los campos es erroneo o esta vacio. Haga el favor de comprobarlos.',
+                style: TextStyle(color: Colors.red)
+            )
         ],
       ),
     );
