@@ -70,7 +70,6 @@ class TextAndChat extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    ;
     return FutureBuilder<List<Message>>(
       future: connectToDatabase(),
       builder: (context, snapshot) {
@@ -94,15 +93,34 @@ class ChatList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if(messages.isEmpty) return const Text("No messages");
-
-    return ListView.builder(
-      shrinkWrap: false,
-      //add space between cards
-      padding: const EdgeInsets.all(10),
-      //itemCount: chatTileCount,
-      itemCount:  messages.length,
-      itemBuilder: (context, index) =>
-          Chat(messages[index]),
+    return Stack(
+      children: [
+      ListView.builder(
+          shrinkWrap: false,
+          //add space between cards
+          padding: const EdgeInsets.all(10),
+          //itemCount: chatTileCount,
+          itemCount:  messages.length,
+          itemBuilder: (context, index) =>
+              Chat(messages[index]),
+        ),
+        Align(
+          alignment: Alignment.bottomRight,
+          child: Padding(
+            padding: EdgeInsets.all(8.0),
+            child: FloatingActionButton.extended(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => VentanaMensajesChat(10, myID)),
+                );
+              },
+              label: const Text('New chat (Implementar en VentanaProducto.dart)'),
+              icon: const Icon(Icons.add),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
