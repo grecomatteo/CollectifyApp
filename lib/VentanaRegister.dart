@@ -1,7 +1,5 @@
-import 'package:collectify/VentanaListaProductos.dart';
 import 'package:collectify/VentanaLogin.dart';
 import 'package:flutter/material.dart';
-
 import 'ConexionBD.dart';
 
 void main() {
@@ -64,7 +62,7 @@ class _RegistroFormState extends State<RegistroForm> {
   }
 
   void _validateNick(String nick) {
-    Future<Usuario?> user = Conexion().getUsuarioByNick(nick);
+    final user = Conexion().getUsuarioByNick(nick);
     setState(() {
       _isValidNick = user == null;
     });
