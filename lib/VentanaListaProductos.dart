@@ -163,7 +163,7 @@ class NavigationBar extends StatelessWidget {
           case 3:
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const VentanaChat()),
+              MaterialPageRoute(builder: (context) => const VentanaChat(0)), //TODO MIGUEL: cambiar el 0 por el id del usuario
             );
             break;
           case 4: //Perfil, por implementar
