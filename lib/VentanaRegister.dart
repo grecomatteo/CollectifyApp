@@ -63,11 +63,10 @@ class _RegistroFormState extends State<RegistroForm> {
       _isValidEmail = emailRegExp.hasMatch(email);
     });
   }
-  void _validateNick(String nick){
+  void _validateNick(String nick) {
     final user = Conexion().getUsuarioByNick(nick);
     setState(() {
-      if(user == null) _isValidNick = true ;
-      else _isValidNick = false;
+      _isValidNick = user == null;
     });
   }
 
@@ -152,14 +151,10 @@ class _RegistroFormState extends State<RegistroForm> {
                       MaterialPageRoute(builder: (context) => VentanaLogin()));
                 }
               }
-              else ok = false;
+              else DiagnosticsNode.message('Alguno de los campos es erroneo o esta vacio. Haga el favor de comprobarlos.');
             },
             child: Text('Registrar'),
           ),
-          if (!ok)
-            Text('Alguno de los campos es erroneo o esta vacio. Haga el favor de comprobarlos.',
-                style: TextStyle(color: Colors.red)
-            )
         ],
       ),
     );
