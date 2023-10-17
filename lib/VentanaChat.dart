@@ -47,12 +47,12 @@ Future<List<Message>> connectToDatabase() async {
 }
 
 class VentanaChat extends StatelessWidget {
-  const VentanaChat(int? id, {Key? key}) : super(key: key);
+  const VentanaChat({required this.id, Key? key}) : super(key: key);
 
-  get id => null;
+  final int id;
+
   @override
   Widget build(BuildContext context) {
-    if(id == null) throw Exception("No ID passed");
     myID = id;
     return Scaffold(
       appBar: AppBar(

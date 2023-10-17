@@ -101,18 +101,23 @@ class Login extends StatelessWidget {
                   ),
                   TextButton(
                     child: Text("Iniciar sesión"),
-                    onPressed: () async{
+                    onPressed: () {
                       nick = usernameText.text;
                       pswrd = passwordText.text;
-                      if(await Conexion().login(nick, pswrd) !=null){
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => ListaProductos(logged)));
-                      }
-                      else{
-                          errorText = "Usuario o contraseña incorrectos";
+                      Conexion().login(nick, pswrd).then((value) =>
+                      {
+                        if(value != null){
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) =>
+                                  ListaProductos(connected: value))),
                         }
-                      }
+                        else
+                          {
+                            errorText = "Usuario o contraseña incorrectos"
+                          }
+                      });
+                    }
                   ),
                   TextButton(
                       child: Text("Registrarse"),

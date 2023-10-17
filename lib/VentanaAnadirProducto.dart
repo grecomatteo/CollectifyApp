@@ -96,7 +96,7 @@ class _AddProductFormState extends State<AddProductForm> {
               if(await Conexion().anadirProducto(prod) !=null){
                 Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => ListaProductos(logged)));
+                    MaterialPageRoute(builder: (context) => ListaProductos(connected: logged)));
               }
               else{
                 var errorText = "Falta details";

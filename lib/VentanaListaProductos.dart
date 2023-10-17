@@ -4,18 +4,15 @@ import 'VentanaAnadirProducto.dart';
 import 'VentanaChat.dart';
 import 'package:collectify/ConexionBD.dart';
 
+Usuario user = new Usuario();
 class ListaProductos extends StatelessWidget {
-  //const ListaProductos({super.key});
+  const ListaProductos({super.key, required this.connected});
 
-  Usuario connected = new Usuario();
-
-  ListaProductos(Usuario u)
-  {
-    connected = u;
-  }
+  final Usuario connected;
 
   @override
   Widget build(BuildContext context) {
+    user = connected;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -161,9 +158,10 @@ class NavigationBar extends StatelessWidget {
             );
             break;
           case 3:
+            int uid = user.usuarioID ?? -1;
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const VentanaChat(0)), //TODO MIGUEL: cambiar el 0 por el id del usuario
+              MaterialPageRoute(builder: (context) => VentanaChat(id: uid)), //TODO MIGUEL: cambiar el 0 por el id del usuario
             );
             break;
           case 4: //Perfil, por implementar
