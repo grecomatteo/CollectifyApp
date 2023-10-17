@@ -6,7 +6,8 @@ import 'package:collectify/ConexionBD.dart';
 
 import 'VentanaInicio.dart';
 
-
+//Placeholder, cambiar
+Usuario u = new Usuario();
 void main() {
   //WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
@@ -43,6 +44,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return  ListaProductos();
+    return  ListaProductos(u);
   }
 }

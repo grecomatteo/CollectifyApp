@@ -5,7 +5,14 @@ import 'VentanaChat.dart';
 import 'package:collectify/ConexionBD.dart';
 
 class ListaProductos extends StatelessWidget {
-  const ListaProductos({super.key});
+  //const ListaProductos({super.key});
+
+  Usuario connected = new Usuario();
+
+  ListaProductos(Usuario u)
+  {
+    connected = u;
+  }
 
   @override
   Widget build(BuildContext context) {

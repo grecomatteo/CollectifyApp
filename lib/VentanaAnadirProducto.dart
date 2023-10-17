@@ -12,6 +12,8 @@ import 'VentanaListaProductos.dart';
 MySqlConnection? conn;
 String nombre = "";
 String description = "";
+//Placeholder, se debe cambiar
+Usuario logged = new Usuario();
 
 Future<bool> validateFields() async {
   conn = await MySqlConnection.connect(
@@ -94,7 +96,7 @@ class _AddProductFormState extends State<AddProductForm> {
               if(await Conexion().anadirProducto(prod) !=null){
                 Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => ListaProductos()));
+                    MaterialPageRoute(builder: (context) => ListaProductos(logged)));
               }
               else{
                 var errorText = "Falta details";
