@@ -34,10 +34,13 @@ Future<bool> validateFields() async {
 
 
 class VentanaAnadirProducto extends StatelessWidget {
-  const VentanaAnadirProducto({super.key});
+  const VentanaAnadirProducto({super.key, required this.user});
+
+  final Usuario user;
 
   @override
   Widget build(BuildContext context) {
+    logged = user;
     return Scaffold(
       appBar: AppBar(
         title: Text('Anadir nuevo producto'),
