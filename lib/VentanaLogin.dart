@@ -7,6 +7,7 @@ import 'package:mysql1/mysql1.dart';
 MySqlConnection? conn;
 String nick = "";
 String pswrd = "";
+Usuario logged = new Usuario();
 
 void main() {
   runApp(VentanaLogin());
@@ -23,8 +24,12 @@ Future<bool> validateFields() async{
         db: "collectifyDB",
       ));
 
-  await conn?.query('select * from users where (nick = $nick AND contrasena = $pswrd)').then((result) {
-    if (result != null) return true;
+  await conn?.query('select TOP 1 * from users where (nick = $nick AND contrasena = $pswrd)').then((result) {
+    if (result != null){
+      logged = result.single.firstOrNull;
+      return true;
+    }
+    else throw Exception("Usuario o contraseña incorrectos");
   }
   );
   return false;
@@ -102,7 +107,7 @@ class Login extends StatelessWidget {
                       if(await Conexion().login(nick, pswrd) !=null){
                         Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => ListaProductos()));
+                            MaterialPageRoute(builder: (context) => ListaProductos(logged)));
                       }
                       else{
                           errorText = "Usuario o contraseña incorrectos";
@@ -117,6 +122,7 @@ class Login extends StatelessWidget {
                               MaterialPageRoute(builder: (context) => VentanaRegister()));
                       }
                   ),
+
                 ],
               );
 
