@@ -1,15 +1,20 @@
+import 'dart:async';
+
 import 'package:collectify/VentanaChat.dart';
 import 'package:flutter/material.dart';
 import 'package:collectify/Message.dart';
 import 'package:mysql1/mysql1.dart';
 
 String toSendMessage = "";
-List<Message> messages = [];
 
+int myID = 0;
+int otherID = 0;
 
-Future<List<Message>> getMessages(int myID, int chatIndex) async{
+bool lookingForMessages = true;
+
+Future<List<Message>> getMessages() async{
   List<ResultRow> maps = [];
-  await conn?.query('select * from chat_messages where (senderID=$myID AND receiverID=$chatIndex) OR (receiverID=$myID AND senderID=$chatIndex)').then((results) {
+  await conn?.query('select * from chat_messages where (senderID=$myID AND receiverID=$otherID) OR (receiverID=$myID AND senderID=$otherID)').then((results) {
     for (var row in results) {
       maps.add(row);
       debugPrint(row.toString());
@@ -25,47 +30,89 @@ Future<List<Message>> getMessages(int myID, int chatIndex) async{
     );
   });
 
-  messages = messageList;
   return messageList;
 }
 
 //List view controller
 final listViewController = ScrollController();
-class VentanaMensajesChat extends StatelessWidget {
-  const VentanaMensajesChat(this.otherID, this.myID, {super.key});
+class VentanaMensajesChat extends StatefulWidget {
+  const VentanaMensajesChat(this.oID, this.iD, {super.key});
 
-  final int myID;
-  final int otherID;
+  final int iD;
+  final int oID;
+
+  @override
+  State<VentanaMensajesChat> createState() => _VentanaMensajesChatState(oID, iD);
+}
+
+class _VentanaMensajesChatState extends State<VentanaMensajesChat> {
+  _VentanaMensajesChatState(this.oID, this.iD);
+
+  final int iD;
+  final int oID;
+
+  final Stream<List<Message>> _messages = (() {
+    late final StreamController<List<Message>> controller;
+    controller = StreamController<List<Message>>(
+      onListen: () async {
+        while (true) {
+          if(!lookingForMessages) return;
+          List<Message> messages = await getMessages();
+          controller.add(messages);
+          await Future<void>.delayed(const Duration(seconds: 1));
+        }
+      },
+    );
+    return controller.stream;
+  })();
 
   @override
   Widget build(BuildContext context) {
+    lookingForMessages = true;
+    myID = iD;
+    otherID = oID;
     String name = otherID.toString();
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text("$name's Chat"),
-      ),
-      body: FutureBuilder (
-        future: getMessages(myID, otherID),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Text('${snapshot.error}');
-          }
-          if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          return ListView.builder(
-            itemCount: messages.length,
-            itemBuilder: (context, index) {
-              return MessageDisplay(message: messages[index], myID: myID, otherID: otherID);
-            },
-            controller: listViewController,
-          );
-        },
-      ),
-      resizeToAvoidBottomInset: false,
-      //When the keyboard is open put the NavigationBar on top of the keyboard
-      bottomNavigationBar: NavigationBar(myID, otherID),
+    return WillPopScope(
+      onWillPop: () async {
+        lookingForMessages = false;
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          title: Text("$name's Chat"),
+        ),
+        body: StreamBuilder<List<Message>>(
+          stream: _messages,
+          builder: (BuildContext context, AsyncSnapshot<List<Message>> snapshot) {
+            List<Widget> children;
+            if (snapshot.hasError) {
+              children = [Text('${snapshot.error}')];
+            }
+            if (!snapshot.hasData) {
+              children = const <Widget>[CircularProgressIndicator()];
+            } else {
+              List<Message> messages = snapshot.data as List<Message>;
+              List<Widget> childrn = [];
+              for (int i = 0; i < messages.length; i++) {
+                childrn.add(MessageDisplay(
+                  message: messages[i],
+                  myID: myID,
+                  otherID: otherID,
+                ));
+              }
+              children = childrn;
+            }
+            return ListView(
+                controller: listViewController,
+                children: children,
+              );
+          },
+        ),
+        resizeToAvoidBottomInset: false,
+        //When the keyboard is open put the NavigationBar on top of the keyboard
+        bottomNavigationBar: const NavigationBar(),
+      )
     );
   }
 }
@@ -92,15 +139,18 @@ class MessageDisplay extends StatelessWidget {
   }
 }
 
-class NavigationBar extends StatelessWidget {
-  NavigationBar(this.myID, this.otherID, {Key? key}) : super(key: key);
+class NavigationBar extends StatefulWidget {
+  const NavigationBar({Key? key}) : super(key: key);
 
-  final int myID;
-  final int otherID;
+  @override
+  State<NavigationBar> createState() => _NavigationBarState();
+}
 
-  Future<void> sendMessage(int myID, int otherID) async{
+class _NavigationBarState extends State<NavigationBar> {
+  Future<Message> sendMessage(int myID, int otherID) async{
     await conn?.query("insert into chat_messages(senderID, receiverID, message, sendDate) values($myID, $otherID, '$toSendMessage', now())");
-    getMessages(myID, otherID);
+    await getMessages();
+    return Message(myID, otherID, toSendMessage, DateTime.now());
   }
 
   final textField = TextEditingController();
@@ -143,16 +193,12 @@ class NavigationBar extends StatelessWidget {
                       {
                         if(toSendMessage.replaceAll(' ', '').isEmpty) return;
                         //send message, clear text field, scroll to the bottom, close keyboard and refresh the page
-                        sendMessage(myID, otherID);
+                        setState(() {
+                          sendMessage(myID, otherID);
+                        });
                         //empty the text field
                         textField.clear();
                         toSendMessage = "";
-                        //scroll to the bottom
-                        listViewController.animateTo(
-                          listViewController.position.maxScrollExtent,
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeOut,
-                        );
                         FocusScope.of(context).unfocus();
                       },
                       icon: const Icon(Icons.send),
