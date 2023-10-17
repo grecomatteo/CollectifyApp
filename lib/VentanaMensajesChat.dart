@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:collectify/ConexionBD.dart';
 import 'package:collectify/VentanaChat.dart';
 import 'package:flutter/material.dart';
 import 'package:collectify/Message.dart';
@@ -9,12 +9,13 @@ String toSendMessage = "";
 
 int myID = 0;
 int otherID = 0;
+String? otherName = "";
 
 bool lookingForMessages = true;
 
 Future<List<Message>> getMessages() async{
   List<ResultRow> maps = [];
-  await conn?.query('select * from chat_messages where (senderID=$myID AND receiverID=$otherID) OR (receiverID=$myID AND senderID=$otherID)').then((results) {
+  await conn?.query('select * from chat_messages where (senderID=$myID AND receiverID=$otherID) OR (receiverID=$myID AND senderID=$otherID) ORDER BY sendDate').then((results) {
     for (var row in results) {
       maps.add(row);
       debugPrint(row.toString());
@@ -71,7 +72,10 @@ class _VentanaMensajesChatState extends State<VentanaMensajesChat> {
     lookingForMessages = true;
     myID = iD;
     otherID = oID;
-    String name = otherID.toString();
+
+    Conexion().getUsuarioByID(otherID).then((value) => setState(() {
+      otherName = value?.nick;
+    }));
     return WillPopScope(
       onWillPop: () async {
         lookingForMessages = false;
@@ -80,7 +84,7 @@ class _VentanaMensajesChatState extends State<VentanaMensajesChat> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: Text("$name's Chat"),
+          title: Text("$otherName's Chat"),
         ),
         body: StreamBuilder<List<Message>>(
           stream: _messages,
@@ -147,10 +151,9 @@ class NavigationBar extends StatefulWidget {
 }
 
 class _NavigationBarState extends State<NavigationBar> {
-  Future<Message> sendMessage(int myID, int otherID) async{
+  Future<void> sendMessage(int myID, int otherID) async{
     await conn?.query("insert into chat_messages(senderID, receiverID, message, sendDate) values($myID, $otherID, '$toSendMessage', now())");
     await getMessages();
-    return Message(myID, otherID, toSendMessage, DateTime.now());
   }
 
   final textField = TextEditingController();

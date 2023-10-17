@@ -1,6 +1,6 @@
+import 'package:collectify/ConexionBD.dart';
 import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
-import 'package:path/path.dart';
 import 'package:collectify/VentanaMensajesChat.dart';
 import 'package:collectify/Message.dart';
 
@@ -53,7 +53,7 @@ class VentanaChat extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text("$myID Chat"),
+        title: const Text("Chat"),
       ),
       body: const TextAndChat(),
     );
@@ -103,15 +103,32 @@ class ChatList extends StatelessWidget {
   }
 }
 
-class Chat extends StatelessWidget {
+class Chat extends StatefulWidget {
   final Message message;
 
-  const Chat(this.message, {super.key});
+  const Chat(this.message, {Key? key}) : super(key: key);
+
+  @override
+  State<Chat> createState() => ChatState(message);
+}
+
+class ChatState extends State<Chat> {
+  final Message message;
+
+  ChatState(this.message);
+
+  String? name = "";
+  String? lastMessage = "";
 
   @override
   Widget build(BuildContext context) {
-    String name = message.senderID == myID ? message.receiverID.toString() : message.senderID.toString();
-    String lastMessage = "${message.senderID}: ${message.message}";
+
+    int otherID = message.senderID == myID ? message.receiverID : message.senderID;
+    Conexion().getUsuarioByID(otherID).then((value) => setState(() {
+      name = value?.nick;
+      Conexion().getUsuarioByID(message.senderID).then((value1) =>
+          lastMessage = "${value1?.nick}: ${message.message}");
+    }));
     return Column(
       children: [
         ElevatedButton(
@@ -147,8 +164,8 @@ class Chat extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(name, style: const TextStyle(fontWeight: FontWeight.bold), textAlign: TextAlign.left, softWrap: false, overflow: TextOverflow.fade,),
-                          Text(lastMessage, textAlign: TextAlign.left, softWrap: false, overflow: TextOverflow.fade,),
+                          Text(name!, style: const TextStyle(fontWeight: FontWeight.bold), textAlign: TextAlign.left, softWrap: false, overflow: TextOverflow.fade,),
+                          Text(lastMessage!, textAlign: TextAlign.left, softWrap: false, overflow: TextOverflow.fade,),
                         ],
                       ),
                     ),
