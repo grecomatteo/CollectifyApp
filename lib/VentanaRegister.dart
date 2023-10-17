@@ -109,6 +109,7 @@ class _RegistroFormState extends State<RegistroForm> {
             ),
           TextFormField(
             controller: nickController,
+            onChanged: _validateNick,
             decoration: InputDecoration(labelText: 'Nombre de usuario'),
           ),
           if (!_isValidNick)

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:collectify/ConexionBD.dart';
 import 'package:flutter/services.dart';
 import 'package:mysql1/mysql1.dart';
+import 'package:image_picker/image_picker.dart';
+
 
 import 'VentanaListaProductos.dart';
 
