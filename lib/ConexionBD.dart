@@ -1,6 +1,5 @@
 
 
-import 'dart:ffi';
 
 import 'package:mysql1/mysql1.dart';
 import 'dart:async';
@@ -192,7 +191,8 @@ class Conexion {
     String? image = product.imagePath;
     double? precio = product.precio;
     try {
-      await conn?.query("insert into producto values('$id', '$nombre', '$descripcion', '$precio', '$image')");
+      await conn?.query("insert into producto (nombre, descripcion, precio, imagePath)"
+          " values('$nombre', '$descripcion', '$precio', '$image')");
     }
     catch(e){
       debugPrint(e.toString());
