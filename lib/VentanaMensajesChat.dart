@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:collectify/ConexionBD.dart';
 import 'package:collectify/VentanaChat.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:collectify/Message.dart';
 import 'package:mysql1/mysql1.dart';
@@ -10,6 +11,7 @@ String toSendMessage = "";
 int myID = 0;
 int otherID = 0;
 String? otherName = "";
+List<Message> messageLocalList = [];
 
 bool lookingForMessages = true;
 
@@ -31,6 +33,7 @@ Future<List<Message>> getMessages() async{
     );
   });
 
+  messageLocalList = messageList;
   return messageList;
 }
 
@@ -58,9 +61,9 @@ class _VentanaMensajesChatState extends State<VentanaMensajesChat> {
       onListen: () async {
         while (true) {
           if(!lookingForMessages) return;
-          List<Message> messages = await getMessages();
+          List<Message> messages =  await getMessages();
           controller.add(messages);
-          await Future<void>.delayed(const Duration(seconds: 1));
+          await Future.delayed(const Duration(seconds: 1));
         }
       },
     );
@@ -104,13 +107,32 @@ class _VentanaMensajesChatState extends State<VentanaMensajesChat> {
                   myID: myID,
                   otherID: otherID,
                 ));
+
+                if(i == messages.length - 1) continue;
+                if(messages[i].sendDate.day != messages[i+1].sendDate.day){
+                  childrn.add(
+                    Container(
+                      margin: const EdgeInsets.all(10),
+                      alignment: Alignment.center,
+                      child: Text(
+                        "${messages[i+1].sendDate.day}/${messages[i+1].sendDate.month}/${messages[i+1].sendDate.year}",
+                        style: const TextStyle(fontSize: 20),
+                      ),
+                    ),
+                  );
+                }
               }
               children = childrn;
             }
-            return ListView(
-                controller: listViewController,
-                children: children,
-              );
+            ListView LV = ListView(
+              controller: listViewController,
+                reverse: true,
+                children: [
+                  for (final element in children.reversed.toList())
+                    element
+                ]
+            );
+            return LV;
           },
         ),
         resizeToAvoidBottomInset: false,
@@ -132,13 +154,27 @@ class MessageDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: message.senderID == myID ? Colors.blue : Colors.red,
+      color: message.senderID == myID ? Colors.green : Colors.blueGrey,
       margin: const EdgeInsets.all(10),
       alignment: message.senderID == myID
           ? Alignment.centerRight
           : Alignment.centerLeft,
       padding: const EdgeInsets.all(10),
-      child: Text(message.message),
+      child: Column(
+        crossAxisAlignment: message.senderID == myID ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        children: [
+          Text(
+            textAlign: TextAlign.start,
+            message.message,
+            style: const TextStyle(fontSize: 20),
+          ),
+          Text(
+            textAlign: TextAlign.end,
+            "${message.sendDate.hour}:${message.sendDate.minute}",
+            style: const TextStyle(fontSize: 10),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -153,6 +189,8 @@ class NavigationBar extends StatefulWidget {
 class _NavigationBarState extends State<NavigationBar> {
   Future<void> sendMessage(int myID, int otherID) async{
     await conn?.query("insert into chat_messages(senderID, receiverID, message, sendDate) values($myID, $otherID, '$toSendMessage', now())");
+
+    messageLocalList.add(Message(myID, otherID, toSendMessage, DateTime.now()));
     await getMessages();
   }
 
@@ -199,6 +237,11 @@ class _NavigationBarState extends State<NavigationBar> {
                         setState(() {
                           sendMessage(myID, otherID);
                         });
+                        listViewController.animateTo(
+                          listViewController.position.maxScrollExtent,
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeOut,
+                        );
                         //empty the text field
                         textField.clear();
                         toSendMessage = "";

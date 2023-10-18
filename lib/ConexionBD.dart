@@ -172,9 +172,8 @@ class Conexion {
 
   Future<bool> registrarUsuario(String nombre, String apellido, String nick, String correo, String contrasena, DateTime fechaNac) async{
     if(conn==null) await conectar();
-    int id = await getNumeroUsuarios();
     try {
-      await conn?.query("insert into usuario values($id, '$nombre', '$apellido', '$nick', '$correo', '$contrasena', '$fechaNac')");
+      await conn?.query("insert into usuario(nombre,apellidos,nick,correo,contrasena,fechaNac) values('$nombre', '$apellido', '$nick', '$correo', '$contrasena', '$fechaNac')");
 
   }
     catch(e){
