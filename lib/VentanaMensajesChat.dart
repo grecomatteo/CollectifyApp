@@ -238,8 +238,8 @@ class _NavigationBarState extends State<NavigationBar> {
                           sendMessage(myID, otherID);
                         });
                         listViewController.animateTo(
-                          listViewController.position.maxScrollExtent,
-                          duration: const Duration(milliseconds: 300),
+                          0.0,
+                          duration: const Duration(milliseconds: 0),
                           curve: Curves.easeOut,
                         );
                         //empty the text field
