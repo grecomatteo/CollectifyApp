@@ -62,10 +62,12 @@ class _RegistroFormState extends State<RegistroForm> {
   }
 
   void _validateNick(String nick) {
-    final user = Conexion().getUsuarioByNick(nick);
-    setState(() {
-      _isValidNick = user == null;
-    });
+    Conexion().getUsuarioByNick(nick).then((value) =>
+        setState(() {
+          _isValidNick = value == null;
+        })
+    );
+
   }
 
   final TextEditingController nickController = TextEditingController();
