@@ -146,11 +146,12 @@ class ChatState extends State<Chat> {
   Widget build(BuildContext context) {
 
     int otherID = message.senderID == myID ? message.receiverID : message.senderID;
-    Conexion().getUsuarioByID(otherID).then((value) => setState(() {
-      name = value?.nick;
-      Conexion().getUsuarioByID(message.senderID).then((value1) =>
-          lastMessage = "${value1?.nick}: ${message.message}");
-    }));
+    Conexion().getUsuarioByID(otherID).then((value) =>
+      Conexion().getUsuarioByID(message.senderID).then((value1) => {
+        name = value?.nick,
+        lastMessage = "${value1?.nick}: ${message.message}"
+      })
+    );
     return Column(
       children: [
         ElevatedButton(

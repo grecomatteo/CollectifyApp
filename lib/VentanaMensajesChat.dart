@@ -76,9 +76,9 @@ class _VentanaMensajesChatState extends State<VentanaMensajesChat> {
     myID = iD;
     otherID = oID;
 
-    Conexion().getUsuarioByID(otherID).then((value) => setState(() {
-      otherName = value?.nick;
-    }));
+    Conexion().getUsuarioByID(otherID).then((value) =>
+    otherName = value?.nick
+    );
     return WillPopScope(
       onWillPop: () async {
         lookingForMessages = false;
