@@ -1,15 +1,19 @@
 class Message {
   final int senderID;
+  final String senderName;
   final int receiverID;
+  final String receiverName;
   final String message;
   final DateTime sendDate;
 
-  Message(this.senderID, this.receiverID, this.message, this.sendDate);
+  Message(this.senderID, this.senderName, this.receiverID, this.receiverName, this.message, this.sendDate);
 
   Map<String, dynamic> toMap() {
     return {
       'senderID': senderID,
+      'senderName': senderName,
       'receiverID': receiverID,
+      'receiverName': receiverName,
       'message': message,
       'sendDate': sendDate,
     };
@@ -17,6 +21,6 @@ class Message {
 
   @override
   String toString() {
-    return 'Message{senderID: $senderID, receiverID: $receiverID, message: $message, sendDate: $sendDate}';
+    return 'Message{senderID: $senderID, senderName: $senderName, receiverID: $receiverID, receiverName: $receiverName, message: $message, sendDate: $sendDate}';
   }
 }
