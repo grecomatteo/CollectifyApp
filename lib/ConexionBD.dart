@@ -217,6 +217,10 @@ class Conexion {
     return -1;
   }
 
+  void hacerPremium(int id) async{
+    if(conn==null) await conectar();
+    await conn?.query("update usuario set esPremium = 1 where userID = $id");
+  }
   Future<bool> anadirImagen(Imagen img) async{
     if(conn==null) await conectar();
     String? nombre = img.nombre;
@@ -235,6 +239,16 @@ class Conexion {
   }
 
 
+  Future<int> esPremium(int id) async {
+    if(conn==null) await conectar();
+    int esPremium = 0;
+    await conn?.query("select esPremium from usuario where userID = $id").then((results) {
+      for (var row in results) {
+        esPremium = row[0];
+      }
+    });
+    return esPremium;
+  }
 
 }
 

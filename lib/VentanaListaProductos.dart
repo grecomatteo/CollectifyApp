@@ -4,6 +4,8 @@ import 'VentanaAnadirProducto.dart';
 import 'VentanaChat.dart';
 import 'package:collectify/ConexionBD.dart';
 
+import 'VentanaPerfil.dart';
+
 Usuario user = new Usuario();
 class ListaProductos extends StatelessWidget {
   const ListaProductos({super.key, required this.connected});
@@ -164,7 +166,12 @@ class NavigationBar extends StatelessWidget {
               MaterialPageRoute(builder: (context) => VentanaChat(id: uid)),
             );
             break;
-          case 4: //Perfil, por implementar
+          case 4:
+            Navigator.push(
+              context,
+
+              MaterialPageRoute(builder: (context) => VentanaPerfil(user: user)),
+            );
             break;
         }
       },

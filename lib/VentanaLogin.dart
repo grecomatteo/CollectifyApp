@@ -17,7 +17,7 @@ void main() {
 Future<bool> validateFields() async{
 
   await conn?.query('select TOP 1 * from users where (nick = $nick AND contrasena = $pswrd)').then((result) {
-    if (result != null){
+    if (result.isNotEmpty){
       logged = result.single.firstOrNull;
       return true;
     }
