@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:collectify/ConexionBD.dart';
 import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
 import 'package:collectify/VentanaMensajesChat.dart';
@@ -157,9 +156,7 @@ class TextAndChatState extends State<TextAndChat> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => VentanaMensajesChat(
-                              element.senderID == myID
-                                  ? element.receiverID
-                                  : element.senderID,
+                              otherID,
                               myID)),
                     );
                   },

@@ -1,15 +1,9 @@
-
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:collectify/ConexionBD.dart';
 import 'package:flutter/services.dart';
 import 'package:mysql1/mysql1.dart';
 import 'package:image_picker/image_picker.dart';
 import 'VentanaListaProductos.dart';
-
-import 'package:image/image.dart' as img;
-import 'package:cross_file_image/cross_file_image.dart';
 
 
 MySqlConnection? conn;
@@ -28,7 +22,7 @@ Future<bool> validateFields() async {
         db: "collectifyDB",
       ));
   await conn?.query('select * from producto where (nombre = $nombre AND descripcion = $description)').then((result) {
-    if (result != null) return true;
+    return true;
   }
   );
   return false;
@@ -70,8 +64,7 @@ class _AddProductFormState extends State<AddProductForm> {
 
   bool _imageTaken = false; // Per tenere traccia se l'immagine è stata scattata
 
-  late File _image;
-  XFile? get pickedFile => null;
+  XFile? pickedFile;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -103,8 +96,7 @@ class _AddProductFormState extends State<AddProductForm> {
               : ElevatedButton(
             onPressed: () async {
               final imagePicker = ImagePicker();
-              final XFile? pickedFile =
-              await imagePicker.pickImage(source: ImageSource.camera);
+              pickedFile = await imagePicker.pickImage(source: ImageSource.camera);
               if (pickedFile != null) {
                 setState(() {
                   _imageTaken = true;
@@ -127,6 +119,7 @@ class _AddProductFormState extends State<AddProductForm> {
               prod.imagePath = "lib/assets/productos/$productName.png";
 
               await Conexion().anadirProducto(prod,user).then((results){
+                debugPrint(results.toString());
                 if(results != -1){
                   int newId = results;
                   Imagen img = Imagen();

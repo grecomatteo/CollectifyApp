@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:collectify/ConexionBD.dart';
 import 'package:collectify/VentanaChat.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:collectify/Message.dart';
 import 'package:mysql1/mysql1.dart';

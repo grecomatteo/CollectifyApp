@@ -1,8 +1,3 @@
-
-
-
-import 'dart:ffi';
-
 import 'package:mysql1/mysql1.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -206,7 +201,7 @@ class Conexion {
     String? image = product.imagePath;
     double? precio = product.precio;
     try {
-      var result = await conn?.query("INSERT INTO producto (usuarioID, nombre, descripcion, precio, imagePath) "
+      await conn?.query("INSERT INTO producto (usuarioID, nombre, descripcion, precio, imagePath) "
           "VALUES ('$userID', '$nombre', '$descripcion', '$precio', '$image'); "
           );
 
@@ -231,7 +226,7 @@ class Conexion {
     List<int>? image = img.image;
 
     try {
-      var result = await conn?.query("INSERT INTO IMAGEN (id_producto, nombre, image) "
+      await conn?.query("INSERT INTO IMAGEN (id_producto, nombre, image) "
           "VALUES ('$ID', '$nombre', '$image'); "
       );
     }
