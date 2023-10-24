@@ -8,12 +8,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 class Producto{
+    int? usuarioID;
     int? productoID;
     String? nombre;
     String? descripcion;
     double? precio;
     String? imagePath;
-    Producto({this.productoID, this.nombre, this.descripcion, this.precio, this.imagePath});
+    Producto({this.usuarioID,this.productoID, this.nombre, this.descripcion, this.precio, this.imagePath});
 }
 
 class Imagen{
@@ -73,11 +74,12 @@ class Conexion {
     await conn?.query('select * from producto').then((results) {
       for (var row in results) {
         Producto producto = Producto(
-            productoID: row[0],
-            nombre:row[1],
-            descripcion: row[2],
-            precio: row[3],
-            imagePath: row[4]);
+            usuarioID: row[0],
+            productoID: row[1],
+            nombre:row[2],
+            descripcion: row[3],
+            precio: row[4],
+            imagePath: row[5]);
         productos.add(producto);
       }
     });
@@ -196,15 +198,16 @@ class Conexion {
     return true;
   }
 
-  Future<int> anadirProducto(Producto product) async{
+  Future<int> anadirProducto(Producto product, Usuario user) async{
     if(conn==null) await conectar();
+    int userID = user.usuarioID!;
     String? nombre = product.nombre;
     String? descripcion = product.descripcion;
     String? image = product.imagePath;
     double? precio = product.precio;
     try {
-      var result = await conn?.query("INSERT INTO producto (nombre, descripcion, precio, imagePath) "
-          "VALUES ('$nombre', '$descripcion', '$precio', '$image'); "
+      var result = await conn?.query("INSERT INTO producto (usuarioID, nombre, descripcion, precio, imagePath) "
+          "VALUES ('$userID', '$nombre', '$descripcion', '$precio', '$image'); "
           );
 
       var id = await conn?.query("SELECT LAST_INSERT_ID() as id;");

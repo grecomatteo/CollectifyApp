@@ -126,7 +126,7 @@ class _AddProductFormState extends State<AddProductForm> {
               prod.descripcion = productDescription;
               prod.imagePath = "lib/assets/productos/$productName.png";
 
-              await Conexion().anadirProducto(prod).then((results){
+              await Conexion().anadirProducto(prod,user).then((results){
                 if(results != -1){
                   int newId = results;
                   Imagen img = Imagen();
