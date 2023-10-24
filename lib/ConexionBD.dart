@@ -182,7 +182,7 @@ class Conexion {
     return true;
   }
 
-  Future<bool> anadirProducto(Producto product) async{
+  Future<int> anadirProducto(Producto product) async{
     if(conn==null) await conectar();
     int id = await getNumeroProductos() + 1;
     String? nombre = product.nombre;
@@ -190,13 +190,16 @@ class Conexion {
     String? image = product.imagePath;
     double? precio = product.precio;
     try {
-      await conn?.query("insert into producto (nombre, descripcion, precio, imagePath)"
-          " values('$nombre', '$descripcion', '$precio', '$image')");
+      var result = await conn?.query("INSERT INTO producto (nombre, descripcion, precio, imagePath) "
+          "VALUES ('$nombre', '$descripcion', '$precio', '$image'); "
+          "SELECT LAST_INSERT_ID() as id;");
+
+      return result!.first['id'];
     }
     catch(e){
       debugPrint(e.toString());
     }
-    return true;
+    return -1;
   }
 
 
