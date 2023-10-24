@@ -15,14 +15,6 @@ void main() {
 
 
 Future<bool> validateFields() async{
-  conn = await MySqlConnection.connect(
-      ConnectionSettings(
-        host: "collectify-server-mysql.mysql.database.azure.com",
-        port: 3306,
-        user: "pin2023",
-        password: "AsLpqR_23",
-        db: "collectifyDB",
-      ));
 
   await conn?.query('select TOP 1 * from users where (nick = $nick AND contrasena = $pswrd)').then((result) {
     if (result != null){
