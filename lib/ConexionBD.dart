@@ -9,7 +9,8 @@ class Producto{
     String? descripcion;
     double? precio;
     String? imagePath;
-    Producto({this.usuarioID,this.productoID, this.nombre, this.descripcion, this.precio, this.imagePath});
+    bool? esPremium;
+    Producto({this.usuarioID,this.productoID, this.nombre, this.descripcion, this.precio, this.imagePath, this.esPremium});
 }
 
 class Imagen{
@@ -66,7 +67,8 @@ class Conexion {
   Future<List<Producto>> getProductos() async {
     if (conn==null )await conectar();
     List<Producto> productos = [];
-    await conn?.query('select * from producto').then((results) {
+
+    await conn?.query('select * from producto where usuarioID in(select userID from usuario where esPremium = 1);').then((results) {
       for (var row in results) {
         Producto producto = Producto(
             usuarioID: row[0],
@@ -74,10 +76,27 @@ class Conexion {
             nombre:row[2],
             descripcion: row[3],
             precio: row[4],
-            imagePath: row[5]);
+            imagePath: row[5],
+            esPremium: true
+        );
         productos.add(producto);
       }
     });
+    await conn?.query('select * from producto where usuarioID in(select userID from usuario where esPremium = 0);').then((results) {
+      for (var row in results) {
+        Producto producto = Producto(
+            usuarioID: row[0],
+            productoID: row[1],
+            nombre:row[2],
+            descripcion: row[3],
+            precio: row[4],
+            imagePath: row[5],
+            esPremium: false
+        );
+        productos.add(producto);
+      }
+    });
+
     return productos;
   }
 

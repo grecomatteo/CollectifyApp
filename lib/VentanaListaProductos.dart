@@ -50,7 +50,7 @@ class ProductListState extends State<ProductList> {
             crossAxisCount: 2,
             children: snapshot.data!
                 .map((e) => ProductoWidget(
-                    nombre: e.nombre, precio: e.precio, imagePath: e.imagePath))
+                    nombre: e.nombre, precio: e.precio, imagePath: e.imagePath, esPremium: e.esPremium ))
                 .toList(),
           );
         } else {
@@ -68,8 +68,9 @@ class ProductoWidget extends StatelessWidget {
   final String? nombre;
   final double? precio;
   final String? imagePath;
+  final bool? esPremium;
 
-  const ProductoWidget({super.key, this.nombre, this.precio, this.imagePath});
+  const ProductoWidget({super.key, this.nombre, this.precio, this.imagePath, this.esPremium});
 
   @override
   Widget build(BuildContext context) {
@@ -108,6 +109,13 @@ class ProductoWidget extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      if(esPremium == true)
+                        const Row(
+                          children: [
+                            Icon(Icons.star, color: Colors.yellow,),
+                            Text("Premium", style: TextStyle(color: Colors.yellow),),
+                          ],
+                        ),
                       Text(nombre!,
                       style: const TextStyle(
                         color: Color.fromARGB(255, 50, 50, 50),
