@@ -11,13 +11,31 @@ String toSendMessage = "";
 int myID = 0;
 int otherID = 0;
 String? otherName = "";
-List<Message> messageLocalList = [];
 
 bool lookingForMessages = true;
 
 Future<List<Message>> getMessages() async{
   List<ResultRow> maps = [];
-  await conn?.query('select * from chat_messages where (senderID=$myID AND receiverID=$otherID) OR (receiverID=$myID AND senderID=$otherID) ORDER BY sendDate').then((results) {
+  await conn?.query('''
+      SELECT
+          cm.id AS message_id,
+          cm.senderID,
+          sender.nick AS senderName,
+          cm.receiverID,
+          receiver.nick AS receiverName,
+          cm.message,
+          cm.sendDate
+      FROM
+          chat_messages AS cm
+      INNER JOIN usuario AS sender ON cm.senderID = sender.userID
+      INNER JOIN usuario AS receiver ON cm.receiverID = receiver.userID
+      WHERE
+          (cm.senderID = $myID AND cm.receiverID = $otherID) OR
+          (cm.senderID = $otherID AND cm.receiverID = $myID)
+      ORDER BY
+          cm.sendDate;
+
+      ''').then((results) {
     for (var row in results) {
       maps.add(row);
       debugPrint(row.toString());
@@ -27,13 +45,14 @@ Future<List<Message>> getMessages() async{
   List<Message> messageList = List.generate(maps.length, (i) {
     return Message(
       maps[i]['senderID'],
+      maps[i]['senderName'].toString(),
       maps[i]['receiverID'],
+      maps[i]['receiverName'].toString(),
       maps[i]['message'].toString(),
       maps[i]['sendDate'],
     );
   });
 
-  messageLocalList = messageList;
   return messageList;
 }
 
@@ -190,7 +209,6 @@ class _NavigationBarState extends State<NavigationBar> {
   Future<void> sendMessage(int myID, int otherID) async{
     await conn?.query("insert into chat_messages(senderID, receiverID, message, sendDate) values($myID, $otherID, '$toSendMessage', now())");
 
-    messageLocalList.add(Message(myID, otherID, toSendMessage, DateTime.now()));
     await getMessages();
   }
 
