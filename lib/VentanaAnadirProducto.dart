@@ -1,12 +1,15 @@
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:collectify/ConexionBD.dart';
 import 'package:flutter/services.dart';
 import 'package:mysql1/mysql1.dart';
 import 'package:image_picker/image_picker.dart';
-
-
 import 'VentanaListaProductos.dart';
+
+import 'package:image/image.dart' as img;
+import 'package:cross_file_image/cross_file_image.dart';
 
 
 MySqlConnection? conn;
@@ -62,7 +65,13 @@ class _AddProductFormState extends State<AddProductForm> {
   final TextEditingController priceController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
 
+
   final priceFormatter = FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}'));
+
+  bool _imageTaken = false; // Per tenere traccia se l'immagine è stata scattata
+
+  late File _image;
+  XFile? get pickedFile => null;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -85,6 +94,26 @@ class _AddProductFormState extends State<AddProductForm> {
             decoration: InputDecoration(labelText: 'Descripción'),
           ),
           const SizedBox(height: 16),
+          _imageTaken
+              ? Icon(
+            Icons.check_circle,
+            color: Colors.green,
+            size: 48.0,
+          )
+              : ElevatedButton(
+            onPressed: () async {
+              final imagePicker = ImagePicker();
+              final XFile? pickedFile =
+              await imagePicker.pickImage(source: ImageSource.camera);
+              if (pickedFile != null) {
+                setState(() {
+                  _imageTaken = true;
+                });
+              }
+            },
+            child: Text('Toma una foto'),
+          ),
+          const SizedBox(height: 16),
           ElevatedButton(
             onPressed: () async {
               final productName = nameController.text;
@@ -96,14 +125,27 @@ class _AddProductFormState extends State<AddProductForm> {
               prod.precio = double.parse(productPrice);
               prod.descripcion = productDescription;
               prod.imagePath = "lib/assets/productos/$productName.png";
-              if(await Conexion().anadirProducto(prod) !=null){
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ListaProductos(connected: logged)));
-              }
-              else{
-                var errorText = "Falta details";
-              }
+
+              await Conexion().anadirProducto(prod).then((results){
+                if(results != -1){
+                  int newId = results;
+                  Imagen img = Imagen();
+                  pickedFile?.readAsBytes().then((value)
+                  {
+                      img.nombre = productName;
+                      img.productoID =  newId;
+                      img.image = value as List<int>?;
+                      Conexion().anadirImagen(img).then((value) {
+                          Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => ListaProductos(connected: logged)));
+                      });
+                });
+                  }
+                else{
+                  var errorText = "Falta details";
+                }
+              });
               Navigator.pop(context);
             },
             child: Text('Anadir Producto'),
@@ -112,4 +154,7 @@ class _AddProductFormState extends State<AddProductForm> {
       ),
     );
   }
+
+
+
 }

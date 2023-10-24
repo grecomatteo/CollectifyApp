@@ -1,6 +1,8 @@
 
 
 
+import 'dart:ffi';
+
 import 'package:mysql1/mysql1.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -12,6 +14,13 @@ class Producto{
     double? precio;
     String? imagePath;
     Producto({this.productoID, this.nombre, this.descripcion, this.precio, this.imagePath});
+}
+
+class Imagen{
+  int? productoID;
+  String? nombre;
+  List<int>? image;
+  Imagen({this.productoID, this.nombre, this.image});
 }
 
 class Usuario {
@@ -179,12 +188,16 @@ class Conexion {
     catch(e){
       debugPrint(e.toString());
     }
+
+
+
+
+
     return true;
   }
 
   Future<int> anadirProducto(Producto product) async{
     if(conn==null) await conectar();
-    int id = await getNumeroProductos() + 1;
     String? nombre = product.nombre;
     String? descripcion = product.descripcion;
     String? image = product.imagePath;
@@ -192,14 +205,33 @@ class Conexion {
     try {
       var result = await conn?.query("INSERT INTO producto (nombre, descripcion, precio, imagePath) "
           "VALUES ('$nombre', '$descripcion', '$precio', '$image'); "
-          "SELECT LAST_INSERT_ID() as id;");
+          );
 
-      return result!.first['id'];
+      var id = await conn?.query("SELECT LAST_INSERT_ID() as id;");
+
+      return id!.first['id'];
     }
     catch(e){
       debugPrint(e.toString());
     }
     return -1;
+  }
+
+  Future<bool> anadirImagen(Imagen img) async{
+    if(conn==null) await conectar();
+    String? nombre = img.nombre;
+    int? ID = img.productoID;
+    List<int>? image = img.image;
+
+    try {
+      var result = await conn?.query("INSERT INTO IMAGEN (id_producto, nombre, image) "
+          "VALUES ('$ID', '$nombre', '$image'); "
+      );
+    }
+    catch(e){
+      debugPrint(e.toString());
+    }
+    return true;
   }
 
 
