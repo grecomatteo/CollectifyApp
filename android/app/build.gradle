@@ -1,3 +1,6 @@
+buildscript {
+    ext.kotlin_version = '1.6.0' // <= expected version is 1.5.1
+}
 plugins {
     id "com.android.application"
     id "kotlin-android"
@@ -24,7 +27,7 @@ if (flutterVersionName == null) {
 
 android {
     namespace "com.collectify.collectify"
-    compileSdkVersion flutter.compileSdkVersion
+    compileSdk 33
     ndkVersion flutter.ndkVersion
 
     compileOptions {
@@ -46,7 +49,7 @@ android {
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdkVersion flutter.minSdkVersion
-        targetSdkVersion flutter.targetSdkVersion
+        targetSdk 33
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
@@ -58,10 +61,16 @@ android {
             signingConfig signingConfigs.debug
         }
     }
+    dependenciesInfo {
+        includeInApk true
+        includeInBundle true
+    }
+    buildToolsVersion '33.0.1'
 }
 
 flutter {
     source '../..'
 }
 
-dependencies {}
+dependencies {
+}

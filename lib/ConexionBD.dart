@@ -12,6 +12,12 @@ class Producto{
     bool? esPremium;
     Producto({this.usuarioID,this.productoID, this.nombre, this.descripcion, this.precio, this.imagePath, this.esPremium});
 }
+class Subasta{
+  int? productoID;
+  DateTime? fechaFin;
+  int? precioInicial;
+  int? ultimaOferta;
+}
 
 class Imagen{
   int? productoID;
@@ -267,5 +273,12 @@ class Conexion {
     return esPremium;
   }
 
+
+  Future<bool> anadirProductoSubasta(Producto producto, Usuario usuario, ) async {
+    if(conn==null) await conectar();
+
+    return true;
+  }
 }
+
 
