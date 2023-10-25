@@ -7,6 +7,7 @@ import 'VentanaChat.dart';
 import 'package:collectify/ConexionBD.dart';
 
 import 'VentanaPerfil.dart';
+import 'VentanaProductosSubasta.dart';
 
 Usuario user = new Usuario();
 class ListaProductos extends StatelessWidget {
@@ -21,9 +22,20 @@ class ListaProductos extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text("Collectify"),
+        actions: [
+          IconButton(onPressed: (){
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => VentanaSubasta()),
+
+            );
+          }, icon: Icon(Icons.gavel)),
+        ],
+
       ),
       body: const ProductList(),
       bottomNavigationBar: const NavigationBar(),
+
     );
   }
 }
