@@ -96,7 +96,7 @@ class _AddProductFormState extends State<AddProductForm> {
               : ElevatedButton(
             onPressed: () async {
               final imagePicker = ImagePicker();
-              pickedFile = await imagePicker.pickImage(source: ImageSource.camera);
+              pickedFile = await imagePicker.pickImage(source: ImageSource.camera, maxHeight: 150, imageQuality: 90);
               if (pickedFile != null) {
                 setState(() {
                   _imageTaken = true;
@@ -116,7 +116,7 @@ class _AddProductFormState extends State<AddProductForm> {
               prod.nombre = productName;
               prod.precio = double.parse(productPrice);
               prod.descripcion = productDescription;
-              prod.imagePath = "lib/assets/productos/$productName.png";
+
 
               await Conexion().anadirProducto(prod,user).then((results){
                 debugPrint(results.toString());
@@ -128,6 +128,7 @@ class _AddProductFormState extends State<AddProductForm> {
                       img.nombre = productName;
                       img.productoID =  newId;
                       img.image = value as List<int>?;
+                      prod.image = img;
                       Conexion().anadirImagen(img).then((value) {
                           Navigator.push(
                           context,
