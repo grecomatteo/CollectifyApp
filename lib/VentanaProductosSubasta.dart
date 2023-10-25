@@ -77,10 +77,10 @@ class ProductoWidget extends StatelessWidget {
   const ProductoWidget({super.key, this.nombre, this.precio, this.imagePath, this.esPremium, this.fechaFin});
 
   String Temporizador(){
-    //int inicio =
-    //int fin = fechaFin.hour *60*60 + ;
-    //DateTime tiempo =  - DateTime.now();
-    return "21:23:12";
+    int inicio = 23;
+    double fin = fechaFin!.hour *60*60;
+    double tiempo = fin - inicio;
+    return "$tiempo" ;
   }
   @override
   Widget build(BuildContext context) {
