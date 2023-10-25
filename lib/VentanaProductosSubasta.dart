@@ -79,7 +79,6 @@ class ProductoWidget extends StatelessWidget {
   final int? precioInicial;
   final int? ultimaOferta;
 
-
   const ProductoWidget({super.key, this.id, this.nombre, this.precioInicial, this.image, this.esPremium,this.ultimaOferta, this.fechaFin});
 
   String Temporizador(){
