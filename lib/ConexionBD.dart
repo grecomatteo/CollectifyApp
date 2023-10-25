@@ -1,5 +1,6 @@
-import 'package:mysql1/mysql1.dart';
 import 'dart:async';
+
+import 'package:mysql1/mysql1.dart';
 import 'package:flutter/material.dart';
 
 class Producto{
@@ -10,15 +11,14 @@ class Producto{
     double? precio;
     String? imagePath;
     bool? esPremium;
+    //Cosas subasta
+    DateTime? fechaFin;
+    int? precioInicial;
+    int? ultimaOferta;
     Producto({this.usuarioID,this.productoID, this.nombre, this.descripcion, this.precio, this.imagePath, this.esPremium});
+    //Producto({this.usuarioID,this.productoID, this.nombre, this.descripcion, this.precio, this.imagePath, this.esPremium, this.fechaFin, this.precioInicial, this.ultimaOferta});
 }
-class Subasta{
-  int? productoID;
-  DateTime? fechaFin;
-  int? precioInicial;
-  int? ultimaOferta;
-  Subasta({this.productoID, this.fechaFin, this.precioInicial, this.ultimaOferta});
-}
+
 
 class Imagen{
   int? productoID;
@@ -279,6 +279,33 @@ class Conexion {
     if(conn==null) await conectar();
 
     return true;
+  }
+
+  Future<List<Producto>> getProductosSubasta() async{
+    if(conn==null) await conectar();
+    List<Producto> productos = [];
+    Producto producto;
+    await conn?.query('select p.*, ps.*,u.esPremium from producto p JOIN productos_subasta ps ON ps.idProducto = p.pruductoID Join usuario u ON p.usuarioID = u.userID Order By u.esPremium ASC;').then((results) => {
+      for (var row in results) {
+        producto = Producto(
+            usuarioID: row['usuarioID'],
+            productoID: row['productoID'],
+            nombre:row['nombre'],
+            descripcion: row['descripcion'],
+            precio: row['precio'],
+            imagePath: row['imagePath'],
+            esPremium: row['esPremium'],
+        ),
+        producto.fechaFin = row['fechaFin'],
+        producto.precioInicial = row['precioInicial'],
+        producto.ultimaOferta = row['ultimaOferta'],
+
+        productos.add(producto)
+      }
+
+    });
+
+    return productos;
   }
 }
 
