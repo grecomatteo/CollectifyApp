@@ -88,7 +88,9 @@ class ProductoWidget extends StatelessWidget {
     final Hora = diferencia!.inHours % 24;
     final Min = diferencia!.inMinutes%60;
     final Sec = diferencia.inSeconds%60;
-    return "$Dia dias, $Hora horas, $Min min, $Sec segundos";
+
+    if(diferencia.isNegative){return "Terminada";}
+    else {return "$Dia dias, $Hora horas, $Min min, $Sec segundos";}
   }
 
   @override
