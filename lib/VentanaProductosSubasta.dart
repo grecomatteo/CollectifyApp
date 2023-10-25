@@ -54,7 +54,7 @@ class _SubastasFormState extends State<SubastasForm> {
             crossAxisCount: 2,
             children: snapshot.data!
                 .map((e) => ProductoWidget(
-                nombre: e.nombre, precio: e.precio, imagePath: e.imagePath, esPremium: e.esPremium, e ))
+                nombre: e.nombre, precio: e.precio, imagePath: e.imagePath, esPremium: e.esPremium ))
                 .toList(),
           );
         } else {
