@@ -4,7 +4,6 @@ import 'dart:typed_data';
 import 'package:mysql1/mysql1.dart';
 import 'dart:async';
 
-import 'package:mysql1/mysql1.dart';
 import 'package:flutter/material.dart';
 
 class Producto{
@@ -242,7 +241,7 @@ class Conexion {
     int userID = user.usuarioID!;
     String? nombre = product.nombre;
     String? descripcion = product.descripcion;
-    Blob? image = product.image;
+    //Blob? image = product.image;
     double? precio = product.precio;
     try {
       await conn?.query("INSERT INTO producto (usuarioID, nombre, descripcion, precio) "
