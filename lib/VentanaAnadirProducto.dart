@@ -136,7 +136,7 @@ class _AddProductFormState extends State<AddProductForm> {
                   var errorText = "Falta details";
                 }
               });
-              Navigator.pop(context);
+              //Navigator.pop(context);
             },
             child: Text('Anadir Producto'),
           ),
