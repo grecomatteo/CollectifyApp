@@ -15,12 +15,11 @@ class Producto{
     double? precio;
     Blob? image;
     bool? esPremium;
-    Producto({this.usuarioID,this.productoID, this.nombre, this.descripcion, this.precio, this.image, this.esPremium});
     //Cosas subasta
     DateTime? fechaFin;
     int? precioInicial;
     int? ultimaOferta;
-    Producto({this.usuarioID,this.productoID, this.nombre, this.descripcion, this.precio, this.imagePath, this.esPremium});
+    Producto({this.usuarioID,this.productoID, this.nombre, this.descripcion, this.precio, this.image, this.esPremium});
     //Producto({this.usuarioID,this.productoID, this.nombre, this.descripcion, this.precio, this.imagePath, this.esPremium, this.fechaFin, this.precioInicial, this.ultimaOferta});
 }
 
@@ -330,7 +329,6 @@ class Conexion {
             nombre:row['nombre'],
             descripcion: row['descripcion'],
             precio: row['precio'],
-            imagePath: row['imagePath'],
             esPremium: row['esPremium'],
         ),
         producto.fechaFin = row['fechaFin'],
