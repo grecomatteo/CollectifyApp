@@ -17,6 +17,7 @@ class Subasta{
   DateTime? fechaFin;
   int? precioInicial;
   int? ultimaOferta;
+  Subasta({this.productoID, this.fechaFin, this.precioInicial, this.ultimaOferta});
 }
 
 class Imagen{
