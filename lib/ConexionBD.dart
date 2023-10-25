@@ -320,7 +320,11 @@ class Conexion {
     if(conn==null) await conectar();
     List<Producto> productos = [];
     Producto producto;
-    await conn?.query('select p.*, ps.*,u.esPremium from producto p JOIN productos_subasta ps ON ps.idProducto = p.pruductoID Join usuario u ON p.usuarioID = u.userID Order By u.esPremium ASC;').then((results) => {
+    await conn?.query('''SELECT p.*, ps.*,u.esPremium 
+                         FROM producto p 
+                         JOIN productos_subasta ps ON ps.idProducto = p.pruductoID 
+                         JOIN usuario u ON p.usuarioID = u.userID 
+                         Order By u.esPremium ASC;''').then((results) => {
       for (var row in results) {
         producto = Producto(
             usuarioID: row['usuarioID'],

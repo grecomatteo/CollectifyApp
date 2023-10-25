@@ -86,96 +86,77 @@ class ProductoWidget extends StatelessWidget {
 
   const ProductoWidget({super.key, this.id, this.nombre, this.precio, this.image, this.esPremium});
 
-  Future<Blob> callAsyncFetch() async {
-    Blob imageBlob = Blob.fromBytes([]);
-    await Conexion().obtenerImagen(id!).then((value)
-    {
-      imageBlob = value!;
-    });
-    return imageBlob;
-  }
-
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Blob?>(
-        future: callAsyncFetch(),
-        builder: (context, AsyncSnapshot<Blob?> snapshot) {
-          if (snapshot.hasData) {
-            Blob imageBlob = snapshot.data!;
-            return ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(250, 240, 217, 248),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                ),
-                onPressed: () {
-                  //Aqui irá la descripcion detallada de producto
-                },
-                child: Center(
-                  child: Column(
-                    children: [
-                      const Spacer(),
-                      Flexible(
-                          flex: 15,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.rectangle,
-                              image: DecorationImage(
-                                image: Image.memory(const Base64Decoder().convert(imageBlob.toString())).image,
-                                fit: BoxFit.cover,
-                              ),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-
-                          )
+    return ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color.fromARGB(250, 240, 217, 248),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+        ),
+        onPressed: () {
+          //Aqui irá la descripcion detallada de producto
+        },
+        child: Center(
+          child: Column(
+            children: [
+              const Spacer(),
+              Flexible(
+                  flex: 15,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.rectangle,
+                      image: DecorationImage(
+                        image: Image.memory(const Base64Decoder().convert(image.toString())).image,
+                        fit: BoxFit.cover,
                       ),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
 
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  if(esPremium == true)
-                                    const Row(
-                                      children: [
-                                        Icon(Icons.star, color: Colors.yellow,),
-                                        Text("Premium", style: TextStyle(color: Colors.yellow),),
-                                      ],
-                                    ),
-                                  Text(nombre!,
-                                    style: const TextStyle(
-                                      color: Color.fromARGB(255, 50, 50, 50),
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
+                  )
+              ),
 
-                                  Text(
-                                    "$precio €",
-                                    style: const TextStyle(
-                                      color: Colors.blueGrey,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ]
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if(esPremium == true)
+                            const Row(
+                              children: [
+                                Icon(Icons.star, color: Colors.yellow,),
+                                Text("Premium", style: TextStyle(color: Colors.yellow),),
+                              ],
                             ),
-                            const Spacer(),
-                            const Icon(Icons.favorite_border_outlined),
+                          Text(nombre!,
+                            style: const TextStyle(
+                              color: Color.fromARGB(255, 50, 50, 50),
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
 
-                          ]
-                      ),
-                      const Spacer(),
-                    ],
-                  ),
-                ));
-          } else {
-            return CircularProgressIndicator();
-          }
-        }
-    );
+                          Text(
+                            "$precio €",
+                            style: const TextStyle(
+                              color: Colors.blueGrey,
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ]
+                    ),
+                    const Spacer(),
+                    const Icon(Icons.favorite_border_outlined),
+
+                  ]
+              ),
+              const Spacer(),
+            ],
+          ),
+        ));
   }
 }
 

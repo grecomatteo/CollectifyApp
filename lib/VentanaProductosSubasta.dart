@@ -46,7 +46,7 @@ class _SubastasFormState extends State<SubastasForm> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: Conexion().getProductos(),
+      future: Conexion().getProductosSubasta(),
       builder: (BuildContext context, AsyncSnapshot<List<Producto>> snapshot) {
         if (snapshot.hasData) {
           debugPrint(snapshot.data!.length.toString());
@@ -57,7 +57,7 @@ class _SubastasFormState extends State<SubastasForm> {
             crossAxisCount: 2,
             children: snapshot.data!
                 .map((e) => ProductoWidget(
-                id: e.productoID, nombre: e.nombre, precio: e.precio, image: e.image, esPremium: e.esPremium ))
+                id: e.productoID, nombre: e.nombre, precioInicial: e.precioInicial, image: e.image, esPremium: e.esPremium,ultimaOferta:e.ultimaOferta, fechaFin: e.fechaFin ))
                 .toList(),
           );
         } else {
@@ -73,12 +73,13 @@ class _SubastasFormState extends State<SubastasForm> {
 class ProductoWidget extends StatelessWidget {
   final int? id;
   final String? nombre;
-  final double? precio;
   final Blob? image;
   final bool? esPremium;
   final DateTime? fechaFin;
+  final int? precioInicial;
+  final int? ultimaOferta;
 
-  const ProductoWidget({super.key, this.id, this.nombre, this.precio, this.image, this.esPremium, this.fechaFin});
+  const ProductoWidget({super.key, this.id, this.nombre, this.precioInicial, this.image, this.esPremium,this.ultimaOferta, this.fechaFin});
 
   String Temporizador(){
     int inicio = 23;
@@ -154,13 +155,21 @@ class ProductoWidget extends StatelessWidget {
                                   ),
 
                                   Text(
-                                    "$precio €",
+                                    "Ultima oferta: $ultimaOferta€",
                                     style: const TextStyle(
                                       color: Colors.blueGrey,
                                       fontSize: 15,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
+                                  Text(
+                                    "Cierra en" + Temporizador() + "." ,
+                                    style: const TextStyle(
+                                      color: Colors.purple,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  )
                                 ]
                             ),
                             const Spacer(),
