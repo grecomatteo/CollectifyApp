@@ -76,6 +76,12 @@ class ProductoWidget extends StatelessWidget {
 
   const ProductoWidget({super.key, this.nombre, this.precio, this.imagePath, this.esPremium, this.fechaFin});
 
+  String Temporizador(){
+    //int inicio =
+    //int fin = fechaFin.hour *60*60 + ;
+    //DateTime tiempo =  - DateTime.now();
+    return "21:23:12";
+  }
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
@@ -150,6 +156,3 @@ class ProductoWidget extends StatelessWidget {
   }
 }
 
-String Temporizador(){
-  return "21:23:12";
-}
