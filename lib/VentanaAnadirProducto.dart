@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:collectify/ConexionBD.dart';
 import 'package:flutter/services.dart';
@@ -122,14 +124,10 @@ class _AddProductFormState extends State<AddProductForm> {
                 debugPrint(results.toString());
                 if(results != -1){
                   int newId = results;
-                  Imagen img = Imagen();
-                  pickedFile?.readAsBytes().then((value)
+                  pickedFile?.readAsBytes().then((value1)
                   {
-                      img.nombre = productName;
-                      img.productoID =  newId;
-                      img.image = value as List<int>?;
-                      prod.image = img;
-                      Conexion().anadirImagen(img).then((value) {
+                      prod.image = Blob.fromBytes(value1)!;
+                      Conexion().anadirImagen(productName, newId, value1).then((value) {
                           Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => ListaProductos(connected: logged)));

@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:mysql1/mysql1.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -8,15 +11,15 @@ class Producto{
     String? nombre;
     String? descripcion;
     double? precio;
-    String? imagePath;
+    Blob? image;
     bool? esPremium;
-    Producto({this.usuarioID,this.productoID, this.nombre, this.descripcion, this.precio, this.imagePath, this.esPremium});
+    Producto({this.usuarioID,this.productoID, this.nombre, this.descripcion, this.precio, this.image, this.esPremium});
 }
 
 class Imagen{
   int? productoID;
   String? nombre;
-  List<int>? image;
+  Uint8List? image;
   Imagen({this.productoID, this.nombre, this.image});
 }
 
@@ -68,29 +71,43 @@ class Conexion {
     if (conn==null )await conectar();
     List<Producto> productos = [];
 
-    await conn?.query('select * from producto where usuarioID in(select userID from usuario where esPremium = 1);').then((results) {
+    await conn?.query('''SELECT producto.*, IMAGEN.image
+        FROM producto
+        JOIN usuario ON producto.usuarioID = usuario.userID
+        JOIN IMAGEN ON producto.pruductoID = IMAGEN.id_producto
+        WHERE usuario.esPremium = 1;
+      ''').then((results) {
       for (var row in results) {
         Producto producto = Producto(
-            usuarioID: row[0],
-            productoID: row[1],
-            nombre:row[2],
-            descripcion: row[3],
-            precio: row[4],
-            imagePath: row[5],
+            usuarioID: row['usuarioID'],
+            productoID: row['pruductoID'],
+            nombre:row['nombre'],
+            descripcion: row['descripcion'],
+            precio: row['precio'],
+            //Get blob 'image'
+            image: row['image'],
             esPremium: true
         );
+
         productos.add(producto);
       }
     });
-    await conn?.query('select * from producto where usuarioID in(select userID from usuario where esPremium = 0);').then((results) {
+    await conn?.query('''SELECT producto.*, IMAGEN.image
+        FROM producto
+        JOIN usuario ON producto.usuarioID = usuario.userID
+        JOIN IMAGEN ON producto.pruductoID = IMAGEN.id_producto
+        WHERE usuario.esPremium = 0;
+    ''').then((results) {
       for (var row in results) {
         Producto producto = Producto(
-            usuarioID: row[0],
-            productoID: row[1],
-            nombre:row[2],
-            descripcion: row[3],
-            precio: row[4],
-            imagePath: row[5],
+            usuarioID: row['usuarioID'],
+            productoID: row['pruductoID'],
+            nombre:row['nombre'],
+            descripcion: row['descripcion'],
+            precio: row['precio'],
+            //Get blob 'image'
+            image: row['image'],
+            //image: row['image'],
             esPremium: false
         );
         productos.add(producto);
@@ -217,11 +234,11 @@ class Conexion {
     int userID = user.usuarioID!;
     String? nombre = product.nombre;
     String? descripcion = product.descripcion;
-    String? image = product.imagePath;
+    Blob? image = product.image;
     double? precio = product.precio;
     try {
-      await conn?.query("INSERT INTO producto (usuarioID, nombre, descripcion, precio, imagePath) "
-          "VALUES ('$userID', '$nombre', '$descripcion', '$precio', '$image'); "
+      await conn?.query("INSERT INTO producto (usuarioID, nombre, descripcion, precio) "
+          "VALUES ('$userID', '$nombre', '$descripcion', '$precio'); "
           );
 
       var id = await conn?.query("SELECT LAST_INSERT_ID() as id;");
@@ -238,21 +255,39 @@ class Conexion {
     if(conn==null) await conectar();
     await conn?.query("update usuario set esPremium = 1 where userID = $id");
   }
-  Future<bool> anadirImagen(Imagen img) async{
+
+  Future<bool> anadirImagen(String nombre, int ID, Uint8List img) async{
     if(conn==null) await conectar();
-    String? nombre = img.nombre;
-    int? ID = img.productoID;
-    List<int>? image = img.image;
 
     try {
-      await conn?.query("INSERT INTO IMAGEN (id_producto, nombre, image) "
-          "VALUES ('$ID', '$nombre', '$image'); "
+      String s = Base64Encoder().convert(img);
+      await conn?.query("INSERT INTO imagen (id_producto, nombre, image) "
+          "VALUES ('$ID', '$nombre', '$s'); "
       );
     }
     catch(e){
       debugPrint(e.toString());
     }
     return true;
+  }
+
+  Future<Blob?> obtenerImagen(int id) async{
+    if(conn==null) await conectar();
+
+    Blob? image;
+
+    try {
+      await conn?.query("SELECT image FROM IMAGEN WHERE id_producto = $id").then((results) {
+        for (var row in results) {
+          image = row['image'];
+
+        }
+      });
+    }
+    catch(e){
+      debugPrint(e.toString());
+    }
+    return image;
   }
 
 

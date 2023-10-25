@@ -1,4 +1,9 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:mysql1/mysql1.dart';
 
 import 'VentanaAnadirProducto.dart';
 import 'VentanaChat.dart';
@@ -42,7 +47,6 @@ class ProductListState extends State<ProductList> {
       future: Conexion().getProductos(),
       builder: (BuildContext context, AsyncSnapshot<List<Producto>> snapshot) {
         if (snapshot.hasData) {
-          debugPrint(snapshot.data!.length.toString());
           return GridView.count(
             mainAxisSpacing: 10,
             crossAxisSpacing: 10,
@@ -50,7 +54,7 @@ class ProductListState extends State<ProductList> {
             crossAxisCount: 2,
             children: snapshot.data!
                 .map((e) => ProductoWidget(
-                    nombre: e.nombre, precio: e.precio, imagePath: e.imagePath, esPremium: e.esPremium ))
+                id: e.productoID, nombre: e.nombre, precio: e.precio, image: e.image, esPremium: e.esPremium ))
                 .toList(),
           );
         } else {
@@ -65,84 +69,104 @@ class ProductListState extends State<ProductList> {
 
 
 class ProductoWidget extends StatelessWidget {
+  final int? id;
   final String? nombre;
   final double? precio;
-  final String? imagePath;
+  final Blob? image;
   final bool? esPremium;
 
-  const ProductoWidget({super.key, this.nombre, this.precio, this.imagePath, this.esPremium});
+  const ProductoWidget({super.key, this.id, this.nombre, this.precio, this.image, this.esPremium});
+
+  Future<Blob> callAsyncFetch() async {
+    Blob imageBlob = Blob.fromBytes([]);
+    await Conexion().obtenerImagen(id!).then((value)
+    {
+      imageBlob = value!;
+    });
+    return imageBlob;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color.fromARGB(250, 240, 217, 248),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
-          ),
-        ),
-        onPressed: () {
-          //Aqui irá la descripcion detallada de producto
-        },
-        child: Center(
-          child: Column(
-            children: [
-              const Spacer(),
-              Flexible(
-                  flex: 15,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.rectangle,
-                      image: DecorationImage(
-                        image: Image.asset(imagePath!).image,
-                        fit: BoxFit.cover,
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-
-                  )
-              ),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if(esPremium == true)
-                        const Row(
-                          children: [
-                            Icon(Icons.star, color: Colors.yellow,),
-                            Text("Premium", style: TextStyle(color: Colors.yellow),),
-                          ],
-                        ),
-                      Text(nombre!,
-                      style: const TextStyle(
-                        color: Color.fromARGB(255, 50, 50, 50),
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-
-                      Text(
-                        "$precio €",
-                        style: const TextStyle(
-                          color: Colors.blueGrey,
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ]
+    return FutureBuilder<Blob?>(
+        future: callAsyncFetch(),
+        builder: (context, AsyncSnapshot<Blob?> snapshot) {
+          if (snapshot.hasData) {
+            Blob imageBlob = snapshot.data!;
+            return ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(250, 240, 217, 248),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
                   ),
-                  const Spacer(),
-                  const Icon(Icons.favorite_border_outlined),
+                ),
+                onPressed: () {
+                  //Aqui irá la descripcion detallada de producto
+                },
+                child: Center(
+                  child: Column(
+                    children: [
+                      const Spacer(),
+                      Flexible(
+                          flex: 15,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.rectangle,
+                              image: DecorationImage(
+                                image: Image.memory(const Base64Decoder().convert(imageBlob.toString())).image,
+                                fit: BoxFit.cover,
+                              ),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
 
-                ]
-              ),
-              const Spacer(),
-            ],
-          ),
-        ));
+                          )
+                      ),
+
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  if(esPremium == true)
+                                    const Row(
+                                      children: [
+                                        Icon(Icons.star, color: Colors.yellow,),
+                                        Text("Premium", style: TextStyle(color: Colors.yellow),),
+                                      ],
+                                    ),
+                                  Text(nombre!,
+                                    style: const TextStyle(
+                                      color: Color.fromARGB(255, 50, 50, 50),
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+
+                                  Text(
+                                    "$precio €",
+                                    style: const TextStyle(
+                                      color: Colors.blueGrey,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ]
+                            ),
+                            const Spacer(),
+                            const Icon(Icons.favorite_border_outlined),
+
+                          ]
+                      ),
+                      const Spacer(),
+                    ],
+                  ),
+                ));
+          } else {
+            return CircularProgressIndicator();
+          }
+        }
+    );
   }
 }
 
