@@ -328,7 +328,7 @@ class Conexion {
             nombre:row['nombre'],
             descripcion: row['descripcion'],
             precio: row['precio'],
-            esPremium: row['esPremium'],
+            esPremium: row['esPremium'] == 1 ? true : false,
         ),
         producto.fechaFin = row['fechaFin'],
         producto.precioInicial = row['precioInicial'],
