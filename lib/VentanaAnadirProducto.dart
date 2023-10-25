@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'VentanaListaProductos.dart';
 
 
+
 MySqlConnection? conn;
 String nombre = "";
 String description = "";
@@ -127,9 +128,7 @@ class _AddProductFormState extends State<AddProductForm> {
                   {
                       prod.image = Blob.fromBytes(value1)!;
                       Conexion().anadirImagen(productName, newId, value1).then((value) {
-                          Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => ListaProductos(connected: logged)));
+                              Navigator.of(context).pop();
                       });
                 });
                   }
