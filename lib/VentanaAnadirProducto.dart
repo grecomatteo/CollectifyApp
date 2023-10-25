@@ -133,7 +133,19 @@ class _AddProductFormState extends State<AddProductForm> {
                 });
                   }
                 else{
-                  var errorText = "Falta details";
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) => AlertDialog(
+                        title: const Text("¡Error!"),
+                        content: const Text("Falta algun campo."),
+                        actions: [
+                          TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text("OK"))
+                        ],
+                      ));
                 }
               });
               //Navigator.pop(context);
