@@ -320,10 +320,11 @@ class Conexion {
     if(conn==null) await conectar();
     List<Producto> productos = [];
     Producto producto;
-    await conn?.query('''SELECT p.*, ps.*,u.esPremium 
+    await conn?.query('''SELECT p.*, ps.*,i.image, u.esPremium 
                          FROM producto p 
                          JOIN productos_subasta ps ON ps.idProducto = p.pruductoID 
                          JOIN usuario u ON p.usuarioID = u.userID 
+                         JOIN imagen i ON p.pruductoID = i.id_producto
                          Order By u.esPremium ASC;''').then((results) => {
       for (var row in results) {
         producto = Producto(
@@ -332,6 +333,7 @@ class Conexion {
             nombre:row['nombre'],
             descripcion: row['descripcion'],
             precio: row['precio'],
+            image: row['image'],
             esPremium: row['esPremium'] == 1 ? true : false,
         ),
         producto.fechaFin = row['fechaFin'],

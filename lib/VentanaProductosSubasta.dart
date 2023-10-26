@@ -10,6 +10,8 @@ void main() {
 }
 
 class VentanaSubasta extends StatelessWidget {
+  const VentanaSubasta({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -90,7 +92,7 @@ class ProductoWidget extends StatelessWidget {
     final Sec = diferencia.inSeconds%60;
 
     if(diferencia.isNegative){return "Terminada";}
-    else {return "$Dia dias, $Hora horas, $Min min, $Sec segundos";}
+    else {return "Cierra en: $Dia dias, $Hora horas, $Min min, $Sec segundos";}
   }
 
   @override
@@ -154,7 +156,7 @@ class ProductoWidget extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            "Cierra en: " + Temporizador(),
+                            Temporizador(),
                             style: const TextStyle(
                               color: Colors.purple,
                               fontSize: 15,
