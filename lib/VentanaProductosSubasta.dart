@@ -10,23 +10,6 @@ void main() {
 }
 
 class VentanaSubasta extends StatelessWidget {
-  const VentanaSubasta({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Collectify',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      debugShowCheckedModeBanner: false,
-      home: VentanaSubastaScreen(),
-    );
-  }
-}
-
-class VentanaSubastaScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,11 +71,11 @@ class ProductoWidget extends StatelessWidget {
     final diferencia = fechaFin?.difference(now);
     final Dia = diferencia?.inDays ;
     final Hora = diferencia!.inHours % 24;
-    final Min = diferencia!.inMinutes%60;
+    final Min = diferencia.inMinutes%60;
     final Sec = diferencia.inSeconds%60;
 
-    if(diferencia.isNegative){return "Terminada";}
-    else {return "Cierra en: $Dia dias, $Hora horas, $Min min, $Sec segundos";}
+    if(diferencia.isNegative){return "¡Terminada!";}
+    else {return "Cierra en: ${Dia}d, ${Hora}h, ${Min}m, ${Sec}s";}
   }
 
   @override
