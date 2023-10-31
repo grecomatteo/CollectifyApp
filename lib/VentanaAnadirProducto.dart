@@ -65,7 +65,7 @@ class _AddProductFormState extends State<AddProductForm> {
   final priceFormatter = FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}'));
 
   bool _imageTaken = false; // Per tenere traccia se l'immagine è stata scattata
-
+  bool esSubasta = false;
   XFile? pickedFile;
   @override
   Widget build(BuildContext context) {
@@ -88,6 +88,22 @@ class _AddProductFormState extends State<AddProductForm> {
             controller: descriptionController,
             decoration: InputDecoration(labelText: 'Descripción'),
           ),
+          Row(
+            children: [
+              Checkbox(
+                  value: esSubasta,
+                  onChanged: (e){
+                      setState(() {
+                      esSubasta = e!;
+
+                      }
+                      );
+                  }
+              ),
+              Text("Es subasta"),
+            ],
+          ),
+
           const SizedBox(height: 16),
           _imageTaken
               ? Icon(
@@ -119,9 +135,10 @@ class _AddProductFormState extends State<AddProductForm> {
               prod.precio = double.parse(productPrice);
               prod.descripcion = productDescription;
 
-
+              int productID = 0;
               await Conexion().anadirProducto(prod,user).then((results){
                 debugPrint(results.toString());
+                productID = results;
                 if(results != -1){
                   int newId = results;
                   pickedFile?.readAsBytes().then((value1)
@@ -131,7 +148,14 @@ class _AddProductFormState extends State<AddProductForm> {
                               Navigator.of(context).pop();
                       });
                 });
+
+                  if(esSubasta){
+                    Conexion().anadirProductoSubasta(productID , double.parse(productPrice)).then((value) => null);
+
                   }
+
+                        }
+
                 else{
                   showDialog(
                       context: context,

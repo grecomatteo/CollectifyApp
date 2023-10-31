@@ -310,8 +310,11 @@ class Conexion {
   }
 
 
-  Future<bool> anadirProductoSubasta(Producto producto, Usuario usuario, ) async {
+  Future<bool> anadirProductoSubasta(int productID, double precioInicial) async {
     if(conn==null) await conectar();
+    await conn?.query("INSERT INTO productos_subasta (idProducto, precioInicial, ultimaOferta) "
+        "VALUES ('$productID', '$precioInicial', '$precioInicial'); "
+    );
 
     return true;
   }
