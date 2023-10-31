@@ -122,6 +122,9 @@ class ProductoWidget extends StatelessWidget {
                               children: [
                                 Icon(Icons.star, color: Colors.yellow,),
                                 Text("Premium", style: TextStyle(color: Colors.yellow),),
+                                //Add icon to the left Icon(Icons.favorite_border_outlined),
+
+                                Icon(Icons.favorite_border_outlined),
                               ],
                             ),
                           Text(nombre!,
@@ -136,7 +139,7 @@ class ProductoWidget extends StatelessWidget {
                             "Ultima oferta: $ultimaOferta €",
                             style: const TextStyle(
                               color: Colors.blueGrey,
-                              fontSize: 15,
+                              fontSize: 12,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -144,14 +147,13 @@ class ProductoWidget extends StatelessWidget {
                             Temporizador(),
                             style: const TextStyle(
                               color: Colors.purple,
-                              fontSize: 15,
+                              fontSize: 10,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                         ]
                     ),
                     const Spacer(),
-                    const Icon(Icons.favorite_border_outlined),
                   ]
               ),
               const Spacer(),
