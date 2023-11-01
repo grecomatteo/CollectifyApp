@@ -155,8 +155,6 @@ class _AddProductFormState extends State<AddProductForm> {
               prod.precio = double.parse(productPrice);
               prod.descripcion = productDescription;
               prod.fechaFin = fechaFinal;
-              prod.precioInicial = int.parse(precioInicial);
-              prod.ultimaOferta = null;
 
               int productID = 0;
               await Conexion().anadirProducto(prod,user).then((results){
@@ -171,7 +169,7 @@ class _AddProductFormState extends State<AddProductForm> {
                       });
                   });
                   if(esSubasta){
-                    Conexion().anadirProductoSubasta(productID , double.parse(productPrice)).then((value) => null);
+                    Conexion().anadirProductoSubasta(productID , double.parse(precioInicial)).then((value) => null);
                   }
                 }
 
