@@ -169,7 +169,7 @@ class _AddProductFormState extends State<AddProductForm> {
                       });
                   });
                   if(esSubasta){
-                    Conexion().anadirProductoSubasta(productID , double.parse(precioInicial)).then((value) => null);
+                    Conexion().anadirProductoSubasta(productID , double.parse(precioInicial),fechaFinal).then((value) => null);
                   }
                 }
 
