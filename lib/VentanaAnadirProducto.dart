@@ -60,6 +60,9 @@ class _AddProductFormState extends State<AddProductForm> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController priceController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
+  final TextEditingController precioInicialController = TextEditingController();
+  final TextEditingController fechaFinalController = TextEditingController();
+
 
 
   final priceFormatter = FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}'));
@@ -78,12 +81,26 @@ class _AddProductFormState extends State<AddProductForm> {
             controller: nameController,
             decoration: InputDecoration(labelText: 'Nombre producto'),
           ),
+          if(esSubasta)
+            TextFormField(
+                controller: precioInicialController,
+                decoration: InputDecoration(labelText: 'Precio Inicial'),
+                inputFormatters: [priceFormatter], // Applica il formatter per il prezzo
+                keyboardType: TextInputType.numberWithOptions(decimal: true)
+            )
+          else
           TextFormField(
             controller: priceController,
             decoration: InputDecoration(labelText: 'Precio'),
             inputFormatters: [priceFormatter], // Applica il formatter per il prezzo
             keyboardType: TextInputType.numberWithOptions(decimal: true)
           ),
+          if(esSubasta)
+            TextFormField(
+                controller: fechaFinalController,
+                decoration: InputDecoration(labelText: 'Fecha y hora de finalización (YYYY-MM-DD HH:MM)'),
+                keyboardType: TextInputType.numberWithOptions(decimal: true)
+            ),
           TextFormField(
             controller: descriptionController,
             decoration: InputDecoration(labelText: 'Descripción'),
@@ -129,11 +146,17 @@ class _AddProductFormState extends State<AddProductForm> {
               final productName = nameController.text;
               final productPrice = priceController.text;
               final productDescription = descriptionController.text;
+              final precioInicial= precioInicialController.text;
+              final fecha = fechaFinalController.text;
+              DateTime fechaFinal =DateTime.parse(fecha);
 
               Producto prod = Producto();
               prod.nombre = productName;
               prod.precio = double.parse(productPrice);
               prod.descripcion = productDescription;
+              prod.fechaFin = fechaFinal;
+              prod.precioInicial = int.parse(precioInicial);
+              prod.ultimaOferta = null;
 
               int productID = 0;
               await Conexion().anadirProducto(prod,user).then((results){
@@ -141,20 +164,16 @@ class _AddProductFormState extends State<AddProductForm> {
                 productID = results;
                 if(results != -1){
                   int newId = results;
-                  pickedFile?.readAsBytes().then((value1)
-                  {
+                  pickedFile?.readAsBytes().then((value1) {
                       prod.image = Blob.fromBytes(value1)!;
                       Conexion().anadirImagen(productName, newId, value1).then((value) {
                               Navigator.of(context).pop();
                       });
-                });
-
+                  });
                   if(esSubasta){
                     Conexion().anadirProductoSubasta(productID , double.parse(productPrice)).then((value) => null);
-
                   }
-
-                        }
+                }
 
                 else{
                   showDialog(
