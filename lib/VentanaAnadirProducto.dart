@@ -144,12 +144,18 @@ class _AddProductFormState extends State<AddProductForm> {
           ElevatedButton(
             onPressed: () async {
               final productName = nameController.text;
-              final productPrice = priceController.text;
               final productDescription = descriptionController.text;
-              final precioInicial= precioInicialController.text;
               final fecha = fechaFinalController.text;
+              final String precioInicial;
+              final String productPrice;
               DateTime fechaFinal =DateTime.parse(fecha);
-
+              if(esSubasta){
+                precioInicial= precioInicialController.text;
+                productPrice = precioInicialController.text;
+              }else{
+                precioInicial= priceController.text;
+                productPrice = priceController.text;
+              }
               Producto prod = Producto();
               prod.nombre = productName;
               prod.precio = double.parse(productPrice);
@@ -163,13 +169,13 @@ class _AddProductFormState extends State<AddProductForm> {
                 if(results != -1){
                   int newId = results;
                   pickedFile?.readAsBytes().then((value1) {
-                      prod.image = Blob.fromBytes(value1)!;
+                      prod.image = Blob.fromBytes(value1);
                       Conexion().anadirImagen(productName, newId, value1).then((value) {
                               Navigator.of(context).pop();
                       });
                   });
                   if(esSubasta){
-                    Conexion().anadirProductoSubasta(productID , double.parse(precioInicial),fechaFinal).then((value) => null);
+                    Conexion().anadirProductoSubasta(productID , int.parse(precioInicial),fechaFinal).then((value) => null);
                   }
                 }
 
