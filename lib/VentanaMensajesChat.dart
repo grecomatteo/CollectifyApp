@@ -3,6 +3,8 @@ import 'package:collectify/ConexionBD.dart';
 import 'package:collectify/VentanaChat.dart';
 import 'package:flutter/material.dart';
 import 'package:collectify/Message.dart';
+import 'package:collectify/notification.dart' as notif;
+import 'package:flutter_local_notifications/flutter_local_notifications.dart' as noti;
 import 'package:mysql1/mysql1.dart';
 
 String toSendMessage = "";
@@ -12,6 +14,8 @@ int otherID = 0;
 String? otherName = "";
 
 bool lookingForMessages = true;
+
+noti.FlutterLocalNotificationsPlugin notPlugin = noti.FlutterLocalNotificationsPlugin();
 
 Future<List<Message>> getMessages() async{
   List<ResultRow> maps = [];
@@ -158,6 +162,13 @@ class _VentanaMensajesChatState extends State<VentanaMensajesChat> {
         bottomNavigationBar: const NavigationBar(),
       )
     );
+  }
+
+  @override
+  void initState()
+  {
+    super.initState();
+    notif.Notification.initialize(notPlugin);
   }
 }
 

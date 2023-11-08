@@ -2,12 +2,16 @@ import 'package:collectify/ConexionBD.dart';
 import 'package:collectify/VentanaListaProductos.dart';
 import 'package:flutter/material.dart';
 import 'package:collectify/VentanaRegister.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart' as noti;
+import 'package:collectify/notification.dart' as notif;
 import 'package:mysql1/mysql1.dart';
 
 MySqlConnection? conn;
 String nick = "";
 String pswrd = "";
 Usuario logged = new Usuario();
+
+noti.FlutterLocalNotificationsPlugin notPlugin = noti.FlutterLocalNotificationsPlugin();
 
 void main() {
   runApp(VentanaLogin());
@@ -57,6 +61,11 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
 
+  @override
+  void initState(){
+    super.initState();
+    notif.Notification.initialize(notPlugin);
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -119,6 +128,12 @@ class Login extends StatelessWidget {
                               MaterialPageRoute(builder: (context) => VentanaRegister()));
                       }
                   ),
+                  TextButton(
+                    child: Text("Funny button"),
+                    onPressed: (){
+                      notif.Notification.showBigTextNotification(title: "Nuevo mensaje", body: "Baki como se instala el wasa", fln: notPlugin);
+                    }
+                  )
 
                 ],
               );
