@@ -45,10 +45,10 @@ class Valoracion
 {
   int? id;
   int? idProducto;
-  int? idUsuario;
+  String? nickUsuario;
   String? comentario;
   int? valoracion;
-  Valoracion({this.id, this.idProducto, this.idUsuario, this.comentario, this.valoracion});
+  Valoracion({this.id, this.idProducto, this.nickUsuario, this.comentario, this.valoracion});
 }
 
 class Conexion {
@@ -366,12 +366,17 @@ class Conexion {
     if(conn==null) conectar();
     List<Valoracion> comentarios = [];
     Valoracion comentario;
-    await conn?.query("SELECT * FROM valoracion WHERE idProducto = $productoID").then((results) => {
+    await conn?.query("""
+    SELECT valoracion.*, usuario.nick
+    FROM valoracion
+    JOIN usuario ON valoracion.idUsuario = usuario.userID
+    WHERE valoracion.idProducto = $productoID;
+    """).then((results) => {
       for (var row in results) {
         comentario = Valoracion(
           id: row['id'],
           idProducto: row['idProducto'],
-          idUsuario: row['idUsuario'],
+          nickUsuario: row['nick'],
           comentario: row['comentario'],
           valoracion: row['valoracion'],
         ),
@@ -381,26 +386,11 @@ class Conexion {
     return comentarios;
   }
 
-  Future<Valoracion> anadirValoracion(int idProducto, int idUsuario, String comentario, int valoracion)
+  void anadirValoracion(int idProducto, int idUsuario, String comentario, int valoracion)
   async {
     if(conn==null) conectar();
-    Valoracion comentario2 = Valoracion();
     await conn?.query("INSERT INTO valoracion (idProducto, idUsuario, comentario, valoracion) "
         "VALUES ('$idProducto', '$idUsuario', '$comentario', '$valoracion'); "
-    ).then((results) => {
-      Conexion.conn?.query("SELECT * FROM valoracion WHERE idProducto = $idProducto AND idUsuario = $idUsuario AND comentario = '$comentario' AND valoracion = $valoracion").then((results) => {
-        for (var row in results) {
-          comentario2 = Valoracion(
-            id: row['id'],
-            idProducto: row['idProducto'],
-            idUsuario: row['idUsuario'],
-            comentario: row['comentario'],
-            valoracion: row['valoracion'],
-          ),
-        }
-      })
-    });
-
-    return comentario2;
+    );
   }
 }
