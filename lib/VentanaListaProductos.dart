@@ -8,6 +8,7 @@ import 'package:collectify/ConexionBD.dart';
 
 import 'VentanaPerfil.dart';
 import 'VentanaProductosSubasta.dart';
+import 'VentanaValoracion.dart';
 
 Usuario user = new Usuario();
 class ListaProductos extends StatelessWidget {
@@ -62,8 +63,7 @@ class ProductListState extends State<ProductList> {
             padding: const EdgeInsets.all(10),
             crossAxisCount: 2,
             children: snapshot.data!
-                .map((e) => ProductoWidget(
-                id: e.productoID, nombre: e.nombre, precio: e.precio, image: e.image, esPremium: e.esPremium ))
+                .map((e) => ProductoWidget(producto: e))
                 .toList(),
           );
         } else {
@@ -78,13 +78,9 @@ class ProductListState extends State<ProductList> {
 
 
 class ProductoWidget extends StatelessWidget {
-  final int? id;
-  final String? nombre;
-  final double? precio;
-  final Blob? image;
-  final bool? esPremium;
+  final Producto producto;
 
-  const ProductoWidget({super.key, this.id, this.nombre, this.precio, this.image, this.esPremium});
+  const ProductoWidget({super.key, required this.producto});
 
   @override
   Widget build(BuildContext context) {
@@ -96,6 +92,10 @@ class ProductoWidget extends StatelessWidget {
           ),
         ),
         onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => VentanaValoracion(connected: user, producto: producto)),
+          );
           //Aqui irá la descripcion detallada de producto
         },
         child: Center(
@@ -108,7 +108,7 @@ class ProductoWidget extends StatelessWidget {
                     decoration: BoxDecoration(
                       shape: BoxShape.rectangle,
                       image: DecorationImage(
-                        image: Image.memory(const Base64Decoder().convert(image.toString())).image,
+                        image: Image.memory(const Base64Decoder().convert(producto!.image.toString())).image,
                         fit: BoxFit.cover,
                       ),
                       borderRadius: BorderRadius.circular(10),
@@ -123,14 +123,14 @@ class ProductoWidget extends StatelessWidget {
                     Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          if(esPremium == true)
+                          if(producto?.esPremium == true)
                             const Row(
                               children: [
                                 Icon(Icons.star, color: Colors.yellow,),
                                 Text("Premium", style: TextStyle(color: Colors.yellow),),
                               ],
                             ),
-                          Text(nombre!,
+                          Text(producto.nombre!,
                             style: const TextStyle(
                               color: Color.fromARGB(255, 50, 50, 50),
                               fontSize: 15,
@@ -139,7 +139,7 @@ class ProductoWidget extends StatelessWidget {
                           ),
 
                           Text(
-                            "$precio €",
+                            "${producto?.precio} €",
                             style: const TextStyle(
                               color: Colors.blueGrey,
                               fontSize: 15,

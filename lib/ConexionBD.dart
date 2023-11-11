@@ -40,6 +40,17 @@ class Usuario {
   DateTime? fechaNacimiento;
   Usuario({this.usuarioID, this.nombre, this.apellidos, this.nick, this.correo, this.contrasena, this.fechaNacimiento});
 }
+
+class Valoracion
+{
+  int? id;
+  int? idProducto;
+  int? idUsuario;
+  String? comentario;
+  int? valoracion;
+  Valoracion({this.id, this.idProducto, this.idUsuario, this.comentario, this.valoracion});
+}
+
 class Conexion {
 
   static MySqlConnection? conn;
@@ -350,6 +361,46 @@ class Conexion {
 
     return productos;
   }
+
+  Future<List<Valoracion>> getValoraciones(int productoID) async{
+    if(conn==null) conectar();
+    List<Valoracion> comentarios = [];
+    Valoracion comentario;
+    await conn?.query("SELECT * FROM valoracion WHERE idProducto = $productoID").then((results) => {
+      for (var row in results) {
+        comentario = Valoracion(
+          id: row['id'],
+          idProducto: row['idProducto'],
+          idUsuario: row['idUsuario'],
+          comentario: row['comentario'],
+          valoracion: row['valoracion'],
+        ),
+        comentarios.add(comentario)
+      }
+    });
+    return comentarios;
+  }
+
+  Future<Valoracion> anadirValoracion(int idProducto, int idUsuario, String comentario, int valoracion)
+  async {
+    if(conn==null) conectar();
+    Valoracion comentario2 = Valoracion();
+    await conn?.query("INSERT INTO valoracion (idProducto, idUsuario, comentario, valoracion) "
+        "VALUES ('$idProducto', '$idUsuario', '$comentario', '$valoracion'); "
+    ).then((results) => {
+      Conexion.conn?.query("SELECT * FROM valoracion WHERE idProducto = $idProducto AND idUsuario = $idUsuario AND comentario = '$comentario' AND valoracion = $valoracion").then((results) => {
+        for (var row in results) {
+          comentario2 = Valoracion(
+            id: row['id'],
+            idProducto: row['idProducto'],
+            idUsuario: row['idUsuario'],
+            comentario: row['comentario'],
+            valoracion: row['valoracion'],
+          ),
+        }
+      })
+    });
+
+    return comentario2;
+  }
 }
-
-
