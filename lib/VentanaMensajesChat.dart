@@ -11,6 +11,7 @@ String toSendMessage = "";
 
 int myID = 0;
 int otherID = 0;
+int msgNum = 0;
 String? otherName = "";
 
 bool lookingForMessages = true;
@@ -55,7 +56,7 @@ Future<List<Message>> getMessages() async{
       maps[i]['sendDate'],
     );
   });
-
+  msgNum = messageList.length;
   return messageList;
 }
 
@@ -218,8 +219,13 @@ class NavigationBar extends StatefulWidget {
 class _NavigationBarState extends State<NavigationBar> {
   Future<void> sendMessage(int myID, int otherID) async{
     await conn?.query("insert into chat_messages(senderID, receiverID, message, sendDate) values($myID, $otherID, '$toSendMessage', now())");
-
-    await getMessages();
+    var prev = msgNum;
+    List<Message> received;
+    received = await getMessages();
+    if(msgNum > prev){
+      var msg = received.last;
+      notif.Notification.showBigTextNotification(title: msg.senderName, body: msg.message, fln: notPlugin);
+    }
   }
 
   final textField = TextEditingController();
