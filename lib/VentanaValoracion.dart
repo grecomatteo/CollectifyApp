@@ -39,21 +39,32 @@ class VentanaValoracion extends StatelessWidget {
                 },
                 child: const Icon(Icons.favorite),
               ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => VentanaMensajesChat(producto.usuarioID!, user.usuarioID!)),
-                  );
-                },
-                child: const Icon(Icons.chat),
-              ),
+              ChatButton(producto: producto)
             ],
           ),
           const Text("Valoraciones", style: TextStyle(fontSize: 20, color: Colors.deepPurple),),
           ProductValoracion(),
         ],
       ),
+    );
+  }
+}
+
+class ChatButton extends StatelessWidget {
+  final Producto producto;
+  const ChatButton({Key? key, required this.producto}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    if(producto.usuarioID == user.usuarioID) return const SizedBox.shrink();
+    return ElevatedButton(
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => VentanaMensajesChat(producto.usuarioID!, user.usuarioID!)),
+        );
+      },
+      child: const Icon(Icons.chat),
     );
   }
 }
