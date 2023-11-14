@@ -118,12 +118,13 @@ class ProductoWidget extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           if(esPremium == true)
-                            const Row(
+                            //Make a row with the icon and the text, the icon must be in the left border
+                            Row(
                               children: [
                                 Icon(Icons.star, color: Colors.yellow,),
                                 Text("Premium", style: TextStyle(color: Colors.yellow),),
                                 //Add icon to the left Icon(Icons.favorite_border_outlined),
-
+                                Container(width: 20),
                                 Icon(Icons.favorite_border_outlined),
                               ],
                             ),
