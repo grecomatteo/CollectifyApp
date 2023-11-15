@@ -1,21 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:collectify/ConexionBD.dart';
+import 'package:flutter/services.dart';
 import 'package:uni_links/uni_links.dart';
 import 'VentanaInicio.dart';
 
 //Placeholder, cambiar
 Usuario u = new Usuario();
-Future<void> main() async {
 
-  WidgetsFlutterBinding.ensureInitialized();
-  String? initialLink = await getInitialLink();
-  handleLink(initialLink);
-
+void main(){
+  runURILINKS();
   runApp(const MyApp());
   Conexion().conectar();
-  uriLinkStream.listen((Uri? uri) {
-    handleLink(uri.toString());
-  });
+}
+
+Future<void> runURILINKS() async {
+  try{
+      WidgetsFlutterBinding.ensureInitialized();
+      String? initialLink = await getInitialLink();
+      handleLink(initialLink);
+
+      uriLinkStream.listen((Uri? uri) {
+      handleLink(uri.toString());
+    });
+  } on PlatformException {
+    // Handle exception by warning the user their action did not succeed
+    // return?
+  }
 }
 void handleLink(String? link) {
   if (link != null) {
