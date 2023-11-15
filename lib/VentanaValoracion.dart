@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:collectify/VentanaPerfil.dart';
 import 'package:flutter/material.dart';
 
 import 'ConexionBD.dart';
