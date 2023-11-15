@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:collectify/VentanaPerfil.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'ConexionBD.dart';
@@ -33,6 +34,27 @@ class VentanaValoracion extends StatelessWidget {
         children: [
           Image.memory(const Base64Decoder().convert(producto!.image.toString()), fit: BoxFit.fill, width: 200, height: 200,),
           Text("${producto.precio} €", style: const TextStyle(fontSize: 20, color: Colors.deepPurple),),
+          ElevatedButton(onPressed:
+              () {
+            Conexion().getUsuarioByID(producto.usuarioID!).then((value)
+            {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => VentanaPerfil(user: value!)),
+              );
+            }
+            );
+          },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Image(image: AssetImage("lib/assets/productos/pikachu.png"), width: 50, height: 50,),
+                Text(producto.usuarioID.toString()),
+              ],
+            ),
+          ),
           Row(
             children: [
               ElevatedButton(
