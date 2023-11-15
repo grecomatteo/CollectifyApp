@@ -1,13 +1,21 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 
 import 'ConexionBD.dart';
+import 'VentanaAnadirEvento.dart';
 
 class VentanaPerfil extends StatelessWidget {
   VentanaPerfil({super.key, required this.user});
 
   final Usuario user;
+  bool visibility =  false;
+
   @override
   Widget build(BuildContext context) {
+    if (user.esEmpresa == 1){
+      visibility =  true;
+    }
     return Scaffold(
         appBar: AppBar(
           title: const Text('Perfil'),
@@ -61,6 +69,23 @@ class VentanaPerfil extends StatelessWidget {
               style: ButtonStyle(
                 backgroundColor:
                     MaterialStateProperty.all<Color>(Colors.yellow),
+              ),
+            ),
+            Visibility(
+                visible: visibility
+                ,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => VentanaAnadirEvento(user : user)),
+                );
+                },
+              child: Text("Crear nuevo evento"),
+              style: ButtonStyle(
+                backgroundColor:
+                MaterialStateProperty.all<Color>(Colors.green),
+               ),
               ),
             ),
             Spacer(),

@@ -38,7 +38,8 @@ class Usuario {
   String? correo;
   String? contrasena;
   DateTime? fechaNacimiento;
-  Usuario({this.usuarioID, this.nombre, this.apellidos, this.nick, this.correo, this.contrasena, this.fechaNacimiento});
+  int? esEmpresa;
+  Usuario({this.usuarioID, this.nombre, this.apellidos, this.nick, this.correo, this.contrasena, this.fechaNacimiento,this.esEmpresa});
 }
 
 class Valoracion
@@ -82,6 +83,56 @@ class Conexion {
     }
 
 
+
+  }
+  Future<List<Producto>> getProductosBasadoPreferencias(Usuario user) async{
+    if(conn == null) await conectar();
+    String categorias = " (";
+    List<Producto> productos = [];
+    await getCategoriasUsuario(user).then((result){
+      result.forEach((element) {
+        categorias = categorias + "producto.categoria like '%${element}%' or ";
+      });
+      categorias = categorias.substring(0, categorias.length - 3);
+      categorias = categorias + " )";
+
+    });
+
+    await conn?.query('''SELECT producto.*, IMAGEN.image
+        FROM producto
+        JOIN usuario ON producto.usuarioID = usuario.userID
+        JOIN IMAGEN ON producto.pruductoID = IMAGEN.id_producto
+        WHERE esSubasta = false AND ${categorias}
+        ORDER BY usuario.esPremium ASC;
+    ''').then((results){
+      for (var row in results) {
+        Producto producto = Producto(
+            usuarioID: row['usuarioID'],
+            productoID: row['pruductoID'],
+            nombre: row['nombre'],
+            descripcion: row['descripcion'],
+            precio: row['precio'],
+            //Get blob 'image'
+            image: row['image'],
+            //image: row['image'],
+            esPremium: false);
+        productos.add(producto);
+      }
+    });
+
+    return productos;
+  }
+
+  Future<List<String>> getCategoriasUsuario(Usuario user)  async{
+
+    if(conn == null) await conectar();
+    List<String> categorias = [];
+    await conn?.query("select categoria from categorias_usuario where usuarioID = ${user.usuarioID}").then((results) {
+      for (var row in results) {
+        categorias.add(row[0]);
+      }
+    });
+    return categorias;
 
   }
 
@@ -148,6 +199,8 @@ class Conexion {
         correo : row[4],
         contrasena : row[5],
         fechaNacimiento : row[6],
+          esEmpresa : row[8],
+
         );
         usuarios.add(usuario);
       }
@@ -169,6 +222,7 @@ class Conexion {
           correo : row[4],
           contrasena : row[5],
           fechaNacimiento : row[6],
+          esEmpresa : row[8],
         );
 
       }
@@ -190,6 +244,7 @@ class Conexion {
           correo : row[4],
           contrasena : row[5],
           fechaNacimiento : row[6],
+          esEmpresa : row[8],
         );
 
       }
@@ -318,6 +373,17 @@ class Conexion {
       }
     });
     return esPremium;
+  }
+
+  Future<int> esEmpresa(int id) async {
+    if(conn==null) await conectar();
+    int esEmpresa = 0;
+    await conn?.query("select esEmpresa from usuario where userID = $id").then((results) {
+      for (var row in results) {
+        esEmpresa = row[0];
+      }
+    });
+    return esEmpresa;
   }
 
 

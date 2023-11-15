@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:collectify/VentanaPerfil.dart';
 import 'package:flutter/material.dart';
 
 import 'ConexionBD.dart';
@@ -9,10 +8,8 @@ import 'VentanaMensajesChat.dart';
 
 Usuario user = new Usuario();
 Producto product = new Producto();
-
 class VentanaValoracion extends StatelessWidget {
-  const VentanaValoracion(
-      {super.key, required this.connected, required this.producto});
+  const VentanaValoracion({super.key, required this.connected, required this.producto});
 
   final Usuario connected;
   final Producto producto;
@@ -71,7 +68,17 @@ class VentanaValoracion extends StatelessWidget {
                     },
                     child: const Icon(Icons.favorite),
                   ),
-                  ChatButton(producto: producto)
+                  ChatButton(producto: producto),
+                  ElevatedButton(
+                    onPressed: () {
+                      final RenderBox box = context.findRenderObject() as RenderBox;
+                      final String textoCompartir = '¡Echa un vistazo a este objeto en venta!';
+                      Share.share(textoCompartir,
+                          subject: 'Enlace del objeto en venta',
+                          sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+                    },
+                    child: const Icon(Icons.share),
+                  ),
                 ],
               ),
             ],
@@ -193,6 +200,7 @@ class _UserValoracionState extends State<UserValoracion> {
         });
   }
 }
+
 
 class NavigationBar extends StatefulWidget {
   const NavigationBar({Key? key}) : super(key: key);
