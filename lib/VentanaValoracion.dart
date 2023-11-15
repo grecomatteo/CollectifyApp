@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'ConexionBD.dart';
 import 'VentanaMensajesChat.dart';
-import 'package:share/share.dart';
+import 'package:share_plus/share_plus.dart';
 
 
 Usuario user = new Usuario();
