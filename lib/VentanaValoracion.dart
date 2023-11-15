@@ -123,7 +123,7 @@ class _ProductValoracionState extends State<ProductValoracion> {
             itemBuilder: (BuildContext context, int index) {
               return Card(
                 child: ListTile(
-                  title: Text(snapshot.data![index].nickUsuario as String),
+                  title: Text(snapshot.data![index].nickUsuarioReviewer as String),
                   subtitle: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
