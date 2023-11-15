@@ -84,6 +84,56 @@ class Conexion {
 
 
   }
+  Future<List<Producto>> getProductosBasadoPreferencias(Usuario user) async{
+    if(conn == null) await conectar();
+    String categorias = " (";
+    List<Producto> productos = [];
+    await getCategoriasUsuario(user).then((result){
+      result.forEach((element) {
+        categorias = categorias + "producto.categoria like '%${element}%' or ";
+      });
+      categorias = categorias.substring(0, categorias.length - 3);
+      categorias = categorias + " )";
+
+    });
+
+    await conn?.query('''SELECT producto.*, IMAGEN.image
+        FROM producto
+        JOIN usuario ON producto.usuarioID = usuario.userID
+        JOIN IMAGEN ON producto.pruductoID = IMAGEN.id_producto
+        WHERE esSubasta = false AND ${categorias}
+        ORDER BY usuario.esPremium ASC;
+    ''').then((results){
+      for (var row in results) {
+        Producto producto = Producto(
+            usuarioID: row['usuarioID'],
+            productoID: row['pruductoID'],
+            nombre: row['nombre'],
+            descripcion: row['descripcion'],
+            precio: row['precio'],
+            //Get blob 'image'
+            image: row['image'],
+            //image: row['image'],
+            esPremium: false);
+        productos.add(producto);
+      }
+    });
+
+    return productos;
+  }
+
+  Future<List<String>> getCategoriasUsuario(Usuario user)  async{
+
+    if(conn == null) await conectar();
+    List<String> categorias = [];
+    await conn?.query("select categoria from categorias_usuario where usuarioID = ${user.usuarioID}").then((results) {
+      for (var row in results) {
+        categorias.add(row[0]);
+      }
+    });
+    return categorias;
+
+  }
 
   Future<List<Producto>> getProductos() async {
     if (conn==null )await conectar();
