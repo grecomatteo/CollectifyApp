@@ -44,11 +44,11 @@ class Usuario {
 class Valoracion
 {
   int? id;
-  int? idProducto;
-  String? nickUsuario;
+  int? idUsuario;
+  String? nickUsuarioReviewer;
   String? comentario;
   int? valoracion;
-  Valoracion({this.id, this.idProducto, this.nickUsuario, this.comentario, this.valoracion});
+  Valoracion({this.id, this.idUsuario, this.nickUsuarioReviewer, this.comentario, this.valoracion});
 }
 
 class Conexion {
@@ -362,21 +362,21 @@ class Conexion {
     return productos;
   }
 
-  Future<List<Valoracion>> getValoraciones(int productoID) async{
+  Future<List<Valoracion>> getValoraciones(int usuarioID) async{
     if(conn==null) conectar();
     List<Valoracion> comentarios = [];
     Valoracion comentario;
     await conn?.query("""
-    SELECT valoracion.*, usuario.nick
+    SELECT valoracion.*, usuario.nick AS reviewerName
     FROM valoracion
-    JOIN usuario ON valoracion.idUsuario = usuario.userID
-    WHERE valoracion.idProducto = $productoID;
+    JOIN usuario ON valoracion.idReviewer = usuario.userID
+    WHERE valoracion.idUsuario = $usuarioID;
     """).then((results) => {
       for (var row in results) {
         comentario = Valoracion(
           id: row['id'],
-          idProducto: row['idProducto'],
-          nickUsuario: row['nick'],
+          idUsuario: row['idUsuario'],
+          nickUsuarioReviewer: row['reviewerName'],
           comentario: row['comentario'],
           valoracion: row['valoracion'],
         ),
@@ -386,11 +386,11 @@ class Conexion {
     return comentarios;
   }
 
-  void anadirValoracion(int idProducto, int idUsuario, String comentario, int valoracion)
+  void anadirValoracion(int idUsuario, int idReviewer, String comentario, int valoracion)
   async {
     if(conn==null) conectar();
-    await conn?.query("INSERT INTO valoracion (idProducto, idUsuario, comentario, valoracion) "
-        "VALUES ('$idProducto', '$idUsuario', '$comentario', '$valoracion'); "
+    await conn?.query("INSERT INTO valoracion (idUsuario, idReviewer, comentario, valoracion) "
+        "VALUES ('$idUsuario', '$idReviewer', '$comentario', '$valoracion'); "
     );
   }
 }

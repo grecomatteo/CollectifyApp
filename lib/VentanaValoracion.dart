@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:collectify/VentanaPerfil.dart';
 import 'package:flutter/material.dart';
 
 import 'ConexionBD.dart';
@@ -8,8 +9,10 @@ import 'VentanaMensajesChat.dart';
 
 Usuario user = new Usuario();
 Producto product = new Producto();
+
 class VentanaValoracion extends StatelessWidget {
-  const VentanaValoracion({super.key, required this.connected, required this.producto});
+  const VentanaValoracion(
+      {super.key, required this.connected, required this.producto});
 
   final Usuario connected;
   final Producto producto;
@@ -29,21 +32,55 @@ class VentanaValoracion extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Image.memory(const Base64Decoder().convert(producto!.image.toString()), fit: BoxFit.fill, width: 200, height: 200,),
-          Text("${producto.precio} €", style: const TextStyle(fontSize: 20, color: Colors.deepPurple),),
-          Row(
+          Image.memory(
+            const Base64Decoder().convert(producto!.image.toString()),
+            fit: BoxFit.fill,
+            width: 200,
+            height: 200,
+          ),
+          Text(
+            "${producto.precio} €",
+            style: const TextStyle(fontSize: 20, color: Colors.deepPurple),
+          ),
+          Column(
             children: [
-              ElevatedButton(
-                onPressed: () {
-                  //Conexion().addProductoListaDeseos(producto.productoID!, user.usuarioID!);
+              ElevatedButton(onPressed:
+                    () {
+                      Conexion().getUsuarioByID(producto.usuarioID!).then((value)
+                      {
+                        Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => VentanaPerfil(user: value!)),
+                      );
+                    }
+                  );
                 },
-                child: const Icon(Icons.favorite),
+                child: Row(
+                  children: [
+                    const Image(image: AssetImage("lib/assets/productos/pikachu.png"), width: 50, height: 50,),
+                    Text(producto.usuarioID.toString()),
+                  ],
+                ),
               ),
-              ChatButton(producto: producto)
+              Row(
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      //Conexion().addProductoListaDeseos(producto.productoID!, user.usuarioID!);
+                    },
+                    child: const Icon(Icons.favorite),
+                  ),
+                  ChatButton(producto: producto)
+                ],
+              ),
             ],
           ),
-          const Text("Valoraciones", style: TextStyle(fontSize: 20, color: Colors.deepPurple),),
-          ProductValoracion(),
+          const Text(
+            "Valoraciones",
+            style: TextStyle(fontSize: 20, color: Colors.deepPurple),
+          ),
+          UserValoracion(),
         ],
       ),
     );
@@ -56,12 +93,14 @@ class ChatButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if(producto.usuarioID == user.usuarioID) return const SizedBox.shrink();
+    if (producto.usuarioID == user.usuarioID) return const SizedBox.shrink();
     return ElevatedButton(
       onPressed: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => VentanaMensajesChat(producto.usuarioID!, user.usuarioID!)),
+          MaterialPageRoute(
+              builder: (context) =>
+                  VentanaMensajesChat(producto.usuarioID!, user.usuarioID!)),
         );
       },
       child: const Icon(Icons.chat),
@@ -69,15 +108,17 @@ class ChatButton extends StatelessWidget {
   }
 }
 
-class ProductValoracion extends StatefulWidget {
-  const ProductValoracion({Key? key}) : super(key: key);
+class UserValoracion extends StatefulWidget {
+  const UserValoracion({Key? key}) : super(key: key);
 
   @override
-  State<ProductValoracion> createState() => _ProductValoracionState();
+  State<UserValoracion> createState() => _UserValoracionState();
 }
 
-class _ProductValoracionState extends State<ProductValoracion> {
-  static late StreamController<List<Valoracion>> _streamController = StreamController<List<Valoracion>>.broadcast();
+class _UserValoracionState extends State<UserValoracion> {
+
+  static late StreamController<List<Valoracion>> _streamController =
+      StreamController<List<Valoracion>>.broadcast();
 
   @override
   void initState() {
@@ -87,7 +128,8 @@ class _ProductValoracionState extends State<ProductValoracion> {
   }
 
   static void refresh() async {
-    List<Valoracion> valoraciones = await Conexion().getValoraciones(product.productoID!);
+    List<Valoracion> valoraciones =
+        await Conexion().getValoraciones(product.usuarioID!);
     _streamController.add(valoraciones);
   }
 
@@ -96,51 +138,61 @@ class _ProductValoracionState extends State<ProductValoracion> {
     refresh();
     return StreamBuilder(
         stream: _streamController.stream,
-        builder: (BuildContext context, AsyncSnapshot<List<Valoracion>> snapshot) {
-      if (snapshot.hasData) {
-        print(snapshot.data!.length);
-        if(snapshot.data!.isEmpty){
-          return const Center(
-            child: Text("No hay valoraciones"),
-          );
-        }
-        return Expanded(
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: snapshot.data?.length,
-            itemBuilder: (BuildContext context, int index) {
-              return Card(
-                child: ListTile(
-                  title: Text(snapshot.data![index].nickUsuario as String),
-                  subtitle: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(snapshot.data![index].comentario as String),
-                      Row(
+        builder:
+            (BuildContext context, AsyncSnapshot<List<Valoracion>> snapshot) {
+          if (snapshot.hasData) {
+            print(snapshot.data!.length);
+            if (snapshot.data!.isEmpty) {
+              return const Center(
+                child: Text("No hay valoraciones"),
+              );
+            }
+            return Expanded(
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: snapshot.data?.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Card(
+                    child: ListTile(
+                      title: Text(snapshot.data![index].nickUsuarioReviewer as String),
+                      subtitle: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          for(int i = 0; i < snapshot.data![index].valoracion!; i++)
-                            const Icon(Icons.star, color: Colors.orangeAccent,),
-                          for(int i = 0; i < 5 - snapshot.data![index].valoracion!; i++)
-                            const Icon(Icons.star_border, color: Colors.orangeAccent,),
+                          Text(snapshot.data![index].comentario as String),
+                          Row(
+                            children: [
+                              for (int i = 0;
+                              i < snapshot.data![index].valoracion!;
+                              i++)
+                                const Icon(
+                                  Icons.star,
+                                  color: Colors.orangeAccent,
+                                ),
+                              for (int i = 0;
+                              i < 5 - snapshot.data![index].valoracion!;
+                              i++)
+                                const Icon(
+                                  Icons.star_border,
+                                  color: Colors.orangeAccent,
+                                ),
+                            ],
+                          ),
                         ],
                       ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-        );
-      } else {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      }
-    });
+                    ),
+                  );
+                },
+              ),
+            );
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        });
   }
 }
-
 
 class NavigationBar extends StatefulWidget {
   const NavigationBar({Key? key}) : super(key: key);
@@ -150,12 +202,13 @@ class NavigationBar extends StatefulWidget {
 }
 
 class _NavigationBarState extends State<NavigationBar> {
-  Future<void> sendMessage(int productID) async {
-    Conexion().anadirValoracion(productID, user.usuarioID!, toSendMessage, valoracion);
+  Future<void> sendMessage(int otherID) async {
+    Conexion().anadirValoracion(
+        otherID, user.usuarioID!, toSendMessage, valoracion);
     valoracion = 0;
 
     //Refresh ProductValoracion
-    _ProductValoracionState.refresh();
+    _UserValoracionState.refresh();
   }
 
   final textField = TextEditingController();
@@ -166,84 +219,82 @@ class _NavigationBarState extends State<NavigationBar> {
   Widget build(BuildContext context) {
     return Container(
       //Make height of NavigationBar the same as the height of the keyboard
-      height: MediaQuery
-          .of(context)
-          .viewInsets
-          .bottom + 70 + 46,
+      height: MediaQuery.of(context).viewInsets.bottom + 70 + 46,
       alignment: Alignment.bottomCenter,
       color: Colors.grey[200],
       child: Column(
-          children: [
-            Row(
+        children: [
+          Row(
+            children: [
+              for (int i = 0; i < valoracion; i++)
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      valoracion = i + 1;
+                    });
+                  },
+                  icon: const Icon(
+                    Icons.star,
+                    color: Colors.orangeAccent,
+                  ),
+                ),
+              for (int i = valoracion; i < 5; i++)
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      valoracion = i + 1;
+                    });
+                  },
+                  icon: const Icon(
+                    Icons.star_border,
+                    color: Colors.orangeAccent,
+                  ),
+                ),
+            ],
+          ),
+          Container(
+            margin: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
               children: [
-                for(int i = 0; i < valoracion; i++)
-                  IconButton(
-                    onPressed: () {
-                      setState(() {
-                        valoracion = i + 1;
-                      });
+                const SizedBox(width: 10),
+                Expanded(
+                  child: TextField(
+                    decoration: const InputDecoration(
+                      hintText: "Type a comment",
+                      border: InputBorder.none,
+                    ),
+                    onChanged: (text) {
+                      toSendMessage = text;
                     },
-                    icon: const Icon(Icons.star, color: Colors
-                        .orangeAccent,),
+                    controller: textField,
                   ),
-                for(int i = valoracion; i < 5; i++)
-                  IconButton(
-                    onPressed: () {
-                      setState(() {
-                        valoracion = i + 1;
-                      });
-                    },
-                    icon: const Icon(Icons.star_border, color: Colors
-                        .orangeAccent,),
-                  ),
+                ),
+                const SizedBox(width: 10),
+                IconButton(
+                  onPressed: () {
+                    if (toSendMessage.replaceAll(' ', '').isEmpty) return;
+
+                    if (valoracion == 0) return;
+                    //send message, clear text field, scroll to the bottom, close keyboard and refresh the page
+                    setState(() {
+                      sendMessage(product.usuarioID!);
+                    });
+                    //empty the text field
+                    textField.clear();
+                    toSendMessage = "";
+                    FocusScope.of(context).unfocus();
+                  },
+                  icon: const Icon(Icons.send),
+                ),
               ],
             ),
-            Container(
-              margin: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child:
-              Row(
-                children: [
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: TextField(
-                      decoration: const InputDecoration(
-                        hintText: "Type a comment",
-                        border: InputBorder.none,
-                      ),
-                      onChanged: (text) {
-                        toSendMessage = text;
-                      },
-                      controller: textField,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  IconButton(
-                    onPressed: () {
-                      if (toSendMessage
-                          .replaceAll(' ', '')
-                          .isEmpty) return;
-
-                      if(valoracion == 0) return;
-                      //send message, clear text field, scroll to the bottom, close keyboard and refresh the page
-                      setState(() {
-                        sendMessage(product.productoID!);
-                      });
-                      //empty the text field
-                      textField.clear();
-                      toSendMessage = "";
-                      FocusScope.of(context).unfocus();
-                    },
-                    icon: const Icon(Icons.send),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
+      ),
     );
   }
 }
