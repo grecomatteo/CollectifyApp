@@ -2,9 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-
+import 'package:flutter/services.dart';
 import 'ConexionBD.dart';
 import 'VentanaMensajesChat.dart';
+import 'package:share/share.dart';
+
 
 Usuario user = new Usuario();
 Producto product = new Producto();
@@ -41,19 +43,40 @@ class VentanaValoracion extends StatelessWidget {
               ),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => VentanaMensajesChat(producto.usuarioID!, user.usuarioID!)),
-                  );
+                  final RenderBox box = context.findRenderObject() as RenderBox;
+                  final String textoCompartir = '¡Echa un vistazo a este objeto en venta!';
+                  Share.share(textoCompartir,
+                      subject: 'Enlace del objeto en venta',
+                      sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
                 },
-                child: const Icon(Icons.chat),
+                child: const Icon(Icons.share),
               ),
+              ChatButton(producto: producto)
             ],
           ),
           const Text("Valoraciones", style: TextStyle(fontSize: 20, color: Colors.deepPurple),),
           ProductValoracion(),
         ],
       ),
+    );
+  }
+}
+
+class ChatButton extends StatelessWidget {
+  final Producto producto;
+  const ChatButton({Key? key, required this.producto}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    if(producto.usuarioID == user.usuarioID) return const SizedBox.shrink();
+    return ElevatedButton(
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => VentanaMensajesChat(producto.usuarioID!, user.usuarioID!)),
+        );
+      },
+      child: const Icon(Icons.chat),
     );
   }
 }
