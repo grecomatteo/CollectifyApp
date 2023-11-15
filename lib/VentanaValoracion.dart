@@ -2,9 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-
+import 'package:flutter/services.dart';
 import 'ConexionBD.dart';
 import 'VentanaMensajesChat.dart';
+import 'package:share/share.dart';
+
 
 Usuario user = new Usuario();
 Producto product = new Producto();
@@ -38,6 +40,16 @@ class VentanaValoracion extends StatelessWidget {
                   //Conexion().addProductoListaDeseos(producto.productoID!, user.usuarioID!);
                 },
                 child: const Icon(Icons.favorite),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  final RenderBox box = context.findRenderObject() as RenderBox;
+                  final String textoCompartir = '¡Echa un vistazo a este objeto en venta!';
+                  Share.share(textoCompartir,
+                      subject: 'Enlace del objeto en venta',
+                      sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+                },
+                child: const Icon(Icons.share),
               ),
               ChatButton(producto: producto)
             ],
