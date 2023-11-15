@@ -59,13 +59,9 @@ class AddEventoForm extends StatefulWidget {
 
 class _AddEventoFormState extends State<AddEventoForm> {
   final TextEditingController nameController = TextEditingController();
+  final TextEditingController direcionController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
-  final TextEditingController precioInicialController = TextEditingController();
-  final TextEditingController fechaFinalController = TextEditingController();
-
-
-
-  final priceFormatter = FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}'));
+  final TextEditingController fechaController = TextEditingController();
 
   bool _imageTaken = false; // Per tenere traccia se l'immagine è stata scattata
   XFile? pickedFile;
@@ -84,97 +80,24 @@ class _AddEventoFormState extends State<AddEventoForm> {
             controller: descriptionController,
             decoration: InputDecoration(labelText: 'Descripción'),
           ),
-          Row(
-            children: [
-              Checkbox(
-                  value: esSubasta,
-                  onChanged: (e){
-                    setState(() {
-                      esSubasta = e!;
-
-                    }
-                    );
-                  }
-              ),
-              Text("Es subasta"),
-            ],
+          TextFormField(
+              controller: fechaController,
+              decoration: InputDecoration(labelText: 'Fecha y hora de finalización (YYYY-MM-DD HH:MM)'),
+              keyboardType: TextInputType.numberWithOptions(decimal: true)
           ),
-
-          const SizedBox(height: 16),
-          _imageTaken
-              ? Icon(
-            Icons.check_circle,
-            color: Colors.green,
-            size: 48.0,
-          )
-              : ElevatedButton(
-            onPressed: () async {
-              final imagePicker = ImagePicker();
-              pickedFile = await imagePicker.pickImage(source: ImageSource.camera, maxHeight: 150, imageQuality: 90);
-              if (pickedFile != null) {
-                setState(() {
-                  _imageTaken = true;
-                });
-              }
-            },
-            child: Text('Toma una foto'),
-          ),
-          const SizedBox(height: 16),
           ElevatedButton(
             onPressed: () async {
               final productName = nameController.text;
               final productDescription = descriptionController.text;
-              final fecha = fechaFinalController.text;
+              final fecha = fechaController.text;
               final String precioInicial;
               final String productPrice;
               DateTime fechaFinal =DateTime.parse(fecha);
-              if(esSubasta){
-                precioInicial= precioInicialController.text;
-                productPrice = precioInicialController.text;
-              }else{
-                precioInicial= priceController.text;
-                productPrice = priceController.text;
-              }
-              Producto prod = Producto();
-              prod.nombre = productName;
-              prod.precio = double.parse(productPrice);
-              prod.descripcion = productDescription;
-              prod.fechaFin = fechaFinal;
+
+
 
               int productID = 0;
-              await Conexion().anadirProducto(prod,user).then((results){
-                debugPrint(results.toString());
-                productID = results;
-                if(results != -1){
-                  int newId = results;
-                  pickedFile?.readAsBytes().then((value1) {
-                    prod.image = Blob.fromBytes(value1);
-                    Conexion().anadirImagen(productName, newId, value1).then((value) {
-                      Navigator.of(context).pop();
-                    });
-                  });
-                  if(esSubasta){
-                    Conexion().anadirProductoSubasta(productID , int.parse(precioInicial),fechaFinal).then((value) => null);
-                  }
-                }
 
-                else{
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) => AlertDialog(
-                        title: const Text("¡Error!"),
-                        content: const Text("Falta algun campo."),
-                        actions: [
-                          TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text("OK"))
-                        ],
-                      ));
-                }
-              });
-              //Navigator.pop(context);
             },
             child: Text('Anadir Producto'),
           ),
