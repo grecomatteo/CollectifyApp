@@ -38,7 +38,8 @@ class Usuario {
   String? correo;
   String? contrasena;
   DateTime? fechaNacimiento;
-  Usuario({this.usuarioID, this.nombre, this.apellidos, this.nick, this.correo, this.contrasena, this.fechaNacimiento});
+  int? esEmpresa;
+  Usuario({this.usuarioID, this.nombre, this.apellidos, this.nick, this.correo, this.contrasena, this.fechaNacimiento,this.esEmpresa});
 }
 
 class Valoracion
@@ -148,6 +149,8 @@ class Conexion {
         correo : row[4],
         contrasena : row[5],
         fechaNacimiento : row[6],
+          esEmpresa : row[8],
+
         );
         usuarios.add(usuario);
       }
@@ -169,6 +172,7 @@ class Conexion {
           correo : row[4],
           contrasena : row[5],
           fechaNacimiento : row[6],
+          esEmpresa : row[8],
         );
 
       }
@@ -190,6 +194,7 @@ class Conexion {
           correo : row[4],
           contrasena : row[5],
           fechaNacimiento : row[6],
+          esEmpresa : row[8],
         );
 
       }
@@ -318,6 +323,17 @@ class Conexion {
       }
     });
     return esPremium;
+  }
+
+  Future<int> esEmpresa(int id) async {
+    if(conn==null) await conectar();
+    int esEmpresa = 0;
+    await conn?.query("select esEmpresa from usuario where userID = $id").then((results) {
+      for (var row in results) {
+        esEmpresa = row[0];
+      }
+    });
+    return esEmpresa;
   }
 
 
