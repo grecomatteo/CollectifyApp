@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:collectify/VentanaPerfil.dart';
 import 'package:flutter/material.dart';
+import 'package:share/share.dart';
 
 import 'ConexionBD.dart';
 import 'VentanaMensajesChat.dart';
