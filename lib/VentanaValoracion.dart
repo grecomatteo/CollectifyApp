@@ -66,9 +66,9 @@ class VentanaValoracion extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   final RenderBox box = context.findRenderObject() as RenderBox;
-                  final String textoCompartir = '¡Echa un vistazo a este objeto en venta!';
+                  final String textoCompartir = '¡Echa un vistazo a este objeto en venta!\nhttps://vm.tiktok.com/ZGe18J8Ft/';
                   Share.share(textoCompartir,
-                      subject: 'Enlace del objeto en venta/nhttps://vm.tiktok.com/ZGe18J8Ft/',
+                      subject: 'Enlace del objeto en ventana',
                       sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
                 },
                 child: const Icon(Icons.share),
