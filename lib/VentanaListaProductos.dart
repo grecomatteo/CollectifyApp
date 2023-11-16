@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:mysql1/mysql1.dart';
 
 import 'VentanaAnadirProducto.dart';
 import 'VentanaChat.dart';
@@ -54,7 +53,7 @@ class ProductListState extends State<ProductList> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: Conexion().getProductos(),
+      future: Conexion().getProductosBasadoPreferencias(user),
       builder: (BuildContext context, AsyncSnapshot<List<Producto>> snapshot) {
         if (snapshot.hasData) {
           return GridView.count(

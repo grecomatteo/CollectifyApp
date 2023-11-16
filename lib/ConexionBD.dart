@@ -103,6 +103,7 @@ class Conexion {
     if(conn == null) await conectar();
     String categorias = " (";
     List<Producto> productos = [];
+
     await getCategoriasUsuario(user).then((result){
       result.forEach((element) {
         categorias = categorias + "producto.categoria like '%${element}%' or ";
