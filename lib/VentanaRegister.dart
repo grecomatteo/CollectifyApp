@@ -77,6 +77,9 @@ class _RegistroFormState extends State<RegistroForm> {
   final TextEditingController surnameController = TextEditingController();
   final TextEditingController birthdateController = TextEditingController();
 
+  bool esEmpresa = false;
+
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -121,6 +124,20 @@ class _RegistroFormState extends State<RegistroForm> {
               ),
             ),
           ),
+          Row(
+            children: [
+              Checkbox(
+                  value: esEmpresa,
+                  onChanged: (e){
+                    setState(() {
+                      esEmpresa = e!;
+
+                    });
+                  },
+              ),
+              Text("Es empresa"),
+            ],
+          ),
           const SizedBox(height: 50.0),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -145,6 +162,12 @@ class _RegistroFormState extends State<RegistroForm> {
                       birthdateController.text != '') {
                     if (await Conexion().registrarUsuario(
                         name, surname, nick, mail, password, birthdate)) {
+                      if (esEmpresa){
+                        await Conexion().getUsuarioByNick(nick).then((results) {
+                          int? id = results?.usuarioID;
+                          Conexion().hacerEmpresa(id!);
+                        });
+                      }
                       Navigator.push(
                           context,
                           MaterialPageRoute(

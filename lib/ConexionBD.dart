@@ -364,6 +364,11 @@ class Conexion {
     await conn?.query("update usuario set esPremium = 1 where userID = $id");
   }
 
+  void hacerEmpresa(int id) async{
+    if(conn==null) await conectar();
+    await conn?.query("update usuario set esEmpresa = 1 where userID = $id");
+  }
+
   Future<bool> anadirImagen(String nombre, int ID, Uint8List img) async{
     if(conn==null) await conectar();
 
