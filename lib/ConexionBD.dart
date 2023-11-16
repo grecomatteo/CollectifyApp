@@ -23,6 +23,7 @@ class Producto{
 }
 
 
+
 class Imagen{
   int? productoID;
   String? nombre;
@@ -40,6 +41,19 @@ class Usuario {
   DateTime? fechaNacimiento;
   int? esEmpresa;
   Usuario({this.usuarioID, this.nombre, this.apellidos, this.nick, this.correo, this.contrasena, this.fechaNacimiento,this.esEmpresa});
+}
+
+
+class Evento {
+
+  int? usuarioID;
+  int? idEvento;
+  String? direccion;
+  String? descripcion;
+  String? nombre;
+  DateTime? fechaEvento;
+  Evento({this.usuarioID, this.idEvento, this.direccion, this.descripcion, this.nombre, this.fechaEvento});
+
 }
 
 class Valoracion
@@ -323,6 +337,27 @@ class Conexion {
     }
     return -1;
   }
+
+
+  Future<int> anadirEvento(Evento evento, Usuario user) async{
+    if(conn==null) await conectar();
+    int userID = user.usuarioID!;
+    String? direccion = evento.direccion;
+    String? descripcion = evento.descripcion;
+    String? nombre = evento.nombre;
+    DateTime? fecha = evento.fechaEvento;
+    try {
+      await conn?.query("INSERT INTO evento (usuarioID, direccion, descripcion, nombre, fecha) "
+          "VALUES ('$userID', '$direccion', '$descripcion', '$nombre','$fecha'); "
+      );
+      return 1;
+    }
+    catch(e){
+      debugPrint(e.toString());
+    }
+    return -1;
+  }
+
 
   void hacerPremium(int id) async{
     if(conn==null) await conectar();

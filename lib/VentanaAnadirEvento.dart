@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:collectify/ConexionBD.dart';
 import 'package:flutter/services.dart';
 import 'package:mysql1/mysql1.dart';
-import 'package:image_picker/image_picker.dart';
 import 'VentanaListaProductos.dart';
 
 
@@ -15,22 +14,6 @@ String description = "";
 //Placeholder, se debe cambiar
 Usuario logged = new Usuario();
 
-Future<bool> validateFields() async {
-  conn = await MySqlConnection.connect(
-      ConnectionSettings(
-        host: "collectify-server-mysql.mysql.database.azure.com",
-        port: 3306,
-        user: "pin2023",
-        password: "AsLpqR_23",
-        db: "collectifyDB",
-      ));
-  await conn?.query('select * from producto where (nombre = $nombre AND descripcion = $description)').then((result) {
-    return true;
-  }
-  );
-  return false;
-  //return true;
-}
 
 
 class VentanaAnadirEvento extends StatelessWidget {
@@ -59,12 +42,11 @@ class AddEventoForm extends StatefulWidget {
 
 class _AddEventoFormState extends State<AddEventoForm> {
   final TextEditingController nameController = TextEditingController();
-  final TextEditingController direcionController = TextEditingController();
+  final TextEditingController direccionController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController fechaController = TextEditingController();
 
-  bool _imageTaken = false; // Per tenere traccia se l'immagine è stata scattata
-  XFile? pickedFile;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -74,7 +56,11 @@ class _AddEventoFormState extends State<AddEventoForm> {
         children: <Widget>[
           TextFormField(
             controller: nameController,
-            decoration: InputDecoration(labelText: 'Nombre producto'),
+            decoration: InputDecoration(labelText: 'Nombre evento'),
+          ),
+          TextFormField(
+            controller: direccionController,
+            decoration: InputDecoration(labelText: 'Dirección'),
           ),
           TextFormField(
             controller: descriptionController,
@@ -82,24 +68,31 @@ class _AddEventoFormState extends State<AddEventoForm> {
           ),
           TextFormField(
               controller: fechaController,
-              decoration: InputDecoration(labelText: 'Fecha y hora de finalización (YYYY-MM-DD HH:MM)'),
+              decoration: InputDecoration(labelText: 'Fecha evento (YYYY-MM-DD HH:MM)'),
               keyboardType: TextInputType.numberWithOptions(decimal: true)
           ),
           ElevatedButton(
             onPressed: () async {
-              final productName = nameController.text;
-              final productDescription = descriptionController.text;
-              final fecha = fechaController.text;
-              final String precioInicial;
-              final String productPrice;
-              DateTime fechaFinal =DateTime.parse(fecha);
+              final nombre = nameController.text;
+              final descripcion = descriptionController.text;
+              final direccion = direccionController.text;
+              final fechaEvento = fechaController.text;
+              DateTime fechaFinal = DateTime.parse(fechaEvento);
+              Evento evento = new Evento();
+              evento.nombre = nombre;
+              evento.descripcion = descripcion;
+              evento.direccion = direccion;
+              evento.fechaEvento = fechaFinal;
 
 
-
-              int productID = 0;
-
-            },
-            child: Text('Anadir Producto'),
+              await Conexion().anadirEvento(evento,user).then((results){
+                debugPrint(results.toString());
+                if(results != -1){
+                    Navigator.of(context).pop();
+                }
+              });
+              },
+            child: Text('Anadir Evento'),
           ),
         ],
       ),

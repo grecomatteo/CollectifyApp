@@ -14,23 +14,6 @@ String description = "";
 //Placeholder, se debe cambiar
 Usuario logged = new Usuario();
 
-Future<bool> validateFields() async {
-  conn = await MySqlConnection.connect(
-      ConnectionSettings(
-        host: "collectify-server-mysql.mysql.database.azure.com",
-        port: 3306,
-        user: "pin2023",
-        password: "AsLpqR_23",
-        db: "collectifyDB",
-      ));
-  await conn?.query('select * from producto where (nombre = $nombre AND descripcion = $description)').then((result) {
-    return true;
-  }
-  );
-  return false;
-  //return true;
-}
-
 
 class VentanaAnadirProducto extends StatelessWidget {
   const VentanaAnadirProducto({super.key, required this.user});
