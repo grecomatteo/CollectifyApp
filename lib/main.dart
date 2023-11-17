@@ -1,11 +1,14 @@
+import 'package:collectify/VentanaValoracion.dart';
 import 'package:flutter/material.dart';
 import 'package:collectify/ConexionBD.dart';
 import 'package:flutter/services.dart' show PlatformException;
 import 'VentanaInicio.dart';
 import 'package:uni_links3/uni_links.dart';
+import 'ConexionBD.dart';
+
 
 //Placeholder, cambiar
-Usuario u = new Usuario();
+Usuario u = Usuario();
 
 void main(){
   runUriLinks();
@@ -17,8 +20,6 @@ Future<void> runUriLinks() async {
   try{
       WidgetsFlutterBinding.ensureInitialized();
       final initialLink = await getInitialLink();
-      handleLink(initialLink);
-
       uriLinkStream.listen((Uri? uri) {
       handleLink(uri.toString());
     });
@@ -28,8 +29,12 @@ Future<void> runUriLinks() async {
   }
 }
 void handleLink(String? link) {
-  if (link != null) {
-    print(link);
+  List<Producto> productos = Conexion().getProductos() as List<Producto>;
+  u = Conexion().getUsuarioByNick('admin') as Usuario;
+  for(var p in productos){
+    if (link == "https://Collectify.es/${p.nombre?.replaceAll(' ', '')}") {
+      VentanaValoracion(connected: u, producto: p,);
+    }
   }
 }
 
