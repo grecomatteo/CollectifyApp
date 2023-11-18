@@ -16,10 +16,11 @@ void main(){
 
 Future<Widget> handleLink(String? link) async {
   if(link != null) {
+    print(link);
     List<Producto> productos = await Conexion().getProductos();
     Usuario u = await Conexion().getUsuarioByNick('admin') as Usuario;
     for (var p in productos) {
-      if (link!.toLowerCase() == "https://collectify.es/${p.productoID}") {
+      if (link == "https://Collectify.es/${p.productoID}") {
         return VentanaValoracion(connected: u, producto: p,);
       }
     }
