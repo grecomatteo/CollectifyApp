@@ -3,10 +3,8 @@ import 'dart:async';
 import 'package:collectify/VentanaValoracion.dart';
 import 'package:flutter/material.dart';
 import 'package:collectify/ConexionBD.dart';
-import 'package:flutter/services.dart' show PlatformException;
 import 'VentanaInicio.dart';
 import 'package:uni_links3/uni_links.dart';
-import 'ConexionBD.dart';
 
 
 void main(){
@@ -16,7 +14,6 @@ void main(){
 
 Future<Widget> handleLink(String? link) async {
   if(link != null) {
-    print(link);
     List<Producto> productos = await Conexion().getProductos();
     Usuario u = await Conexion().getUsuarioByNick('admin') as Usuario;
     for (var p in productos) {
