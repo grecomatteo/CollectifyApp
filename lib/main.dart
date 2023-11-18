@@ -17,7 +17,7 @@ Future<Widget> handleLink(String? link) async {
     List<Producto> productos = await Conexion().getProductos();
     Usuario u = await Conexion().getUsuarioByNick('admin') as Usuario;
     for (var p in productos) {
-      if (link == "https://Collectify.es/${p.productoID}") {
+      if (link!.toLowerCase() == "https://collectify.es/${p.productoID}") {
         return VentanaValoracion(connected: u, producto: p,);
       }
     }
