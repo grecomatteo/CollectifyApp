@@ -29,9 +29,9 @@ Future<void> runUriLinks() async {
     // return?
   }
 }
-void handleLink(String? link) {
-  List<Producto> productos = Conexion().getProductos() as List<Producto>;
-  u = Conexion().getUsuarioByNick('admin') as Usuario;
+Future<void> handleLink(String? link) async {
+  List<Producto> productos = await Conexion().getProductos();
+  u = await Conexion().getUsuarioByNick('admin') as Usuario;
   for(var p in productos){
     if (link == "https://Collectify.es/${p.productoID}") {
       VentanaValoracion(connected: u, producto: p,);
