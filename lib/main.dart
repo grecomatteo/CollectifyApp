@@ -20,6 +20,7 @@ Future<void> runUriLinks() async {
   try{
       WidgetsFlutterBinding.ensureInitialized();
       final initialLink = await getInitialLink();
+      handleLink(initialLink);
       uriLinkStream.listen((Uri? uri) {
       handleLink(uri.toString());
     });
@@ -32,7 +33,7 @@ void handleLink(String? link) {
   List<Producto> productos = Conexion().getProductos() as List<Producto>;
   u = Conexion().getUsuarioByNick('admin') as Usuario;
   for(var p in productos){
-    if (link == "https://Collectify.es/${p.nombre?.replaceAll(' ', '')}") {
+    if (link == "https://Collectify.es/${p.productoID}") {
       VentanaValoracion(connected: u, producto: p,);
     }
   }
