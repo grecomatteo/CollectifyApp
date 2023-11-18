@@ -201,6 +201,56 @@ class Conexion {
     return productos;
   }
 
+  //nica
+  Future<List<Producto>> searchProductos(String query) async {
+    print('Executing searchProductos with query: $query');
+
+    if (conn == null) {
+      print('Connection is null. Connecting...');
+      await conectar();
+      print('Connection established.');
+    }
+
+    List<Producto> productos = [];
+
+    // Usare il metodo rawQuery di SQL per filtrare i prodotti in base alla query
+    await conn?.query(
+      '''
+    SELECT producto.*, IMAGEN.image
+    FROM producto
+    JOIN usuario ON producto.usuarioID = usuario.userID
+    JOIN IMAGEN ON producto.pruductoID = IMAGEN.id_producto
+    WHERE LOWER(producto.nombre) LIKE ?;
+    ''',
+      ['%${query.toLowerCase()}%'],
+    ).then((results) {
+      //print('Query executed successfully. Results: $results');
+
+      // Iterare su tutti i risultati restituiti dalla query
+      for (var row in results) {
+        print('Processing row: $row');
+        // Creare un oggetto Producto con i valori corretti
+        Producto producto = Producto(
+          usuarioID: row['usuarioID'],
+          productoID: row['pruductoID'],
+          nombre: row['nombre'],
+          descripcion: row['descripcion'],
+          precio: row['precio'],
+          image: row['image'],
+          esPremium: row['esPremium'] == 1,
+        );
+
+        productos.add(producto);
+        print('Created Producto: $producto');
+      }
+    }).catchError((error) {
+      print('Error executing query: $error');
+    });
+
+    return productos;
+  }
+  //fine nica
+
   Future<List<Usuario>> getUsuarios() async{
     if(conn==null) await conectar();
     List<Usuario> usuarios = [];
@@ -309,10 +359,6 @@ class Conexion {
     catch(e){
       debugPrint(e.toString());
     }
-
-
-
-
 
     return true;
   }

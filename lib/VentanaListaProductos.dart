@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:mysql1/mysql1.dart';
 
 import 'VentanaAnadirProducto.dart';
 import 'VentanaChat.dart';
@@ -10,62 +11,147 @@ import 'VentanaProductosSubasta.dart';
 import 'VentanaValoracion.dart';
 
 Usuario user = new Usuario();
-class ListaProductos extends StatelessWidget {
-  const ListaProductos({super.key, required this.connected});
+
+class ListaProductos extends StatefulWidget {
+  const ListaProductos({Key? key, required this.connected}) : super(key: key);
 
   final Usuario connected;
 
   @override
+  _ListaProductosState createState() => _ListaProductosState();
+}
+
+class _ListaProductosState extends State<ListaProductos> {
+  List<Producto> _searchResults = [];
+
+  @override
   Widget build(BuildContext context) {
-    user = connected;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text("Collectify"),
         actions: [
-          IconButton(onPressed: (){
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => VentanaSubasta()),
-
-            );
-          }, icon: Icon(Icons.gavel)),
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => VentanaSubasta()),
+              );
+            },
+            icon: Icon(Icons.gavel),
+          ),
         ],
-
       ),
-      body: const ProductList(),
+      body: Column(
+        children: [
+          SearchBar(onSearchResults: (results) {
+            setState(() {
+              _searchResults = results;
+            });
+          }),
+          Expanded(
+            child: ProductList(searchResults: _searchResults),
+          ),
+        ],
+      ),
       bottomNavigationBar: const NavigationBar(),
-
     );
   }
 }
 
-class ProductList extends StatefulWidget {
-  const ProductList({super.key});
+class SearchBar extends StatefulWidget {
+  final Function(List<Producto>) onSearchResults;
+
+  const SearchBar({Key? key, required this.onSearchResults}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() {
-    return ProductListState();
+  _SearchBarState createState() => _SearchBarState();
+}
+
+class _SearchBarState extends State<SearchBar> {
+  final TextEditingController _controller = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.all(Radius.circular(20)),
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black12,
+              offset: Offset(0, 2),
+              blurRadius: 4.0,
+            ),
+          ],
+        ),
+        child: TextField(
+          controller: _controller,
+          onChanged: (query) {
+            // Aggiorna la lista dei risultati di ricerca ogni volta che viene modificato il testo
+            _handleSearch(query);
+          },
+          decoration: InputDecoration(
+            hintText: 'Buscar',
+            hintStyle: const TextStyle(
+              color: Colors.grey,
+            ),
+            border: InputBorder.none,
+            prefixIcon: IconButton(
+              icon: const Icon(Icons.search),
+              color: Colors.grey.withOpacity(0.8),
+              onPressed: () {
+                // Azioni da eseguire quando viene premuto l'icona di ricerca
+                _handleSearch(_controller.text);
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _handleSearch(String query) async {
+    // Chiamare la logica di ricerca nel database usando la classe Conexion
+    List<Producto> searchResults = await Conexion().searchProductos(query);
+
+    // Passare i risultati della ricerca alla funzione onSearchResults fornita come parametro
+    widget.onSearchResults(searchResults);
   }
 }
 
+class ProductList extends StatefulWidget {
+  const ProductList({Key? key, this.searchResults = const []}) : super(key: key);
+  final List<Producto> searchResults;
+
+  @override
+  ProductListState createState() => ProductListState();
+}
+
 class ProductListState extends State<ProductList> {
+  List<Producto> _displayedProducts = [];
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: Conexion().getProductosBasadoPreferencias(user),
+      future: Conexion().getProductos(),
       builder: (BuildContext context, AsyncSnapshot<List<Producto>> snapshot) {
         if (snapshot.hasData) {
+          _displayedProducts =
+          widget.searchResults.isNotEmpty ? widget.searchResults : snapshot.data!;
           return GridView.count(
-            mainAxisSpacing: 10,
-            crossAxisSpacing: 10,
-            padding: const EdgeInsets.all(10),
-            crossAxisCount: 2,
-            children: snapshot.data!
-                .map((e) => ProductoWidget(producto: e))
-                .toList(),
-          );
-        } else {
+              mainAxisSpacing: 10,
+              crossAxisSpacing: 10,
+              padding: const EdgeInsets.all(10),
+              crossAxisCount: 2,
+              children: _displayedProducts
+                  .map((e) => ProductoWidget(producto: e))
+                  .toList(),
+            );
+          }
+        else {
           return const Center(
             child: CircularProgressIndicator(),
           );
@@ -74,7 +160,6 @@ class ProductListState extends State<ProductList> {
     );
   }
 }
-
 
 class ProductoWidget extends StatelessWidget {
   final Producto producto;
