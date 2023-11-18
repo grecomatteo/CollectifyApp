@@ -19,8 +19,8 @@ void main(){
 Future<void> runUriLinks() async {
   try{
       WidgetsFlutterBinding.ensureInitialized();
-      final initialLink = await getInitialLink();
-      handleLink(initialLink);
+      //final initialLink = await getInitialLink();
+      //handleLink(initialLink);
       uriLinkStream.listen((Uri? uri) {
       handleLink(uri.toString());
     });
