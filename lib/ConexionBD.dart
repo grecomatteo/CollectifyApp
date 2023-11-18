@@ -99,26 +99,60 @@ class Conexion {
 
 
   }
-  Future<List<Producto>> getProductosBasadoPreferencias(Usuario user) async{
-    if(conn == null) await conectar();
-    String categorias = " (";
+  Future<List<Producto>> getProductos() async {
+    if (conn==null )await conectar();
     List<Producto> productos = [];
 
-    await getCategoriasUsuario(user).then((result){
-      result.forEach((element) {
-        categorias = categorias + "producto.categoria like '%${element}%' or ";
-      });
-      categorias = categorias.substring(0, categorias.length - 3);
-      categorias = categorias + " )";
-
-    });
-
-    await conn?.query('''SELECT producto.*, IMAGEN.image
+    await conn?.query('''SELECT producto.*, IMAGEN.image, usuario.esPremium
         FROM producto
         JOIN usuario ON producto.usuarioID = usuario.userID
         JOIN IMAGEN ON producto.pruductoID = IMAGEN.id_producto
-        WHERE esSubasta = false AND ${categorias}
-        ORDER BY usuario.esPremium ASC;
+        WHERE esSubasta = false
+        ORDER BY usuario.esPremium DESC;
+      ''').then((results) {
+      for (var row in results) {
+        Producto producto = Producto(
+          usuarioID: row['usuarioID'],
+          productoID: row['pruductoID'],
+          nombre:row['nombre'],
+          descripcion: row['descripcion'],
+          precio: row['precio'],
+          //Get blob 'image'
+          image: row['image'],
+          esPremium: row['esPremium'] == 1 ? true : false,
+        );
+
+        productos.add(producto);
+      }
+    });
+
+
+    return productos;
+  }
+
+  Future<List<Producto>> getProductosBasadoPreferencias(Usuario user) async{
+    if(conn == null) await conectar();
+    String categorias = " ";
+    List<Producto> productos = [];
+    debugPrint("Obteniendo categorias");
+    await getCategoriasUsuario(user).then((result){
+      if(result.isEmpty) return;
+      result.forEach((element) {
+        categorias = categorias + "'$element', ";
+      });
+      categorias = categorias.substring(0, categorias.length - 2);
+      categorias = categorias + " ";
+
+    });
+
+    if(categorias == " ") return await getProductos();
+
+    await conn?.query('''SELECT producto.*, IMAGEN.image, usuario.esPremium
+        FROM producto
+        JOIN usuario ON producto.usuarioID = usuario.userID
+        JOIN IMAGEN ON producto.pruductoID = IMAGEN.id_producto
+        WHERE esSubasta = false
+        ORDER BY FIELD(categoria,${categorias}) DESC, usuario.esPremium ASC;
     ''').then((results){
       for (var row in results) {
         Producto producto = Producto(
@@ -130,7 +164,7 @@ class Conexion {
             //Get blob 'image'
             image: row['image'],
             //image: row['image'],
-            esPremium: false);
+            esPremium: row['esPremium'] == 1 ? true : false);
         productos.add(producto);
       }
     });
@@ -151,55 +185,6 @@ class Conexion {
 
   }
 
-  Future<List<Producto>> getProductos() async {
-    if (conn==null )await conectar();
-    List<Producto> productos = [];
-
-    await conn?.query('''SELECT producto.*, IMAGEN.image
-        FROM producto
-        JOIN usuario ON producto.usuarioID = usuario.userID
-        JOIN IMAGEN ON producto.pruductoID = IMAGEN.id_producto
-        WHERE usuario.esPremium = 1;
-      ''').then((results) {
-      for (var row in results) {
-        Producto producto = Producto(
-            usuarioID: row['usuarioID'],
-            productoID: row['pruductoID'],
-            nombre:row['nombre'],
-            descripcion: row['descripcion'],
-            precio: row['precio'],
-            //Get blob 'image'
-            image: row['image'],
-            esPremium: true
-        );
-
-        productos.add(producto);
-      }
-    });
-    await conn?.query('''SELECT producto.*, IMAGEN.image
-        FROM producto
-        JOIN usuario ON producto.usuarioID = usuario.userID
-        JOIN IMAGEN ON producto.pruductoID = IMAGEN.id_producto
-        WHERE usuario.esPremium = 0;
-    ''').then((results) {
-      for (var row in results) {
-        Producto producto = Producto(
-            usuarioID: row['usuarioID'],
-            productoID: row['pruductoID'],
-            nombre:row['nombre'],
-            descripcion: row['descripcion'],
-            precio: row['precio'],
-            //Get blob 'image'
-            image: row['image'],
-            //image: row['image'],
-            esPremium: false
-        );
-        productos.add(producto);
-      }
-    });
-
-    return productos;
-  }
 
   Future<List<Usuario>> getUsuarios() async{
     if(conn==null) await conectar();
