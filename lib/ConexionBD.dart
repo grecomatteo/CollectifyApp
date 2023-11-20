@@ -99,7 +99,7 @@ class Conexion {
 
 
   }
-  Future<List<Producto>> getProductos() async {
+  Future<List<Producto>> getProductosVenta() async {
     if (conn==null )await conectar();
     List<Producto> productos = [];
 
@@ -108,6 +108,35 @@ class Conexion {
         JOIN usuario ON producto.usuarioID = usuario.userID
         JOIN IMAGEN ON producto.pruductoID = IMAGEN.id_producto
         WHERE esSubasta = false
+        ORDER BY usuario.esPremium DESC;
+      ''').then((results) {
+      for (var row in results) {
+        Producto producto = Producto(
+          usuarioID: row['usuarioID'],
+          productoID: row['pruductoID'],
+          nombre:row['nombre'],
+          descripcion: row['descripcion'],
+          precio: row['precio'],
+          //Get blob 'image'
+          image: row['image'],
+          esPremium: row['esPremium'] == 1 ? true : false,
+        );
+
+        productos.add(producto);
+      }
+    });
+
+
+    return productos;
+  }
+  Future<List<Producto>> getAllProductos() async {
+    if (conn==null )await conectar();
+    List<Producto> productos = [];
+
+    await conn?.query('''SELECT producto.*, IMAGEN.image, usuario.esPremium
+        FROM producto
+        JOIN usuario ON producto.usuarioID = usuario.userID
+        JOIN IMAGEN ON producto.pruductoID = IMAGEN.id_producto
         ORDER BY usuario.esPremium DESC;
       ''').then((results) {
       for (var row in results) {
@@ -145,7 +174,7 @@ class Conexion {
 
     });
 
-    if(categorias == " ") return await getProductos();
+    if(categorias == " ") return await getProductosVenta();
 
     await conn?.query('''SELECT producto.*, IMAGEN.image, usuario.esPremium
         FROM producto

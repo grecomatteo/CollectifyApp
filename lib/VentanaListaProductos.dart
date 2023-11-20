@@ -141,7 +141,7 @@ class ProductListState extends State<ProductList> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: Conexion().getProductos(),
+      future: Conexion().getProductosVenta(),
       builder: (BuildContext context, AsyncSnapshot<List<Producto>> snapshot) {
         if (snapshot.hasData) {
           _displayedProducts =
