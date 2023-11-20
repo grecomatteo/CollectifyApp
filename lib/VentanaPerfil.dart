@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 
@@ -33,10 +32,10 @@ class VentanaPerfil extends StatelessWidget {
             child: Column(
           //mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Spacer(),
+            const Spacer(),
             const Text('Perfil'),
-            Icon(Icons.account_circle, size: 100),
-            Spacer(),
+            const Icon(Icons.account_circle, size: 100),
+            const Spacer(),
             ElevatedButton(
               onPressed: () async {
                 if (await Conexion()
@@ -73,11 +72,11 @@ class VentanaPerfil extends StatelessWidget {
                           ));
                 }
               },
-              child: Text("Hazte Premium"),
               style: ButtonStyle(
                 backgroundColor:
                     MaterialStateProperty.all<Color>(Colors.yellow),
               ),
+              child: const Text("Hazte Premium"),
             ),
             Visibility(
                 visible: visibility
@@ -89,14 +88,14 @@ class VentanaPerfil extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => VentanaAnadirEvento(user : mUser)),
                 );
                 },
-              child: Text("Crear nuevo evento"),
               style: ButtonStyle(
                 backgroundColor:
                 MaterialStateProperty.all<Color>(Colors.green),
                ),
+              child: const Text("Crear nuevo evento"),
               ),
             ),
-            Spacer(),
+            const Spacer(),
             const Text("Valoraciones", style: TextStyle(fontSize: 20, color: Colors.deepPurple),),
             const UserValoracion(),
           ],
@@ -115,7 +114,7 @@ class UserValoracion extends StatefulWidget {
 }
 
 class _UserValoracionState extends State<UserValoracion> {
-  static late StreamController<List<Valoracion>> _streamController = StreamController<List<Valoracion>>.broadcast();
+  static StreamController<List<Valoracion>> _streamController = StreamController<List<Valoracion>>.broadcast();
 
   @override
   void initState() {

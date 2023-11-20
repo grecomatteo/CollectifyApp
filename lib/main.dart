@@ -21,7 +21,6 @@ Future<void> initUniLinks() async {
     final initialLink = await getInitialLink();
     // Parse the link and warn the user, if it is not correct,
     // but keep in mind it could be `null`.
-    print("Link: $initialLink");
     handleLink(initialLink).then((value) => _streamController.add(value));
   } on PlatformException {
     // Handle exception by warning the user their action did not succeed
@@ -29,7 +28,6 @@ Future<void> initUniLinks() async {
   }
   linkStream.listen((String? link) {
     // Parse the link and warn the user, if it is not correct
-    print("Link: $link");
     handleLink(link).then((value) => _streamController.add(value));
   }, onError: (err) {
     // Handle exception by warning the user their action did not succeed
@@ -41,8 +39,7 @@ Future<Widget> handleLink(String? link) async {
     List<Producto> productos = await Conexion().getProductos();
     Usuario u = await Conexion().getUsuarioByNick('admin') as Usuario;
     for (var p in productos) {
-      if (link! == "https://collectify.es/${p.productoID}") {
-        print("Producto encontrado");
+      if (link == "https://collectify.es/${p.productoID}") {
         return VentanaProducto(connected: u, producto: p,);
       }
     }
