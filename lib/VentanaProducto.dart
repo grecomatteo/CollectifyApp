@@ -11,8 +11,8 @@ import 'package:share_plus/share_plus.dart';
 
 Usuario user = new Usuario();
 Producto product = new Producto();
-class VentanaValoracion extends StatelessWidget {
-  const VentanaValoracion({super.key, required this.connected, required this.producto});
+class VentanaProducto extends StatelessWidget {
+  const VentanaProducto({super.key, required this.connected, required this.producto});
 
   final Usuario connected;
   final Producto producto;
@@ -26,7 +26,7 @@ class VentanaValoracion extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(producto.nombre as String),
       ),
-      //Columna con la imagen, abajo el precio, abajo una fila con un boton para añadir a la lista de deseos y otro para comenzar chat con el vendedor, abajo la lista de valoraciones
+      //Columna con la imagen, abajo el precio, abajo una fila con un boton para añadir a la lista de deseos y otro para comenzar chat con el vendedor
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -35,7 +35,7 @@ class VentanaValoracion extends StatelessWidget {
           Text("${producto.precio} €", style: const TextStyle(fontSize: 20, color: Colors.deepPurple),),
           ElevatedButton(onPressed:
               () {
-            Conexion().getUsuarioByID(producto.usuarioID!).then((value)
+            Conexion().getUsuarioByID(producto!.usuarioID!).then((value)
             {
               Navigator.push(
                 context,
@@ -75,7 +75,6 @@ class VentanaValoracion extends StatelessWidget {
               ChatButton(producto: producto)
             ],
           ),
-          const Text("Valoraciones", style: TextStyle(fontSize: 20, color: Colors.deepPurple),),
         ],
       ),
     );

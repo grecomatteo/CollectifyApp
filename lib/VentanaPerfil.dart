@@ -10,9 +10,9 @@ Usuario? myUser;
 Usuario? reviewUser;
 
 class VentanaPerfil extends StatelessWidget {
-  VentanaPerfil({super.key, required this.mUser, this.rUser});
+  VentanaPerfil({super.key, required this.mUser, required this.rUser});
 
-  final Usuario mUser;
+  Usuario mUser;
   Usuario? rUser;
   bool visibility =  false;
 
@@ -28,6 +28,7 @@ class VentanaPerfil extends StatelessWidget {
           title: const Text('Perfil'),
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         ),
+        bottomNavigationBar: const NavigationBar(),
         body: Center(
             child: Column(
           //mainAxisAlignment: MainAxisAlignment.center,
@@ -96,23 +97,24 @@ class VentanaPerfil extends StatelessWidget {
               ),
             ),
             Spacer(),
+            const Text("Valoraciones", style: TextStyle(fontSize: 20, color: Colors.deepPurple),),
+            const UserValoracion(),
           ],
         )),
-        bottomNavigationBar: const NavigationBar(),
     );
   }
 }
 
 
 
-class ProductValoracion extends StatefulWidget {
-  const ProductValoracion({Key? key}) : super(key: key);
+class UserValoracion extends StatefulWidget {
+  const UserValoracion({Key? key}) : super(key: key);
 
   @override
-  State<ProductValoracion> createState() => _ProductValoracionState();
+  State<UserValoracion> createState() => _UserValoracionState();
 }
 
-class _ProductValoracionState extends State<ProductValoracion> {
+class _UserValoracionState extends State<UserValoracion> {
   static late StreamController<List<Valoracion>> _streamController = StreamController<List<Valoracion>>.broadcast();
 
   @override
@@ -123,7 +125,7 @@ class _ProductValoracionState extends State<ProductValoracion> {
   }
 
   static void refresh() async {
-    List<Valoracion> valoraciones = await Conexion().getValoraciones(myUser!.usuarioID!);
+    List<Valoracion> valoraciones = await Conexion().getValoraciones(reviewUser!.usuarioID!);
     _streamController.add(valoraciones);
   }
 
@@ -134,7 +136,6 @@ class _ProductValoracionState extends State<ProductValoracion> {
         stream: _streamController.stream,
         builder: (BuildContext context, AsyncSnapshot<List<Valoracion>> snapshot) {
           if (snapshot.hasData) {
-            print(snapshot.data!.length);
             if(snapshot.data!.isEmpty){
               return const Center(
                 child: Text("No hay valoraciones"),
@@ -191,7 +192,7 @@ class _NavigationBarState extends State<NavigationBar> {
     valoracion = 0;
 
     //Refresh ProductValoracion
-    _ProductValoracionState.refresh();
+    _UserValoracionState.refresh();
   }
 
   final textField = TextEditingController();
@@ -200,9 +201,9 @@ class _NavigationBarState extends State<NavigationBar> {
 
   @override
   Widget build(BuildContext context) {
-    if(reviewUser == null) return const SizedBox.shrink();
-    else {
-      print((reviewUser!.usuarioID).toString() + " ! " + (myUser!.usuarioID).toString());
+    if(reviewUser == null) {
+      return const SizedBox.shrink();
+    } else {
       if(reviewUser!.usuarioID == myUser!.usuarioID) {
         return const SizedBox.shrink();
       }

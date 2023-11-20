@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:collectify/VentanaValoracion.dart';
+import 'package:collectify/VentanaProducto.dart';
 import 'package:flutter/material.dart';
 import 'package:collectify/ConexionBD.dart';
 import 'VentanaInicio.dart';
@@ -43,7 +43,7 @@ Future<Widget> handleLink(String? link) async {
     for (var p in productos) {
       if (link! == "https://collectify.es/${p.productoID}") {
         print("Producto encontrado");
-        return VentanaValoracion(connected: u, producto: p,);
+        return VentanaProducto(connected: u, producto: p,);
       }
     }
   }

@@ -8,7 +8,7 @@ import 'package:collectify/ConexionBD.dart';
 
 import 'VentanaPerfil.dart';
 import 'VentanaProductosSubasta.dart';
-import 'VentanaValoracion.dart';
+import 'VentanaProducto.dart';
 
 Usuario user = new Usuario();
 
@@ -18,14 +18,19 @@ class ListaProductos extends StatefulWidget {
   final Usuario connected;
 
   @override
-  _ListaProductosState createState() => _ListaProductosState();
+  _ListaProductosState createState() => _ListaProductosState(connected: connected);
 }
 
 class _ListaProductosState extends State<ListaProductos> {
+  _ListaProductosState({required this.connected});
+
+  final Usuario connected;
+
   List<Producto> _searchResults = [];
 
   @override
   Widget build(BuildContext context) {
+    user = connected;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -178,7 +183,7 @@ class ProductoWidget extends StatelessWidget {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => VentanaValoracion(connected: user, producto: producto)),
+            MaterialPageRoute(builder: (context) => VentanaProducto(connected: user, producto: producto)),
           );
           //Aqui irá la descripcion detallada de producto
         },
@@ -276,7 +281,7 @@ class NavigationBar extends StatelessWidget {
             Navigator.push(
               context,
 
-              MaterialPageRoute(builder: (context) => VentanaPerfil(mUser: user)),
+              MaterialPageRoute(builder: (context) => VentanaPerfil(mUser: user, rUser: user,)),
             );
             break;
         }

@@ -518,6 +518,7 @@ class Conexion {
           comentario: row['comentario'],
           valoracion: row['valoracion'],
         ),
+        print(comentario),
         comentarios.add(comentario)
       }
     });
