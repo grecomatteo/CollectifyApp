@@ -170,7 +170,7 @@ class _UserValoracionState extends State<UserValoracion> {
                         ),
                       )
                     ],
-                  ),
+                  );
                 },
               ),
             );
