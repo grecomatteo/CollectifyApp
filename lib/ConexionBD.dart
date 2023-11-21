@@ -1,10 +1,12 @@
-import 'dart:convert';
+import'dart:convert';
 import 'dart:typed_data';
 
 import 'package:mysql1/mysql1.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+
+import 'VentanaListaProductos.dart';
 
 class Producto{
     int? usuarioID;
@@ -96,9 +98,8 @@ class Conexion {
       debugPrint(e.toString() + "Error");
     }
 
-
-
   }
+
   Future<List<Producto>> getProductos() async {
     if (conn==null )await conectar();
     List<Producto> productos = [];
@@ -185,8 +186,6 @@ class Conexion {
 
   }
 
-
-  //nica
   Future<List<Producto>> searchProductos(String query) async {
     print('Executing searchProductos with query: $query');
 
@@ -196,9 +195,16 @@ class Conexion {
       print('Connection established.');
     }
 
+    //Elimino los espacios antes y después de las letras, también para obtener ayuda para el próximo cheque
+    query=query.trim();
+
+    //Compruebo si query esta toda compuesta por espacios, si es así muestro mensaje de error
+    if(query.isEmpty){
+      isValid=false;
+    }
+
     List<Producto> productos = [];
 
-    // Usare il metodo rawQuery di SQL per filtrare i prodotti in base alla query
     await conn?.query(
       '''
     SELECT producto.*, IMAGEN.image
@@ -209,12 +215,11 @@ class Conexion {
     ''',
       ['%${query.toLowerCase()}%'],
     ).then((results) {
-      //print('Query executed successfully. Results: $results');
 
-      // Iterare su tutti i risultati restituiti dalla query
+      // Iterar sobre todos los resultados devueltos por la consulta
       for (var row in results) {
         print('Processing row: $row');
-        // Creare un oggetto Producto con i valori corretti
+        //crear nuevo objecto producton da anadir a la lista
         Producto producto = Producto(
           usuarioID: row['usuarioID'],
           productoID: row['pruductoID'],
@@ -234,7 +239,7 @@ class Conexion {
 
     return productos;
   }
-  //fine nica
+
 
   Future<List<Usuario>> getUsuarios() async{
     if(conn==null) await conectar();

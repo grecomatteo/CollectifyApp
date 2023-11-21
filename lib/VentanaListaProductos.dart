@@ -11,6 +11,7 @@ import 'VentanaProductosSubasta.dart';
 import 'VentanaProducto.dart';
 
 Usuario user = new Usuario();
+bool isValid=true;
 
 class ListaProductos extends StatefulWidget {
   const ListaProductos({Key? key, required this.connected}) : super(key: key);
@@ -27,6 +28,23 @@ class _ListaProductosState extends State<ListaProductos> {
   final Usuario connected;
 
   List<Producto> _searchResults = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Inicializa _searchResults con todos los productos al momento de la creación del estado
+    cargarProductos();
+  }
+
+  Future<void> cargarProductos() async {
+    List<Producto> allProducts = await Conexion().getProductos();
+
+    setState(() {
+      _searchResults = allProducts;
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +113,7 @@ class _SearchBarState extends State<SearchBar> {
         child: TextField(
           controller: _controller,
           onChanged: (query) {
-            // Aggiorna la lista dei risultati di ricerca ogni volta che viene modificato il testo
+            // Actualiza la lista de resultados de búsqueda cada vez que cambia el texto
             _handleSearch(query);
           },
           decoration: InputDecoration(
@@ -108,7 +126,7 @@ class _SearchBarState extends State<SearchBar> {
               icon: const Icon(Icons.search),
               color: Colors.grey.withOpacity(0.8),
               onPressed: () {
-                // Azioni da eseguire quando viene premuto l'icona di ricerca
+            // Acciones a realizar cuando se presiona el ícono de búsqueda
                 _handleSearch(_controller.text);
               },
             ),
@@ -146,7 +164,19 @@ class ProductListState extends State<ProductList> {
         if (snapshot.hasData) {
           _displayedProducts =
           widget.searchResults.isNotEmpty ? widget.searchResults : snapshot.data!;
-          return GridView.count(
+
+          if (isValid==false) {
+            isValid=true;
+            return Center(
+              child: Text('La búsqueda no es válida. Ingrese un término de búsqueda válido.'),
+            );
+
+          } else if (widget.searchResults.isEmpty) {
+            return Center(
+              child: Text('No hay ningún producto con ese nombre'),
+            );
+          } else {
+            return GridView.count(
               mainAxisSpacing: 10,
               crossAxisSpacing: 10,
               padding: const EdgeInsets.all(10),
@@ -156,7 +186,11 @@ class ProductListState extends State<ProductList> {
                   .toList(),
             );
           }
-        else {
+        } else if (snapshot.hasError) {
+          return Center(
+            child: Text(snapshot.error.toString()),
+          );
+        } else {
           return const Center(
             child: CircularProgressIndicator(),
           );
