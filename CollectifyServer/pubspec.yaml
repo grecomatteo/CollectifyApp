@@ -1,0 +1,5 @@
+name: container_server_example
+publish_to: none # not intended for publication to pub.dev
+
+environment:
+  sdk: ^3.1.2
