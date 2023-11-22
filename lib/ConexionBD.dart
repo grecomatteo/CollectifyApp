@@ -21,7 +21,7 @@ class Producto{
   DateTime? fechaFin;
   int? precioInicial;
   int? ultimaOferta;
-  Producto({this.usuarioID,this.productoID, this.nombre, this.descripcion, this.precio, this.image, this.esPremium});
+  Producto({this.usuarioID,this.productoID, this.nombre, this.descripcion, this.precio, this.image, this.esPremium, this.esSubasta});
 //Producto({this.usuarioID,this.productoID, this.nombre, this.descripcion, this.precio, this.imagePath, this.esPremium, this.fechaFin, this.precioInicial, this.ultimaOferta});
 }
 
@@ -196,7 +196,8 @@ class Conexion {
             //Get blob 'image'
             image: row['image'],
             //image: row['image'],
-            esPremium: row['esPremium'] == 1 ? true : false);
+            esPremium: row['esPremium'] == 1 ? true : false,
+            esSubasta: row['esSubasta'] == 1 ? true : false);
         productos.add(producto);
       }
     });
@@ -234,7 +235,8 @@ class Conexion {
           precio: row['precio'],
           image: row['image'],
           esPremium: row['esPremium'] == 1 ? true : false,
-        ),
+          esSubasta: row['esSubasta'] == 1 ? true : false,
+    ),
         productos.add(producto),
         producto.fechaFin = row['fechaFin'],
         producto.precioInicial = row['precioInicial'],
