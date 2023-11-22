@@ -123,6 +123,7 @@ class Conexion {
           //Get blob 'image'
           image: row['image'],
           esPremium: row['esPremium'] == 1 ? true : false,
+          esSubasta: row['esSubasta'] == 1 ? true : false,
         );
 
         productos.add(producto);
@@ -152,6 +153,7 @@ class Conexion {
           //Get blob 'image'
           image: row['image'],
           esPremium: row['esPremium'] == 1 ? true : false,
+          esSubasta: row['esSubasta'] == 1 ? true : false,
         );
 
         productos.add(producto);
@@ -569,6 +571,7 @@ class Conexion {
           precio: row['precio'],
           image: row['image'],
           esPremium: row['esPremium'] == 1 ? true : false,
+          esSubasta: row['esSubasta'] == 1 ? true : false,
         ),
         producto.fechaFin = row['fechaFin'],
         producto.precioInicial = row['precioInicial'],
