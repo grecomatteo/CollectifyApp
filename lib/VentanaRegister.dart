@@ -199,7 +199,7 @@ class _RegistroFormState extends State<RegistroForm> {
                                     style: TextStyle(color: Colors.white),
                                   ),
                                   onPressed: () {
-                                    Navigator.of(context).pop();
+                                    Navigator.of(buildcontext).pop();
                                   })
                             ],
                           );

@@ -32,7 +32,17 @@ class VentanaProducto extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Image.memory(const Base64Decoder().convert(producto!.image.toString()), fit: BoxFit.fill, width: 200, height: 200,),
-          Text("${producto.precio} €", style: const TextStyle(fontSize: 20, color: Colors.deepPurple),),
+          Text("Descripción", style: const TextStyle(fontSize: 30, color: Colors.deepPurple),),
+          Text("${producto.descripcion}.", style: const TextStyle(fontSize: 15, color: Colors.blueGrey),),
+          if(producto.esSubasta == true)
+            Column(
+              children: [
+                  Text("Precio inicial : ${producto.precioInicial} €", style: const TextStyle(fontSize: 20, color: Colors.deepPurple),),
+                  Text("Última puja : ${producto.ultimaOferta} €", style: const TextStyle(fontSize: 20, color: Colors.deepPurple),)
+              ],
+            )
+          else Text("${producto.precio} €", style: const TextStyle(fontSize: 20, color: Colors.deepPurple),),
+
           ElevatedButton(onPressed:
               () {
             Conexion().getUsuarioByID(producto!.usuarioID!).then((value)
@@ -73,6 +83,40 @@ class VentanaProducto extends StatelessWidget {
                 child: const Icon(Icons.share),
               ),
               ChatButton(producto: producto)
+            ],
+          ),
+          Row(
+            children: [
+              ElevatedButton(
+                onPressed:(){
+                  //abrir ventana de compra
+                  showDialog(
+                      context: context,
+                      builder: (buildcontext) {
+                        return AlertDialog(
+                          title: const Text("¡Error!",
+                              style: TextStyle(color: Colors.red)),
+                          content: const Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Row(children: <Widget>[
+                                SizedBox(width: 10.0),
+                                Text("tt esperate que esto aun no esta implementao"),
+                              ]),
+                            ],
+                          ),
+                          actions: <Widget>[
+                            ElevatedButton(
+                                child: const Text("volver pa tras", style: TextStyle(color: Colors.black),
+                                ),
+                                onPressed: () {Navigator.of(buildcontext).pop();
+                                })
+                          ],
+                        );
+                      });
+                },
+                child: const Text("Comprar"),
+              ),
             ],
           ),
         ],

@@ -16,6 +16,7 @@ class Producto{
   double? precio;
   Blob? image;
   bool? esPremium;
+  bool? esSubasta;
   //Cosas subasta
   DateTime? fechaFin;
   int? precioInicial;
