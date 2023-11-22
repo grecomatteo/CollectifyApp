@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:mysql1/mysql1.dart';
 
 import 'VentanaAnadirProducto.dart';
 import 'VentanaChat.dart';
@@ -38,7 +37,7 @@ class _ListaProductosState extends State<ListaProductos> {
   }
 
   Future<void> cargarProductos() async {
-    List<Producto> allProducts = await Conexion().getProductos();
+    List<Producto> allProducts = await Conexion().getProductosBasadoPreferencias(user);
 
     setState(() {
       _searchResults = allProducts;
@@ -159,7 +158,7 @@ class ProductListState extends State<ProductList> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: Conexion().getProductosVenta(),
+      future: Conexion().getProductosBasadoPreferencias(user),
       builder: (BuildContext context, AsyncSnapshot<List<Producto>> snapshot) {
         if (snapshot.hasData) {
           _displayedProducts =
@@ -231,7 +230,7 @@ class ProductoWidget extends StatelessWidget {
                     decoration: BoxDecoration(
                       shape: BoxShape.rectangle,
                       image: DecorationImage(
-                        image: Image.memory(const Base64Decoder().convert(producto!.image.toString())).image,
+                        image: Image.memory(const Base64Decoder().convert(producto.image.toString())).image,
                         fit: BoxFit.cover,
                       ),
                       borderRadius: BorderRadius.circular(10),
@@ -246,7 +245,7 @@ class ProductoWidget extends StatelessWidget {
                     Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          if(producto?.esPremium == true)
+                          if(producto.esPremium == true)
                             const Row(
                               children: [
                                 Icon(Icons.star, color: Colors.yellow,),
@@ -262,7 +261,7 @@ class ProductoWidget extends StatelessWidget {
                           ),
 
                           Text(
-                            "${producto?.precio} €",
+                            "${producto.precio} €",
                             style: const TextStyle(
                               color: Colors.blueGrey,
                               fontSize: 15,
