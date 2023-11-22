@@ -57,7 +57,7 @@ class _ListaProductosState extends State<ListaProductos> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => VentanaSubasta()),
+                MaterialPageRoute(builder: (context) => ListaProductosSubasta(connected: connected)),
               );
             },
             icon: Icon(Icons.gavel),

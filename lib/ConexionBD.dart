@@ -9,19 +9,19 @@ import 'package:flutter/material.dart';
 import 'VentanaListaProductos.dart';
 
 class Producto{
-    int? usuarioID;
-    int? productoID;
-    String? nombre;
-    String? descripcion;
-    double? precio;
-    Blob? image;
-    bool? esPremium;
-    //Cosas subasta
-    DateTime? fechaFin;
-    int? precioInicial;
-    int? ultimaOferta;
-    Producto({this.usuarioID,this.productoID, this.nombre, this.descripcion, this.precio, this.image, this.esPremium});
-    //Producto({this.usuarioID,this.productoID, this.nombre, this.descripcion, this.precio, this.imagePath, this.esPremium, this.fechaFin, this.precioInicial, this.ultimaOferta});
+  int? usuarioID;
+  int? productoID;
+  String? nombre;
+  String? descripcion;
+  double? precio;
+  Blob? image;
+  bool? esPremium;
+  //Cosas subasta
+  DateTime? fechaFin;
+  int? precioInicial;
+  int? ultimaOferta;
+  Producto({this.usuarioID,this.productoID, this.nombre, this.descripcion, this.precio, this.image, this.esPremium});
+//Producto({this.usuarioID,this.productoID, this.nombre, this.descripcion, this.precio, this.imagePath, this.esPremium, this.fechaFin, this.precioInicial, this.ultimaOferta});
 }
 
 
@@ -202,6 +202,46 @@ class Conexion {
 
     return productos;
   }
+  Future<List<Producto>> getProductosSubastaBasadoPreferencias(Usuario user) async{
+    if(conn == null) await conectar();
+    String categorias = " ";
+    List<Producto> productos = [];
+    Producto producto;
+    debugPrint("Obteniendo categorias");
+    await getCategoriasUsuario(user).then((result){
+      if(result.isEmpty) return;
+      for (var element in result) {
+        categorias = "$categorias'$element', ";
+      }
+      categorias = categorias.substring(0, categorias.length - 2);
+      categorias = "$categorias ";
+    });
+    if(categorias == " ") return await getProductosSubasta();
+    await conn?.query('''SELECT p.*, ps.*,i.image, u.esPremium 
+        FROM producto p 
+        JOIN productos_subasta ps ON ps.idProducto = p.pruductoID 
+        JOIN usuario u ON p.usuarioID = u.userID 
+        JOIN imagen i ON p.pruductoID = i.id_producto
+        ORDER BY FIELD(categoria,$categorias) DESC, u.esPremium ASC;
+    ''').then((results) => {
+      for (var row in results) {
+        producto = Producto(
+          usuarioID: row['usuarioID'],
+          productoID: row['productoID'],
+          nombre:row['nombre'],
+          descripcion: row['descripcion'],
+          precio: row['precio'],
+          image: row['image'],
+          esPremium: row['esPremium'] == 1 ? true : false,
+        ),
+        productos.add(producto),
+        producto.fechaFin = row['fechaFin'],
+        producto.precioInicial = row['precioInicial'],
+        producto.ultimaOferta = row['ultimaOferta'],
+      }
+    });
+    return productos;
+  }
 
   Future<List<String>> getCategoriasUsuario(Usuario user)  async{
 
@@ -281,13 +321,13 @@ class Conexion {
     await conn?.query('select * from usuario').then((results) {
       for (var row in results) {
         Usuario usuario = Usuario(
-        usuarioID : row[0],
-        nombre: row[1],
-        apellidos :row[2],
-        nick : row[3],
-        correo : row[4],
-        contrasena : row[5],
-        fechaNacimiento : row[6],
+          usuarioID : row[0],
+          nombre: row[1],
+          apellidos :row[2],
+          nick : row[3],
+          correo : row[4],
+          contrasena : row[5],
+          fechaNacimiento : row[6],
           esEmpresa : row[8],
 
         );
@@ -379,7 +419,7 @@ class Conexion {
     try {
       await conn?.query("insert into usuario(nombre,apellidos,nick,correo,contrasena,fechaNac) values('$nombre', '$apellido', '$nick', '$correo', '$contrasena', '$fechaNac')");
 
-  }
+    }
     catch(e){
       debugPrint(e.toString());
     }
@@ -397,7 +437,7 @@ class Conexion {
     try {
       await conn?.query("INSERT INTO producto (usuarioID, nombre, descripcion, precio) "
           "VALUES ('$userID', '$nombre', '$descripcion', '$precio'); "
-          );
+      );
 
       var id = await conn?.query("SELECT LAST_INSERT_ID() as id;");
 
@@ -519,13 +559,13 @@ class Conexion {
                          Order By u.esPremium ASC;''').then((results) => {
       for (var row in results) {
         producto = Producto(
-            usuarioID: row['usuarioID'],
-            productoID: row['productoID'],
-            nombre:row['nombre'],
-            descripcion: row['descripcion'],
-            precio: row['precio'],
-            image: row['image'],
-            esPremium: row['esPremium'] == 1 ? true : false,
+          usuarioID: row['usuarioID'],
+          productoID: row['productoID'],
+          nombre:row['nombre'],
+          descripcion: row['descripcion'],
+          precio: row['precio'],
+          image: row['image'],
+          esPremium: row['esPremium'] == 1 ? true : false,
         ),
         producto.fechaFin = row['fechaFin'],
         producto.precioInicial = row['precioInicial'],
