@@ -98,9 +98,10 @@ class Conexion {
       debugPrint(e.toString() + "Error");
     }
 
-  }
 
-  Future<List<Producto>> getProductos() async {
+
+  }
+  Future<List<Producto>> getProductosVenta() async {
     if (conn==null )await conectar();
     List<Producto> productos = [];
 
@@ -109,6 +110,35 @@ class Conexion {
         JOIN usuario ON producto.usuarioID = usuario.userID
         JOIN IMAGEN ON producto.pruductoID = IMAGEN.id_producto
         WHERE esSubasta = false
+        ORDER BY usuario.esPremium DESC;
+      ''').then((results) {
+      for (var row in results) {
+        Producto producto = Producto(
+          usuarioID: row['usuarioID'],
+          productoID: row['pruductoID'],
+          nombre:row['nombre'],
+          descripcion: row['descripcion'],
+          precio: row['precio'],
+          //Get blob 'image'
+          image: row['image'],
+          esPremium: row['esPremium'] == 1 ? true : false,
+        );
+
+        productos.add(producto);
+      }
+    });
+
+
+    return productos;
+  }
+  Future<List<Producto>> getAllProductos() async {
+    if (conn==null )await conectar();
+    List<Producto> productos = [];
+
+    await conn?.query('''SELECT producto.*, IMAGEN.image, usuario.esPremium
+        FROM producto
+        JOIN usuario ON producto.usuarioID = usuario.userID
+        JOIN IMAGEN ON producto.pruductoID = IMAGEN.id_producto
         ORDER BY usuario.esPremium DESC;
       ''').then((results) {
       for (var row in results) {
@@ -146,7 +176,7 @@ class Conexion {
 
     });
 
-    if(categorias == " ") return await getProductos();
+    if(categorias == " ") return await getProductosVenta();
 
     await conn?.query('''SELECT producto.*, IMAGEN.image, usuario.esPremium
         FROM producto
@@ -186,6 +216,8 @@ class Conexion {
 
   }
 
+
+  //nica
   Future<List<Producto>> searchProductos(String query) async {
     print('Executing searchProductos with query: $query');
 
@@ -205,6 +237,7 @@ class Conexion {
 
     List<Producto> productos = [];
 
+    // Usare il metodo rawQuery di SQL per filtrare i prodotti in base alla query
     await conn?.query(
       '''
     SELECT producto.*, IMAGEN.image
@@ -215,6 +248,7 @@ class Conexion {
     ''',
       ['%${query.toLowerCase()}%'],
     ).then((results) {
+      //print('Query executed successfully. Results: $results');
 
       // Iterar sobre todos los resultados devueltos por la consulta
       for (var row in results) {
@@ -239,7 +273,7 @@ class Conexion {
 
     return productos;
   }
-
+  //fine nica
 
   Future<List<Usuario>> getUsuarios() async{
     if(conn==null) await conectar();

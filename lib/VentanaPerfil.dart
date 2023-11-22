@@ -145,25 +145,31 @@ class _UserValoracionState extends State<UserValoracion> {
                 shrinkWrap: true,
                 itemCount: snapshot.data?.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return Card(
-                    child: ListTile(
-                      title: Text(snapshot.data![index].nickUsuarioReviewer as String),
-                      subtitle: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(snapshot.data![index].comentario as String),
-                          Row(
+                  return Column(
+                    children: [
+                      //Calcular media de valoraciones de cada usuario
+                      Text("Media de valoraciones: ${snapshot.data!.map((e) => e.valoracion!).reduce((a, b) => a + b) / snapshot.data!.length}"),
+                      Card(
+                        child: ListTile(
+                          title: Text(snapshot.data![index].nickUsuarioReviewer as String),
+                          subtitle: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              for(int i = 0; i < snapshot.data![index].valoracion!; i++)
-                                const Icon(Icons.star, color: Colors.orangeAccent,),
-                              for(int i = 0; i < 5 - snapshot.data![index].valoracion!; i++)
-                                const Icon(Icons.star_border, color: Colors.orangeAccent,),
+                              Text(snapshot.data![index].comentario as String),
+                              Row(
+                                children: [
+                                  for(int i = 0; i < snapshot.data![index].valoracion!; i++)
+                                    const Icon(Icons.star, color: Colors.orangeAccent,),
+                                  for(int i = 0; i < 5 - snapshot.data![index].valoracion!; i++)
+                                    const Icon(Icons.star_border, color: Colors.orangeAccent,),
+                                ],
+                              ),
                             ],
                           ),
-                        ],
-                      ),
-                    ),
+                        ),
+                      )
+                    ],
                   );
                 },
               ),

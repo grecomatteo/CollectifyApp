@@ -36,7 +36,7 @@ Future<void> initUniLinks() async {
 
 Future<Widget> handleLink(String? link) async {
   if(link != null) {
-    List<Producto> productos = await Conexion().getProductos();
+    List<Producto> productos = await Conexion().getAllProductos();
     Usuario u = await Conexion().getUsuarioByNick('admin') as Usuario;
     for (var p in productos) {
       if (link == "https://collectify.es/${p.productoID}") {
