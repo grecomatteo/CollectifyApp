@@ -73,12 +73,14 @@ class Conexion {
 
   static MySqlConnection? conn;
 
+  List<Producto> productosVentaBasadoPreferencias = [];
+  List<Producto> productosSubastaBasadoPreferencias = [];
+
   Future<void> conectar() async {
     debugPrint("Conectando");
     if(conn != null){
       return;
     }
-
 
     try {
       conn = await MySqlConnection.connect(ConnectionSettings(
@@ -88,12 +90,7 @@ class Conexion {
         password: "AsLpqR_23",
         db: "collectifyDB",
       ));
-      await conn?.query('select * from usuario').then((results) {
-        for (var row in results) {
-          debugPrint(row.runtimeType.toString());
-          debugPrint(row.toString());
-        }
-      });
+
       debugPrint("Conectado");
     } catch (e) {
       debugPrint(e.toString() + "Error");
@@ -165,6 +162,7 @@ class Conexion {
   }
 
   Future<List<Producto>> getProductosBasadoPreferencias(Usuario user) async{
+    if(productosVentaBasadoPreferencias.isNotEmpty) return productosVentaBasadoPreferencias;
     if(conn == null) await conectar();
     String categorias = " ";
     List<Producto> productos = [];
@@ -203,10 +201,12 @@ class Conexion {
         productos.add(producto);
       }
     });
-
+    productosVentaBasadoPreferencias = productos;
     return productos;
   }
+
   Future<List<Producto>> getProductosSubastaBasadoPreferencias(Usuario user) async{
+    if(productosSubastaBasadoPreferencias.isNotEmpty) return productosSubastaBasadoPreferencias;
     if(conn == null) await conectar();
     String categorias = " ";
     List<Producto> productos = [];
@@ -245,6 +245,7 @@ class Conexion {
         producto.ultimaOferta = row['ultimaOferta'],
       }
     });
+    productosSubastaBasadoPreferencias = productos;
     return productos;
   }
 
@@ -395,10 +396,14 @@ class Conexion {
 
     if(usuario == null) throw Exception("Usuario no encontrado");
 
-    if(usuario.contrasena == contrasena) return usuario;
-    else throw Exception("Contraseña incorrecta");
+    if(usuario.contrasena == contrasena) {
+      return usuario;
+    } else {
+      throw Exception("Contraseña incorrecta");
+    }
 
   }
+
   Future<int> getNumeroUsuarios() async{
     if (conn==null )await conectar();
     int numeroUsuarios = 0;

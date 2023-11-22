@@ -2,7 +2,8 @@ import 'package:collectify/ConexionBD.dart';
 import 'package:collectify/VentanaListaProductos.dart';
 import 'package:flutter/material.dart';
 import 'package:collectify/VentanaRegister.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart' as noti;
+import 'package:flutter_local_notifications/flutter_local_notifications.dart'
+    as noti;
 import 'package:collectify/notification.dart' as notif;
 import 'package:mysql1/mysql1.dart';
 
@@ -11,28 +12,15 @@ String nick = "";
 String pswrd = "";
 Usuario logged = new Usuario();
 
-noti.FlutterLocalNotificationsPlugin notPlugin = noti.FlutterLocalNotificationsPlugin();
+noti.FlutterLocalNotificationsPlugin notPlugin =
+    noti.FlutterLocalNotificationsPlugin();
 
 void main() {
   runApp(VentanaLogin());
 }
 
-
-Future<bool> validateFields() async{
-
-  await conn?.query('select TOP 1 * from users where (nick = $nick AND contrasena = $pswrd)').then((result) {
-    if (result.isNotEmpty){
-      logged = result.single.firstOrNull;
-      return true;
-    }
-    else throw Exception("Usuario o contraseña incorrectos");
-  }
-  );
-  return false;
-  //return true;
-}
-
-class VentanaLogin extends StatelessWidget { //Punto inicial, no tocar
+class VentanaLogin extends StatelessWidget {
+  //Punto inicial, no tocar
   const VentanaLogin({super.key});
 
   @override
@@ -44,7 +32,6 @@ class VentanaLogin extends StatelessWidget { //Punto inicial, no tocar
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-
       home: const LoginPage(),
     );
   }
@@ -60,85 +47,109 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-
   @override
-  void initState(){
+  void initState() {
     super.initState();
     notif.Notification.initialize(notPlugin);
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text("¡Bienvenido a Collectify!"),
-      ),
-      body: Login()
-    );
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          title: const Text("¡Bienvenido a Collectify!"),
+        ),
+        body: Login());
   }
 }
 
 class Login extends StatelessWidget {
-   Login({super.key});
+  Login({super.key});
 
   final TextEditingController usernameText = TextEditingController();
   final TextEditingController passwordText = TextEditingController();
-  String errorText = "";
+
 
   @override
   Widget build(BuildContext context) {
-              return Column(
-                children: [
-                  Text("Nombre de usuario"),
-                  TextField(
-                    controller: usernameText,
-                      textAlign: TextAlign.center
-                  ),
-                  Text("Contraseña"),
-                  TextField(
-                    controller: passwordText,
-                      textAlign: TextAlign.center,
-                      obscureText: true
-                  ),
-                  TextButton(
-                    child: Text("Iniciar sesión"),
-                    onPressed: () {
-                      nick = usernameText.text;
-                      pswrd = passwordText.text;
-                      Conexion().login(nick, pswrd).then((value) =>
-                      {
-                        if(value != null){
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) =>
-                                  ListaProductos(connected: value))),
-                        }
-                        else
-                          {
-                            errorText = "Usuario o contraseña incorrectos"
-                          }
-                      });
-                    }
-                  ),
-                  TextButton(
-                      child: Text("Registrarse"),
-                      onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => VentanaRegister()));
-                      }
-                  ),
-                  TextButton(
-                    child: Text("Funny button"),
-                    onPressed: (){
-                      notif.Notification.showBigTextNotification(title: "Nuevo mensaje", body: "Baki como se instala el wasa", fln: notPlugin);
-                    }
-                  )
+    return Column(
+      children: [
+        const Text("Nombre de usuario"),
+        TextField(controller: usernameText, textAlign: TextAlign.center),
+        const Text("Contraseña"),
+        TextField(
+            controller: passwordText,
+            textAlign: TextAlign.center,
+            obscureText: true),
+        TextButton(
+            child: const Text("Iniciar sesión"),
+            onPressed: () async {
+              nick = usernameText.text;
+              pswrd = passwordText.text;
+              if (nick == "" || pswrd == "") {
 
-                ],
-              );
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text("Error"),
+                        content: Text("Por favor, rellene todos los campos"),
+                        actions: [
+                          TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text("OK"))
+                        ],
+                      );
+                    });
+                return;
+              }
 
+              try {
+                await Conexion().login(nick, pswrd).then((value) => {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  ListaProductos(connected: value!))),
+                    });
+              } catch (e) {
+                debugPrint("Error");
+
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text("Error"),
+                        content: Text(e.toString()),
+                        actions: [
+                          TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text("OK"))
+                        ],
+                      );
+                    });
+              }
+            }),
+        TextButton(
+            child: const Text("Registrarse"),
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => VentanaRegister()));
+            }),
+        TextButton(
+            child: const Text("Funny button"),
+            onPressed: () {
+              notif.Notification.showBigTextNotification(
+                  title: "Nuevo mensaje",
+                  body: "Baki como se instala el wasa",
+                  fln: notPlugin);
+            })
+      ],
+    );
   }
-
-
 }
