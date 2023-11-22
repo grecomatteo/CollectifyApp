@@ -1,4 +1,7 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:core';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
@@ -7,66 +10,7 @@ import 'package:collectify/Message.dart';
 
 int myID = 0;
 MySqlConnection? conn;
-
-bool lookingForChats = true;
-
-Future<List<Message>> connectToDatabase() async {
-  try {
-    conn = await MySqlConnection.connect(ConnectionSettings(
-      host: "collectify-server-mysql.mysql.database.azure.com",
-      port: 3306,
-      user: "pin2023",
-      password: "AsLpqR_23",
-      db: "collectifyDB",
-    ));
-
-    List<ResultRow> maps = [];
-    await conn
-        ?.query(
-            '''
-            SELECT
-                cm.id AS message_id,
-                cm.senderID,
-                sender.nick AS senderName,
-                cm.receiverID,
-                receiver.nick AS receiverName,
-                cm.message,
-                cm.sendDate
-            FROM
-                chat_messages AS cm
-            INNER JOIN usuario AS sender ON cm.senderID = sender.userID
-            INNER JOIN usuario AS receiver ON cm.receiverID = receiver.userID
-            WHERE
-                cm.senderID = $myID OR cm.receiverID = $myID
-            ORDER BY
-                cm.sendDate DESC
-            LIMIT 1;
-            ''')
-        .then((results) {
-      for (var row in results) {
-        maps.add(row);
-      }
-    });
-
-    List<Message> messages = List.generate(maps.length, (i) {
-      Message m = Message(
-        maps[i]['senderID'],
-        maps[i]['senderName'],
-        maps[i]['receiverID'],
-        maps[i]['receiverName'],
-        maps[i]['message'].toString(),
-        maps[i]['sendDate'],
-      );
-      debugPrint(m.toString());
-      return m;
-    });
-
-    return messages;
-  } catch (e) {
-    debugPrint("${e} Error");
-  }
-  return [];
-}
+Socket? chatSocket;
 
 class VentanaChat extends StatelessWidget {
   const VentanaChat({required this.id, Key? key}) : super(key: key);
@@ -78,7 +22,10 @@ class VentanaChat extends StatelessWidget {
     myID = id;
     return WillPopScope(
         onWillPop: () async {
-          lookingForChats = false;
+          chatSocket?.write("DisconnectedUser:$myID");
+          //Check if the message is sent
+          await Future.delayed(const Duration(milliseconds: 100));
+          chatSocket?.close();
           return true;
         },
         child: Scaffold(
@@ -99,26 +46,149 @@ class TextAndChat extends StatefulWidget {
 }
 
 class TextAndChatState extends State<TextAndChat> {
-  final Stream<List<Message>> _messages = (() {
-    late final StreamController<List<Message>> controller;
-    controller = StreamController<List<Message>>(
-      onListen: () async {
-        while (true) {
-          if (!lookingForChats) return;
-          List<Message> messages = await connectToDatabase();
-          controller.add(messages);
-          await Future.delayed(const Duration(seconds: 1));
+
+  List<Message> messages = [];
+  StreamController<List<Message>> _messages = StreamController<List<Message>>.broadcast();
+
+  /*List<int> getUsersWithCommunication(Socket socket) {
+    List<int> users = [];
+    socket.write("GetUsersWithCommunication:$myID");
+    socket.listen((List<int> event) {
+      String message = utf8.decode(event);
+      if(message.startsWith("UsersWithCommunication:")){
+        var split = message.split(":");
+        for(int i = 1; i < split.length; i++){
+          users.add(int.parse(split[i]));
         }
-      },
-    );
-    return controller.stream;
-  })();
+      }
+    });
+    return users;
+  }
+
+  void requestAllMessages(Socket socket) {
+    var users = getUsersWithCommunication(socket);
+
+    List<Message> gottenMessages = [];
+    socket.write("GetMessages:$myID:${users[i]}");
+    for(int i = 0; i < users.length; i++){
+      socket.listen((List<int> event) {
+        String message = utf8.decode(event);
+        if(message.startsWith("Messages:")){
+          var split = message.split(":");
+          for(int i = 1; i < split.length; i++){
+            var json = jsonDecode(split[i]);
+            Message m = Message.fromJson(json);
+            gottenMessages.add(m);
+          }
+        }
+      });
+    }
+
+    messages = gottenMessages;
+    _messages.add(messages);
+  }*/
+
+  void handleNewMessages(Socket socket) {
+    socket.listen((List<int> event) {
+      String message = utf8.decode(event);
+      if(message.startsWith("ConnectedUser:")){
+        socket.write("GetUsersWithCommunication:$myID");
+      } else if(message.startsWith("UsersWithCommunication:")){
+        var split = message.split(":");
+        split.removeAt(0);
+        //Remove empty strings
+        split.removeWhere((element) => element == "");
+        //Remove duplicates
+        split = split.toSet().toList();
+        //Get all messages between the main user and the other users, all the users are passed in the message
+        socket.write("GetLastMessage:$myID:${split.join(":")}");
+      }  else if(message.startsWith("DisconnectedUser:")){
+        var split = message.split(":");
+        int userID = int.parse(split[1]);
+        print("User disconnected: $userID");
+        messages.removeWhere((element) => element.senderID == userID || element.receiverID == userID);
+        _messages.add(messages);
+      } else if (message.startsWith("LastMessage:")) {
+        var split = message.split(":");
+
+        var messageListStr = split[1].split(";");
+        //What we get is a list of strings, each string is a list of integers
+        //We need to convert each string to a list of integers
+        List<List<int>> messageList = [];
+        for(int i = 0; i < messageListStr.length; i++){
+          //Remove the first and last character, which are "[" and "]"
+          messageListStr[i] = messageListStr[i].substring(1, messageListStr[i].length - 1);
+
+          var split2 = messageListStr[i].split(",");
+          List<int> varList = [];
+          for(int j = 0; j < split2.length; j++){
+            varList.add(int.parse(split2[j]));
+          }
+          messageList.add(varList);
+        }
+
+        List<Message> gottenMessages = [];
+        Message m = Message.decompressObject(messageList);
+        gottenMessages.add(m);
+        messages = gottenMessages;
+
+        _messages.add(messages);
+      } else if(message.startsWith("Messages:")) {
+        var split = message.split(":");
+
+        var messageListStr = split[1].split(";");
+        //What we get is a list of strings, each string is a list of integers
+        //We need to convert each string to a list of integers
+        List<List<List<int>>> messageList = [];
+        for(int i = 0; i < messageListStr.length; i++){
+          //Remove the first and last character, which are "[" and "]"
+          messageListStr[i] = messageListStr[i].substring(1, messageListStr[i].length - 1);
+          //Get the array of strings, they are in this format: [values], [values], [values]
+          var split2 = messageListStr[i].split("], [");
+          //Remove the "[" from the first string and the "]" from the last string
+          split2[0] = split2[0].substring(1);
+          split2[split2.length - 1] = split2[split2.length - 1].substring(0, split2[split2.length - 1].length - 1);
+
+          List<List<int>> messageVarList = [];
+          for(int j = 0; j < split2.length; j++){
+            //Split the string by ","
+            var split3 = split2[j].split(",");
+            List<int> varList = [];
+            for(int k = 0; k < split3.length; k++){
+              varList.add(int.parse(split3[k]));
+            }
+            messageVarList.add(varList);
+          }
+          messageList.add(messageVarList);
+        }
+
+        List<Message> gottenMessages = [];
+        for(int i = 0; i < messageList.length; i++){
+          Message m = Message.decompressObject(messageList[i]);
+          gottenMessages.add(m);
+        }
+        messages = gottenMessages;
+
+        _messages.add(messages);
+      }
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
-    lookingForChats = true;
+    Socket.connect('10.0.2.2', 55555).then((socket) {
+      print('Connected to: '
+          '${socket.remoteAddress.address}:${socket.remotePort}');
+      chatSocket = socket;
+      socket.write("ConnectedUser:$myID");
+      handleNewMessages(socket);
+
+    });
+
+
     return StreamBuilder<List<Message>>(
-      stream: _messages,
+      stream: _messages.stream,
       builder: (context, snapshot) {
         List<Widget> children = [];
         if (snapshot.hasError) {
@@ -226,83 +296,3 @@ class TextAndChatState extends State<TextAndChat> {
     );
   }
 }
-
-/*
-class Chat extends StatefulWidget {
-  final Message message;
-
-  const Chat(this.message, {Key? key}) : super(key: key);
-
-  @override
-  State<Chat> createState() => ChatState(message);
-}
-
-class ChatState extends State<Chat> {
-  final Message message;
-
-  ChatState(this.message);
-
-  String? name;
-  String? lastMessage;
-
-  @override
-  Widget build(BuildContext context) {
-
-    int otherID = message.senderID == myID ? message.receiverID : message.senderID;
-    Conexion().getUsuarioByID(otherID).then((value) =>
-      Conexion().getUsuarioByID(message.senderID).then((value1) => {
-        name = value?.nick,
-        lastMessage = "${value1?.nick}: ${message.message}"
-      })
-    );
-    return Column(
-      children: [
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            alignment: Alignment.centerLeft,
-            backgroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => VentanaMensajesChat(message.senderID == myID ? message.receiverID : message.senderID, myID)),
-            );
-          },
-          //Horizontal list
-          child: Column(
-              children: [
-                const SizedBox(height: 2,),
-                Row(
-                  //Align the children to the left
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    //Small image resize to fit the button, add margin and make it circular
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(50),
-                      child: Image.network("https://picsum.photos/250?image=9", width: 50, height: 50,),
-                    ),
-                    //Separate the image from the text
-                    const SizedBox(width: 10,),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(name!, style: const TextStyle(fontWeight: FontWeight.bold), textAlign: TextAlign.left, softWrap: false, overflow: TextOverflow.fade,),
-                          Text(lastMessage!, textAlign: TextAlign.left, softWrap: false, overflow: TextOverflow.fade,),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 2,),
-              ]
-          ),
-        ),
-        const SizedBox(height: 10,),
-      ],
-    );
-  }
-}*/
