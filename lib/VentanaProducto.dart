@@ -9,8 +9,8 @@ import 'VentanaMensajesChat.dart';
 import 'package:share_plus/share_plus.dart';
 
 
-Usuario user = new Usuario();
-Producto product = new Producto();
+Usuario user = Usuario();
+Producto product = Producto();
 class VentanaProducto extends StatelessWidget {
   const VentanaProducto({super.key, required this.connected, required this.producto});
 
@@ -32,7 +32,7 @@ class VentanaProducto extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Image.memory(const Base64Decoder().convert(producto!.image.toString()), fit: BoxFit.fill, width: 200, height: 200,),
-          Text("Descripción", style: const TextStyle(fontSize: 30, color: Colors.deepPurple),),
+          const Text("Descripción", style: TextStyle(fontSize: 30, color: Colors.deepPurple),),
           Text("${producto.descripcion}.", style: const TextStyle(fontSize: 15, color: Colors.blueGrey),),
           if(producto.esSubasta == true)
             Column(
@@ -108,7 +108,7 @@ class VentanaProducto extends StatelessWidget {
                         );
                       });
                 },
-                child: const Text("Comprar"),
+                child: Row(children: [if(producto.esSubasta == true )const Text("Pujar") else const Text("Comprar"),],)
               ),
             ],
           ),
