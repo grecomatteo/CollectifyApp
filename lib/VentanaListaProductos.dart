@@ -136,10 +136,19 @@ class _SearchBarState extends State<SearchBar> {
   }
 
   void _handleSearch(String query) async {
-    // Chiamare la logica di ricerca nel database usando la classe Conexion
-    List<Producto> searchResults = await Conexion().searchProductos(query);
 
-    // Passare i risultati della ricerca alla funzione onSearchResults fornita come parametro
+    List<Producto> searchResults;
+
+    //Antes de consultar la base de datos, verifique si no se ha ingresado nada en el campo de búsqueda
+    if(query.isEmpty){
+      searchResults = await Conexion().getProductosBasadoPreferencias(user);
+    }
+    else {
+      // Llama a la lógica de búsqueda de la base de datos usando la clase Conexion
+      searchResults = await Conexion().searchProductos(query);
+    }
+
+    // Pasa los resultados de la búsqueda a la función onSearchResults proporcionada como parámetro
     widget.onSearchResults(searchResults);
   }
 }
