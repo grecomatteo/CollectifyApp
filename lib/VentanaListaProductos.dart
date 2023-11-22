@@ -132,6 +132,9 @@ class _SearchBarState extends State<SearchBar> {
             suffixIcon: IconButton(
               icon: const Icon(Icons.send),
               onPressed: () {
+                setState(() {
+                  loading = true;
+                });
                 _handleSearch(_controller.text);
               },
             ),
@@ -157,6 +160,9 @@ class _SearchBarState extends State<SearchBar> {
 
       // Llama a la lógica de búsqueda de la base de datos usando la clase Conexion
       searchResults = await Conexion().searchProductos(query);
+      setState(() {
+        loading = false;
+      });
     }
 
     // Pasa los resultados de la búsqueda a la función onSearchResults proporcionada como parámetro
