@@ -94,17 +94,10 @@ class VentanaProducto extends StatelessWidget {
                       context: context,
                       builder: (buildcontext) {
                         return AlertDialog(
+                          contentPadding: const EdgeInsets.all(8.0),
                           title: const Text("¡Error!",
                               style: TextStyle(color: Colors.red)),
-                          content: const Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Row(children: <Widget>[
-                                SizedBox(width: 10.0),
-                                Text("tt esperate que esto aun no esta implementao"),
-                              ]),
-                            ],
-                          ),
+                          content: const Text("tt esperate que esto aun no esta implementao"),
                           actions: <Widget>[
                             ElevatedButton(
                                 child: const Text("volver pa tras", style: TextStyle(color: Colors.black),
