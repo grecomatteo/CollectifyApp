@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:collectify/ConexionBD.dart';
 import 'VentanaInicio.dart';
 import 'package:uni_links3/uni_links.dart';
-import 'package:flutter/services.dart' show PlatformException;
+import 'package:flutter/services.dart' show DeviceOrientation, PlatformException, SystemChrome;
 
 final StreamController<Widget> _streamController = StreamController<Widget>.broadcast();
 
@@ -52,8 +52,11 @@ class MyApp extends StatelessWidget { //Punto inicial, no tocar
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp]
+    );
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Collectify',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
