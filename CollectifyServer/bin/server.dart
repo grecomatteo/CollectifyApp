@@ -8,7 +8,7 @@ import 'dart:io';
 
 import 'Message.dart';
 
-Map<Socket, int> sockets = {};
+Map<int, Socket> sockets = {};
 List<Message> messages = [];
 
 void startServer() {
@@ -43,7 +43,7 @@ void handleData(List<int> data, Socket socket) {
     var split = message.split(":");
     int userID = int.parse(split[1]);
     print("New user connected: $userID");
-    sockets[socket] = userID;
+    sockets[userID] = socket;
     socket.write("ConnectedUser:$userID");
   } else if (message.startsWith("GetUsersWithCommunication:")) {
     //Get all users with communication with the user with the given ID
@@ -53,21 +53,6 @@ void handleData(List<int> data, Socket socket) {
     List<int> users = getUsersWithCommunication(userID);
     socket.write("UsersWithCommunication:${users.join(":")}");
   } else if (message.startsWith("GetLastMessage:")) {
-    print(message + "\n");
-    //Get all messages between the two users with the given IDs
-    var split = message.split(":");
-    int userID1 = int.parse(split[1]);
-    List<int> userIDs = [];
-    for (int i = 2; i < split.length; i++) {
-      userIDs.add(int.parse(split[i]));
-    }
-    List<List<int>> messageList = [];
-    for (int i = 0; i < userIDs.length; i++) {
-      messageList.addAll(getLastMessage(userID1, userIDs[i]));
-    }
-    socket.write("LastMessage:${messageList.join(";")}");
-  } else if (message.startsWith("GetMessages:")) {
-    //Get all messages between the two users with the given IDs
     var split = message.split(":");
     int userID1 = int.parse(split[1]);
     List<int> userIDs = [];
@@ -76,15 +61,24 @@ void handleData(List<int> data, Socket socket) {
     }
     List<List<List<int>>> messageList = [];
     for (int i = 0; i < userIDs.length; i++) {
-      messageList.addAll(getMessages(userID1, userIDs[i]));
+      messageList.addAll(getLastMessage(userID1, userIDs[i]));
     }
+    socket.write("LastMessage:${messageList.join(";")}");
+  } else if (message.startsWith("GetMessages:")) {
+    //Get all messages between the two users with the given IDs
+    var split = message.split(":");
+    int userID1 = int.parse(split[1]);
+    int userID2 = int.parse(split[2]);
+    List<List<List<int>>> messageList = getMessages(userID1, userID2);
+
     socket.write("Messages:${messageList.join(";")}");
   } else if (message.startsWith("DisconnectedUser:")) {
     //Remove the user with the given ID from the list of connected users
     var split = message.split(":");
     int userID = int.parse(split[1]);
+    sockets.removeWhere((key, value) => value == socket);
     print("User disconnected: " + sockets.length.toString());
-    sockets.removeWhere((key, value) => value == userID);
+    socket.write("DisconnectedUser:$userID");
   }
 }
 
@@ -112,7 +106,7 @@ List<List<List<int>>> getMessages(int userID1, int userID2) {
   return compressedMessages;
 }
 
-List<List<int>> getLastMessage(int userID1, int userID2) {
+List<List<List<int>>> getLastMessage(int userID1, int userID2) {
   List<List<List<int>>> compressedMessages = [];
   //Get the last messages between the two users
   for (int i = 0; i < messages.length; i++) {
@@ -130,7 +124,7 @@ List<List<int>> getLastMessage(int userID1, int userID2) {
   });
 
   //Get the last message
-  List<List<int>> lastMessage = compressedMessages[compressedMessages.length - 1];
+  List<List<List<int>>> lastMessage = [compressedMessages[compressedMessages.length - 1]];
 
 
 

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:collectify/ConexionBD.dart';
 import 'package:collectify/VentanaChat.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +15,7 @@ int otherID = 0;
 int msgNum = 0;
 String? otherName = "";
 
-bool lookingForMessages = true;
+Socket? chatSocket;
 
 noti.FlutterLocalNotificationsPlugin notPlugin = noti.FlutterLocalNotificationsPlugin();
 
@@ -78,24 +79,99 @@ class _VentanaMensajesChatState extends State<VentanaMensajesChat> {
   final int iD;
   final int oID;
 
-  final Stream<List<Message>> _messages = (() {
-    late final StreamController<List<Message>> controller;
-    controller = StreamController<List<Message>>(
-      onListen: () async {
-        while (true) {
-          if(!lookingForMessages) return;
-          List<Message> messages =  await getMessages();
-          controller.add(messages);
-          await Future.delayed(const Duration(seconds: 1));
+  List<Message> messages = [];
+  StreamController<List<Message>> _messages = StreamController<List<Message>>.broadcast();
+
+  void handleGetAllMessages(String message){
+
+    var split = message.split(":");
+
+    var messageListStr = split[1].split(";");
+    //What we get is a list of strings, each string is a list of integers
+    //We need to convert each string to a list of integers
+    List<List<List<int>>> messageList = [];
+    for(int i = 0; i < messageListStr.length; i++){
+      //Remove the first and last character, which are "[" and "]"
+      messageListStr[i] = messageListStr[i].substring(1, messageListStr[i].length - 1);
+      //Get the array of strings, they are in this format: [values], [values], [values]
+      var split2 = messageListStr[i].split("], [");
+      //Remove the "[" from the first string and the "]" from the last string
+      split2[0] = split2[0].substring(1);
+      split2[split2.length - 1] = split2[split2.length - 1].substring(0, split2[split2.length - 1].length - 1);
+
+      List<List<int>> messageVarList = [];
+      for(int j = 0; j < split2.length; j++){
+        //Split the string by ","
+        var split3 = split2[j].split(",");
+        List<int> varList = [];
+        for(int k = 0; k < split3.length; k++){
+          varList.add(int.parse(split3[k]));
         }
-      },
-    );
-    return controller.stream;
-  })();
+        messageVarList.add(varList);
+      }
+      messageList.add(messageVarList);
+    }
+
+    List<Message> gottenMessages = [];
+    for(int i = 0; i < messageList.length; i++){
+      Message m = Message.decompressObject(messageList[i]);
+      gottenMessages.add(m);
+    }
+    messages = gottenMessages;
+
+    _messages.add(messages);
+  }
+
+  void handleGetNewMessage(String message){
+    //message format: "NewMessage:[senderID, senderName, receiverID, receiverName, message, sendDate]"
+    var split = message.split(":");
+    //What we get is a list of strings, each string is a list of integers
+    //We need to convert each string to a list of integers
+    List<List<int>> msg = [];
+    //Remove the first and last character, which are "[" and "]"
+    split[1] = split[1].substring(1, split[1].length - 1);
+    //Get the array of strings, they are in this format: [values], [values], [values]
+    var split2 = split[1].split("], [");
+    //Remove the "[" from the first string and the "]" from the last string
+    split2[0] = split2[0].substring(1);
+    split2[split2.length - 1] = split2[split2.length - 1].substring(0, split2[split2.length - 1].length - 1);
+
+    List<List<int>> messageVarList = [];
+    for(int j = 0; j < split2.length; j++){
+      //Split the string by ","
+      var split3 = split2[j].split(",");
+      List<int> varList = [];
+      for(int k = 0; k < split3.length; k++){
+        varList.add(int.parse(split3[k]));
+      }
+      messageVarList.add(varList);
+    }
+
+    Message m = Message.decompressObject(messageVarList);
+    messages.add(m);
+    _messages.add(messages);
+  }
+
+  void handleMessages(String message) {
+    if (message.startsWith("Messages:")) {
+      handleGetAllMessages(message);
+    } else if (message.startsWith("NewMessage:")) {
+      handleGetNewMessage(message);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    lookingForMessages = true;
+
+    Socket.connect('10.0.2.2', 55555).then((value) {
+      value.write("GetMessages:$myID:$otherID");
+      chatSocket = value;
+      value.listen((event) {
+        String message = String.fromCharCodes(event);
+        handleMessages(message);
+      });
+    });
+
     myID = iD;
     otherID = oID;
 
@@ -104,7 +180,6 @@ class _VentanaMensajesChatState extends State<VentanaMensajesChat> {
     );
     return WillPopScope(
       onWillPop: () async {
-        lookingForMessages = false;
         return true;
       },
       child: Scaffold(
@@ -113,7 +188,7 @@ class _VentanaMensajesChatState extends State<VentanaMensajesChat> {
           title: Text("$otherName's Chat"),
         ),
         body: StreamBuilder<List<Message>>(
-          stream: _messages,
+          stream: _messages.stream,
           builder: (BuildContext context, AsyncSnapshot<List<Message>> snapshot) {
             List<Widget> children;
             if (snapshot.hasError) {
