@@ -103,7 +103,7 @@ void handleData(List<int> data, Socket socket) {
     Message m = Message.decompressObject(messageVarList);
     messages.add(m);
     socket.write("NewMessage:${m.compressObject()}");
-    if (sockets[m.receiverID] != null)
+    if (sockets.containsKey(m.receiverID))
       sockets[m.receiverID]?.write("NewMessage:${m.compressObject()}");
     print("New message from ${m.senderID} to ${m.receiverID}: ${m.message}");
   }

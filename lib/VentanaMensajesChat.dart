@@ -117,6 +117,13 @@ class _VentanaMensajesChatState extends State<VentanaMensajesChat> {
       handleGetNewMessage(message);
     } else if (message.startsWith("ConnectedUser:")) {
       chatSocket?.write("GetMessages:$myID:$otherID");
+    } else if(message.startsWith("DisconnectedUser:"))
+    {
+      var split = message.split(":");
+      int userID = int.parse(split[1]);
+      messages = [];
+      _messages.add(messages);
+      chatSocket?.close();
     }
   }
 
@@ -145,7 +152,7 @@ class _VentanaMensajesChatState extends State<VentanaMensajesChat> {
 
     return WillPopScope(
       onWillPop: () async {
-        chatSocket?.close();
+        chatSocket?.write("DisconnectedUser:$myID");
         return true;
       },
       child: StreamBuilder<List<Message>>(
