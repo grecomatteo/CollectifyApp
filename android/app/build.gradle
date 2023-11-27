@@ -27,7 +27,7 @@ if (flutterVersionName == null) {
 
 android {
     namespace "com.collectify.collectify"
-    compileSdk 33
+    compileSdk 34
     ndkVersion flutter.ndkVersion
 
     compileOptions {
@@ -52,6 +52,7 @@ android {
         targetSdk 33
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        manifestPlaceholders+=[foregroundServiceType: 'remoteMessaging']
     }
 
     signingConfigs{

@@ -1,18 +1,41 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:collectify/VentanaProducto.dart';
 import 'package:flutter/material.dart';
 import 'package:collectify/ConexionBD.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'VentanaInicio.dart';
 import 'package:uni_links3/uni_links.dart';
-import 'package:flutter/services.dart' show DeviceOrientation, PlatformException, SystemChrome;
+import 'package:flutter/services.dart'
+    show DeviceOrientation, PlatformException, SystemChrome;
 
-final StreamController<Widget> _streamController = StreamController<Widget>.broadcast();
+import 'package:collectify/notification.dart' as notificaciones;
+import 'package:workmanager/workmanager.dart';
 
-void main(){
+///////////
+
+
+
+final StreamController<Widget> _streamController =
+    StreamController<Widget>.broadcast();
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  Workmanager().initialize(
+      callbackDispatcher,
+      isInDebugMode: false);
+
+  Workmanager().registerOneOffTask(
+    "task",
+    "simplePeriodicTask",
+  );
+
   Conexion().conectar();
-  runApp(const MyApp());
   initUniLinks();
+  runApp( MyApp());
+
+
 }
 
 Future<void> initUniLinks() async {
@@ -35,26 +58,28 @@ Future<void> initUniLinks() async {
 }
 
 Future<Widget> handleLink(String? link) async {
-  if(link != null) {
+  if (link != null) {
     List<Producto> productos = await Conexion().getAllProductos();
     Usuario u = await Conexion().getUsuarioByNick('admin') as Usuario;
     for (var p in productos) {
       if (link == "https://collectify.es/${p.productoID}") {
-        return VentanaProducto(connected: u, producto: p,);
+        return VentanaProducto(
+          connected: u,
+          producto: p,
+        );
       }
     }
   }
   return const VentanaInicio();
 }
 
-class MyApp extends StatelessWidget { //Punto inicial, no tocar
+class MyApp extends StatelessWidget {
+  //Punto inicial, no tocar
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setPreferredOrientations(
-      [DeviceOrientation.portraitUp]
-    );
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     return MaterialApp(
       title: 'Collectify',
       theme: ThemeData(
@@ -62,24 +87,36 @@ class MyApp extends StatelessWidget { //Punto inicial, no tocar
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-
-      home:  StreamBuilder<Uri?>(
-        stream: uriLinkStream,
-        builder: (context, snapshot) {
-          return StreamBuilder<Widget>(
-            stream: _streamController.stream,
-            builder: (context, snapshot) {
-              if(snapshot.hasData) return snapshot.data!;
-              //Loading
-              return const Scaffold(
-                body: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              );
-            }
-          );
-        }
-      ),
+      home: StreamBuilder<Uri?>(
+          stream: uriLinkStream,
+          builder: (context, snapshot) {
+            return StreamBuilder<Widget>(
+                stream: _streamController.stream,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) return snapshot.data!;
+                  //Loading
+                  return const Scaffold(
+                    body: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+                });
+          }),
     );
   }
 }
+
+@pragma('vm:entry-point')
+void callbackDispatcher(){
+  Workmanager().executeTask((task, inputData)  {
+    notificaciones.Notification.showBigTextNotification(
+        title: "Primera",
+        body: "Primera notificacion",
+        fln: FlutterLocalNotificationsPlugin()
+
+    );
+
+    return Future.value(true);
+  });
+}
+

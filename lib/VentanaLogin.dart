@@ -6,6 +6,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart'
     as noti;
 import 'package:collectify/notification.dart' as notif;
 import 'package:mysql1/mysql1.dart';
+import 'package:workmanager/workmanager.dart';
 
 MySqlConnection? conn;
 String nick = "";
@@ -85,6 +86,7 @@ class Login extends StatelessWidget {
         TextButton(
             child: const Text("Iniciar sesión"),
             onPressed: () async {
+
               nick = usernameText.text;
               pswrd = passwordText.text;
               if (nick == "" || pswrd == "") {
