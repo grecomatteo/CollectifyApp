@@ -140,7 +140,7 @@ class _VentanaMensajesChatState extends State<VentanaMensajesChat> {
     myID = iD;
     otherID = oID;
     getNames();
-    Socket.connect('143.47.181.8', 55555).then((value) {
+    Socket.connect('143.47.181.8', 25565).then((value) {
       value.write("ConnectedUser:$myID");
       value.write("GetMessages:$myID:$otherID");
       chatSocket = value;

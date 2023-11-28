@@ -169,7 +169,7 @@ class TextAndChatState extends State<TextAndChat> {
 
   @override
   Widget build(BuildContext context) {
-    Socket.connect('143.47.181.8', 55555).then((socket) {
+    Socket.connect('143.47.181.8', 25565).then((socket) {
       print('Connected to: '
           '${socket.remoteAddress.address}:${socket.remotePort}');
       chatSocket = socket;
