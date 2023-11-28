@@ -68,38 +68,29 @@ class TextAndChatState extends State<TextAndChat> {
 
   void handleLastMessage(Socket socket, String message){
     var split = message.split(":");
-
-    var messageListStr = split[1].split(";");
-    //What we get is a list of strings, each string is a list of integers
-    //We need to convert each string to a list of integers
-    List<List<List<int>>> messageList = [];
-    for(int i = 0; i < messageListStr.length; i++){
-      //Remove the first and last character, which are "[" and "]"
-      messageListStr[i] = messageListStr[i].substring(1, messageListStr[i].length - 1);
-      //Get the array of strings, they are in this format: [values], [values], [values]
-      var split2 = messageListStr[i].split("], [");
-      //Remove the "[" from the first string and the "]" from the last string
-      split2[0] = split2[0].substring(1);
-      split2[split2.length - 1] = split2[split2.length - 1].substring(0, split2[split2.length - 1].length - 1);
-
-      List<List<int>> messageVarList = [];
-      for(int j = 0; j < split2.length; j++){
-        //Split the string by ","
-        var split3 = split2[j].split(",");
-        List<int> varList = [];
-        for(int k = 0; k < split3.length; k++){
-          varList.add(int.parse(split3[k]));
-        }
-        messageVarList.add(varList);
-      }
-      messageList.add(messageVarList);
-    }
-
     List<Message> gottenMessages = [];
-    for(int i = 0; i < messageList.length; i++){
-      Message m = Message.decompressObject(messageList[i]);
+
+    //Recieved message:
+    /*
+    LastMessage:[[120, 156, 171, 152, 99, 204, 196, 192, 96, 204, 96, 12, 0, 11, 94, 1, 176], [120, 156, 171, 152, 163, 173, 235, 167, 203, 196, 192, 146, 203, 120, 0, 0, 21, 115, 3, 28], [120, 156, 171, 152, 99, 204, 194, 192, 96, 196, 96, 4, 0, 11, 102, 1, 176], [120, 156, 171, 152, 227, 237, 115, 242, 236, 25, 102, 6, 54, 70, 38, 46, 0, 38, 238, 4, 36], [120, 156, 171, 152, 195, 237, 169, 171, 23, 120, 194, 87, 87, 207, 207, 199, 63, 212, 128, 153, 65, 61, 145, 229, 15, 0, 77, 6, 6, 126], [120, 156, 171, 152, 99, 108, 100, 96, 116, 205, 212, 228, 138, 233, 166, 0, 131, 45, 91, 140, 76, 182, 24, 153, 94, 219, 188, 197, 192, 212, 208, 128, 149, 193, 197, 144, 85, 25, 0, 233, 160, 11, 228]];[[120, 156, 171, 152, 99, 204, 198, 192, 96, 194, 96, 2, 0, 11, 122, 1, 182], [120, 156, 171, 152, 243, 249, 172, 143, 190, 239, 89, 70, 6, 14, 33, 166, 20, 0, 48, 35, 4, 235], [120, 156, 171, 152, 99, 204, 194, 192, 96, 196, 96, 4, 0, 11, 102, 1, 176], [120, 156, 171, 152, 227, 237, 115, 242, 236, 25, 102, 6, 54, 70, 38, 46,
+    */
+
+    //Remove the first and last character, which are "[" and "]"
+    //Split the string by ";"
+    var messagesCompressed = split[1].split(";");
+
+    List<List<List<int>>> messageList = [];
+
+    for(int i = 0; i < messagesCompressed.length; i++){
+      //Remove the first and last character, which are "[" and "]"
+      messagesCompressed[i] = messagesCompressed[i].substring(1, messagesCompressed[i].length - 1);
+
+      //String to List<List<int>>, remove the "[" from the first string and the "]" from the last string
+      List<List<int>> messageCompressed = messagesCompressed[i].split("], [").map((e) => e.replaceAll("[", "").replaceAll("]", "").split(",").map((e) => int.parse(e)).toList()).toList();
+      Message m = Message.decompressObject(messageCompressed);
       gottenMessages.add(m);
     }
+
     messages = gottenMessages;
 
     _messages.add(messages);
@@ -169,7 +160,7 @@ class TextAndChatState extends State<TextAndChat> {
 
   @override
   Widget build(BuildContext context) {
-    Socket.connect('143.47.181.8', 25565).then((socket) {
+    Socket.connect('bytedev.es', 55555).then((socket) {
       print('Connected to: '
           '${socket.remoteAddress.address}:${socket.remotePort}');
       chatSocket = socket;

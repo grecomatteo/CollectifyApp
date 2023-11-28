@@ -45,6 +45,7 @@ class _VentanaMensajesChatState extends State<VentanaMensajesChat> {
   void handleGetAllMessages(String message) {
     var split = message.split(":");
 
+
     var messageListStr = split[1].split(";");
     //What we get is a list of strings, each string is a list of integers
     //We need to convert each string to a list of integers
@@ -110,7 +111,6 @@ class _VentanaMensajesChatState extends State<VentanaMensajesChat> {
   }
 
   void handleMessages(String message) {
-    print("New message");
     if (message.startsWith("Messages:")) {
       handleGetAllMessages(message);
     } else if (message.startsWith("NewMessage:")) {
@@ -140,7 +140,7 @@ class _VentanaMensajesChatState extends State<VentanaMensajesChat> {
     myID = iD;
     otherID = oID;
     getNames();
-    Socket.connect('143.47.181.8', 25565).then((value) {
+    Socket.connect('bytedev.es', 55555).then((value) {
       value.write("ConnectedUser:$myID");
       value.write("GetMessages:$myID:$otherID");
       chatSocket = value;
