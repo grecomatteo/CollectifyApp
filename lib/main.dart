@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:ui';
-
 import 'package:collectify/VentanaProducto.dart';
 import 'package:flutter/material.dart';
 import 'package:collectify/ConexionBD.dart';
@@ -24,13 +22,13 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Workmanager().initialize(
       callbackDispatcher,
-      isInDebugMode: false);
+      );
 
   Workmanager().registerOneOffTask(
     "task",
-    "simplePeriodicTask",
+    "simpleTask",
   );
-
+  
   Conexion().conectar();
   initUniLinks();
   runApp( MyApp());

@@ -5,6 +5,7 @@ import 'VentanaAnadirProducto.dart';
 import 'VentanaChat.dart';
 import 'package:collectify/ConexionBD.dart';
 
+import 'VentanaEventos.dart';
 import 'VentanaPerfil.dart';
 import 'VentanaProductosSubasta.dart';
 import 'VentanaProducto.dart';
@@ -328,6 +329,11 @@ class NavigationBar extends StatelessWidget {
             //Se queda en la misma ventana
             break;
           case 1: //Articulos con me gusta, por implementar
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => VentanaEventos()),
+          );
             break;
           case 2:
             Navigator.push(

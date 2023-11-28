@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -32,12 +33,17 @@ class Notification {
       'channel_name',
       playSound: true,
       enableVibration: true,
-      vibrationPattern: Int64List.fromList([0, 1000, 500, 1000]),
+      vibrationPattern: Int64List.fromList([0, 1000, 5000, 2000]),
+      enableLights: true,
+      color: const Color.fromARGB(255, 255, 255, 0),
+      ledColor: const Color.fromARGB(255, 255, 255, 0),
+      ledOnMs: 1000,
+      ledOffMs: 500,
       importance: Importance.max,
       priority: Priority.high,
     );
 
     var not = NotificationDetails(android: chSpecifics);
-    await fln.show(0, title, body, not);
+    await fln.show(id++, title, body, not);
   }
 }
