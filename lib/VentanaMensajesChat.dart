@@ -1,13 +1,10 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:collectify/ConexionBD.dart';
-import 'package:collectify/VentanaChat.dart';
-import 'package:collectify/VentanaMensajesChat.dart';
 import 'package:flutter/material.dart';
 import 'package:collectify/Message.dart';
 import 'package:collectify/notification.dart' as notif;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart' as noti;
-import 'package:mysql1/mysql1.dart';
 
 String toSendMessage = "";
 
@@ -16,7 +13,6 @@ String? myName = "";
 int otherID = 0;
 String? otherName = "";
 int msgNum = 0;
-
 Socket? chatSocket;
 
 noti.FlutterLocalNotificationsPlugin notPlugin = noti.FlutterLocalNotificationsPlugin();
@@ -24,28 +20,30 @@ noti.FlutterLocalNotificationsPlugin notPlugin = noti.FlutterLocalNotificationsP
 //List view controller
 final listViewController = ScrollController();
 class VentanaMensajesChat extends StatefulWidget {
-  const VentanaMensajesChat(this.iD, this.oID, {super.key});
+  VentanaMensajesChat(this.iD, this.oID, this.socket);
 
   final int iD;
   final int oID;
+  Socket? socket;
+
+  _VentanaMensajesChatState? ventana;
 
   @override
-  State<VentanaMensajesChat> createState() => _VentanaMensajesChatState(iD, oID);
+  State<VentanaMensajesChat> createState() => ventana = _VentanaMensajesChatState(iD, oID, socket);
 }
 
 class _VentanaMensajesChatState extends State<VentanaMensajesChat> {
-  _VentanaMensajesChatState(this.iD, this.oID);
+  _VentanaMensajesChatState(this.iD, this.oID, this.socket);
 
   final int iD;
   final int oID;
+  final Socket? socket;
 
-  List<Message> messages = [];
-  StreamController<List<Message>> _messages = StreamController<List<Message>>.broadcast();
+  List<Message> messagesChat = [];
+  StreamController<List<Message>> _messagesChat = StreamController<List<Message>>.broadcast();
 
   void handleGetAllMessages(String message) {
     var split = message.split(":");
-
-
     var messageListStr = split[1].split(";");
     //What we get is a list of strings, each string is a list of integers
     //We need to convert each string to a list of integers
@@ -79,9 +77,9 @@ class _VentanaMensajesChatState extends State<VentanaMensajesChat> {
       Message m = Message.decompressObject(messageList[i]);
       gottenMessages.add(m);
     }
-    messages = gottenMessages;
+    messagesChat = gottenMessages;
 
-    _messages.add(messages);
+    _messagesChat.add(messagesChat);
   }
 
   void handleGetNewMessage(String message) {
@@ -106,25 +104,8 @@ class _VentanaMensajesChatState extends State<VentanaMensajesChat> {
     }
     Message m = Message.decompressObject(messageVarList);
 
-    messages.add(m);
-    _messages.add(messages);
-  }
-
-  void handleMessages(String message) {
-    if (message.startsWith("Messages:")) {
-      handleGetAllMessages(message);
-    } else if (message.startsWith("NewMessage:")) {
-      handleGetNewMessage(message);
-    } else if (message.startsWith("ConnectedUser:")) {
-      chatSocket?.write("GetMessages:$myID:$otherID");
-    } else if(message.startsWith("DisconnectedUser:"))
-    {
-      var split = message.split(":");
-      int userID = int.parse(split[1]);
-      messages = [];
-      _messages.add(messages);
-      chatSocket?.close();
-    }
+    messagesChat.add(m);
+    _messagesChat.add(messagesChat);
   }
 
   void getNames() async {
@@ -132,31 +113,27 @@ class _VentanaMensajesChatState extends State<VentanaMensajesChat> {
     myName = value?.nick);
     await Conexion().getUsuarioByID(otherID)?.then((value) =>
     otherName = value?.nick);
-    _messages.add(messages);
+    _messagesChat.add(messagesChat);
   }
 
   @override
   Widget build(BuildContext context) {
     myID = iD;
     otherID = oID;
+    if(socket != null) {
+      chatSocket = socket;
+    }
     getNames();
-    Socket.connect('bytedev.es', 55555).then((value) {
-      value.write("ConnectedUser:$myID");
-      value.write("GetMessages:$myID:$otherID");
-      chatSocket = value;
-      value.listen((event) {
-        String message = String.fromCharCodes(event);
-        handleMessages(message);
-      });
-    });
+
+
+    chatSocket?.write("GetMessages:$myID:$otherID");
 
     return WillPopScope(
       onWillPop: () async {
-        chatSocket?.write("DisconnectedUser:$myID");
         return true;
       },
       child: StreamBuilder<List<Message>>(
-        stream: _messages.stream,
+        stream: _messagesChat.stream,
         builder: (BuildContext context, AsyncSnapshot<List<Message>> snapshot) {
 
           List<Widget> children;
@@ -278,7 +255,7 @@ class _NavigationBarChatState extends State<NavigationBarChat> {
       toSendMessage,
       DateTime.now(),
     );
-    chatSocket?.write("NewMessage:${m.compressObject()}");
+    chatSocket?.write("NewMessage:$otherID:${m.compressObject()}");
   }
 
   final textField = TextEditingController();
