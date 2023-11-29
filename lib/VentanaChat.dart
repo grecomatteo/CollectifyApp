@@ -11,6 +11,7 @@ import 'package:collectify/Message.dart';
 int myID = 0;
 MySqlConnection? conn;
 Socket? chatSocket;
+VentanaMensajesChat? ventanaMensajesChat;
 
 class VentanaChat extends StatelessWidget {
   const VentanaChat({required this.id, Key? key}) : super(key: key);
@@ -132,42 +133,84 @@ class TextAndChatState extends State<TextAndChat> {
     _messages.add(messages);
   }
 
-  void handleNewMessages(Socket socket) {
-    socket.listen((List<int> event) {
-      String message = utf8.decode(event);
-      if(message.startsWith("ConnectedUser:"))
-      {
-        socket.write("GetUsersWithCommunication:$myID");
+  void handleMessages(Socket socket, String message){
+    //Get all the messages between the main user and the other user
+    var split = message.split(":");
+    //Remove the first and last character, which are "[" and "]"
+    split[1] = split[1].substring(1, split[1].length - 1);
+    //Get the array of strings, they are in this format: [values], [values], [values]
+    var split2 = split[1].split("], [");
+    //Remove the "[" from the first string and the "]" from the last string
+    split2[0] = split2[0].substring(1);
+    split2[split2.length - 1] = split2[split2.length - 1].substring(0, split2[split2.length - 1].length - 1);
+
+    List<List<int>> messageVarList = [];
+    for(int j = 0; j < split2.length; j++){
+      //Split the string by ","
+      var split3 = split2[j].split(",");
+      List<int> varList = [];
+      for(int k = 0; k < split3.length; k++){
+        varList.add(int.parse(split3[k]));
       }
-      else if(message.startsWith("UsersWithCommunication:"))
-      {
-        handleUsersWithCommunication(socket, message);
-      }
-      else if(message.startsWith("DisconnectedUser:"))
-      {
-        handleDisconnectedUser(socket, message);
-      }
-      else if (message.startsWith("LastMessage:"))
-      {
-        handleLastMessage(socket, message);
-      }
-      else if (message.startsWith("NewMessage:")){
-        handleNewMessage(socket, message);
-      }
+      messageVarList.add(varList);
+    }
+    Message m = Message.decompressObject(messageVarList);
+    messages.add(m);
+    _messages.add(messages);
+  }
+
+  void handleNewMessages(List<int> event) {
+    String message = utf8.decode(event);
+    if(message.startsWith("ConnectedUser:"))
+    {
+      chatSocket?.write("GetUsersWithCommunication:$myID");
+    }
+    else if(message.startsWith("UsersWithCommunication:"))
+    {
+      handleUsersWithCommunication(chatSocket!, message);
+    }
+    else if(message.startsWith("DisconnectedUser:"))
+    {
+      handleDisconnectedUser(chatSocket!, message);
+    }
+    else if (message.startsWith("LastMessage:"))
+    {
+      handleLastMessage(chatSocket!, message);
+    }
+    else if(message.startsWith("Messages:")){
+      ventanaMensajesChat?.ventana?.handleGetAllMessages(message);
+    }
+    else if (message.startsWith("NewMessage:")){
+      handleNewMessage(chatSocket!, message);
+      ventanaMensajesChat?.ventana?.handleGetNewMessage(message);
+    }
+  }
+
+  void buildSocket(){
+    Socket.connect('bytedev.es', 55555).then((socket) {
+      chatSocket = socket;
+      print('Connected to: ${socket.remoteAddress.address}:${socket.remotePort}');
+      socket.write("ConnectedUser:$myID");
+      socket.listen((data) {
+        handleNewMessages(data);
+      },
+          onError: (error) {
+            print(error);
+            socket.destroy();
+            buildSocket();
+          },
+          onDone: () {
+            print("Done");
+            socket.destroy();
+            buildSocket();
+          });
     });
   }
 
 
   @override
   Widget build(BuildContext context) {
-    Socket.connect('bytedev.es', 55555).then((socket) {
-      print('Connected to: '
-          '${socket.remoteAddress.address}:${socket.remotePort}');
-      chatSocket = socket;
-      socket.write("ConnectedUser:$myID");
-      handleNewMessages(socket);
-
-    });
+    buildSocket();
 
 
     return StreamBuilder<List<Message>>(
@@ -205,11 +248,10 @@ class TextAndChatState extends State<TextAndChat> {
                     ),
                   ),
                   onPressed: () {
-                    chatSocket?.write("DisconnectedUser:$myID");
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => VentanaMensajesChat(myID, otherID)),
+                          builder: (context) => ventanaMensajesChat = VentanaMensajesChat(myID, otherID, chatSocket!)),
                     );
                   },
                   //Horizontal list

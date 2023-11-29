@@ -92,7 +92,7 @@ class ChatButton extends StatelessWidget {
       onPressed: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => VentanaMensajesChat(producto.usuarioID!, user.usuarioID!)),
+          MaterialPageRoute(builder: (context) => VentanaMensajesChat(producto.usuarioID!, user.usuarioID!, null)),
         );
       },
       child: const Icon(Icons.chat),
