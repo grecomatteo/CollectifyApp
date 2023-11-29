@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:collectify/ConexionBD.dart';
 import 'package:collectify/VentanaChat.dart';
+import 'package:collectify/VentanaMensajesChat.dart';
 import 'package:flutter/material.dart';
 import 'package:collectify/Message.dart';
 import 'package:collectify/notification.dart' as notif;
@@ -10,164 +12,214 @@ import 'package:mysql1/mysql1.dart';
 String toSendMessage = "";
 
 int myID = 0;
+String? myName = "";
 int otherID = 0;
-int msgNum = 0;
 String? otherName = "";
+int msgNum = 0;
 
-bool lookingForMessages = true;
+Socket? chatSocket;
 
 noti.FlutterLocalNotificationsPlugin notPlugin = noti.FlutterLocalNotificationsPlugin();
-
-Future<List<Message>> getMessages() async{
-  List<ResultRow> maps = [];
-  await conn?.query('''
-      SELECT
-          cm.id AS message_id,
-          cm.senderID,
-          sender.nick AS senderName,
-          cm.receiverID,
-          receiver.nick AS receiverName,
-          cm.message,
-          cm.sendDate
-      FROM
-          chat_messages AS cm
-      INNER JOIN usuario AS sender ON cm.senderID = sender.userID
-      INNER JOIN usuario AS receiver ON cm.receiverID = receiver.userID
-      WHERE
-          (cm.senderID = $myID AND cm.receiverID = $otherID) OR
-          (cm.senderID = $otherID AND cm.receiverID = $myID)
-      ORDER BY
-          cm.sendDate;
-
-      ''').then((results) {
-    for (var row in results) {
-      maps.add(row);
-      debugPrint(row.toString());
-    }
-  });
-
-  List<Message> messageList = List.generate(maps.length, (i) {
-    return Message(
-      maps[i]['senderID'],
-      maps[i]['senderName'].toString(),
-      maps[i]['receiverID'],
-      maps[i]['receiverName'].toString(),
-      maps[i]['message'].toString(),
-      maps[i]['sendDate'],
-    );
-  });
-  msgNum = messageList.length;
-  return messageList;
-}
 
 //List view controller
 final listViewController = ScrollController();
 class VentanaMensajesChat extends StatefulWidget {
-  const VentanaMensajesChat(this.oID, this.iD, {super.key});
+  const VentanaMensajesChat(this.iD, this.oID, {super.key});
 
   final int iD;
   final int oID;
 
   @override
-  State<VentanaMensajesChat> createState() => _VentanaMensajesChatState(oID, iD);
+  State<VentanaMensajesChat> createState() => _VentanaMensajesChatState(iD, oID);
 }
 
 class _VentanaMensajesChatState extends State<VentanaMensajesChat> {
-  _VentanaMensajesChatState(this.oID, this.iD);
+  _VentanaMensajesChatState(this.iD, this.oID);
 
   final int iD;
   final int oID;
 
-  final Stream<List<Message>> _messages = (() {
-    late final StreamController<List<Message>> controller;
-    controller = StreamController<List<Message>>(
-      onListen: () async {
-        while (true) {
-          if(!lookingForMessages) return;
-          List<Message> messages =  await getMessages();
-          controller.add(messages);
-          await Future.delayed(const Duration(seconds: 1));
+  List<Message> messages = [];
+  StreamController<List<Message>> _messages = StreamController<List<Message>>.broadcast();
+
+  void handleGetAllMessages(String message) {
+    var split = message.split(":");
+
+
+    var messageListStr = split[1].split(";");
+    //What we get is a list of strings, each string is a list of integers
+    //We need to convert each string to a list of integers
+    List<List<List<int>>> messageList = [];
+    for (int i = 0; i < messageListStr.length; i++) {
+      //Remove the first and last character, which are "[" and "]"
+      messageListStr[i] =
+          messageListStr[i].substring(1, messageListStr[i].length - 1);
+      //Get the array of strings, they are in this format: [values], [values], [values]
+      var split2 = messageListStr[i].split("], [");
+      //Remove the "[" from the first string and the "]" from the last string
+      split2[0] = split2[0].substring(1);
+      split2[split2.length - 1] = split2[split2.length - 1].substring(
+          0, split2[split2.length - 1].length - 1);
+
+      List<List<int>> messageVarList = [];
+      for (int j = 0; j < split2.length; j++) {
+        //Split the string by ","
+        var split3 = split2[j].split(",");
+        List<int> varList = [];
+        for (int k = 0; k < split3.length; k++) {
+          varList.add(int.parse(split3[k]));
         }
-      },
-    );
-    return controller.stream;
-  })();
+        messageVarList.add(varList);
+      }
+      messageList.add(messageVarList);
+    }
+
+    List<Message> gottenMessages = [];
+    for (int i = 0; i < messageList.length; i++) {
+      Message m = Message.decompressObject(messageList[i]);
+      gottenMessages.add(m);
+    }
+    messages = gottenMessages;
+
+    _messages.add(messages);
+  }
+
+  void handleGetNewMessage(String message) {
+    var split = message.split(":");
+    //Remove the first and last character, which are "[" and "]"
+    split[1] = split[1].substring(1, split[1].length - 1);
+    //Get the array of strings, they are in this format: [values], [values], [values]
+    var split2 = split[1].split("], [");
+    //Remove the "[" from the first string and the "]" from the last string
+    split2[0] = split2[0].substring(1);
+    split2[split2.length - 1] = split2[split2.length - 1].substring(0, split2[split2.length - 1].length - 1);
+
+    List<List<int>> messageVarList = [];
+    for(int j = 0; j < split2.length; j++){
+      //Split the string by ","
+      var split3 = split2[j].split(",");
+      List<int> varList = [];
+      for(int k = 0; k < split3.length; k++){
+        varList.add(int.parse(split3[k]));
+      }
+      messageVarList.add(varList);
+    }
+    Message m = Message.decompressObject(messageVarList);
+
+    messages.add(m);
+    _messages.add(messages);
+  }
+
+  void handleMessages(String message) {
+    if (message.startsWith("Messages:")) {
+      handleGetAllMessages(message);
+    } else if (message.startsWith("NewMessage:")) {
+      handleGetNewMessage(message);
+    } else if (message.startsWith("ConnectedUser:")) {
+      chatSocket?.write("GetMessages:$myID:$otherID");
+    } else if(message.startsWith("DisconnectedUser:"))
+    {
+      var split = message.split(":");
+      int userID = int.parse(split[1]);
+      messages = [];
+      _messages.add(messages);
+      chatSocket?.close();
+    }
+  }
+
+  void getNames() async {
+    await Conexion().getUsuarioByID(myID)?.then((value) =>
+    myName = value?.nick);
+    await Conexion().getUsuarioByID(otherID)?.then((value) =>
+    otherName = value?.nick);
+    _messages.add(messages);
+  }
 
   @override
   Widget build(BuildContext context) {
-    lookingForMessages = true;
     myID = iD;
     otherID = oID;
+    getNames();
+    Socket.connect('bytedev.es', 55555).then((value) {
+      value.write("ConnectedUser:$myID");
+      value.write("GetMessages:$myID:$otherID");
+      chatSocket = value;
+      value.listen((event) {
+        String message = String.fromCharCodes(event);
+        handleMessages(message);
+      });
+    });
 
-    Conexion().getUsuarioByID(otherID).then((value) =>
-    otherName = value?.nick
-    );
     return WillPopScope(
       onWillPop: () async {
-        lookingForMessages = false;
+        chatSocket?.write("DisconnectedUser:$myID");
         return true;
       },
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: Text("$otherName's Chat"),
-        ),
-        body: StreamBuilder<List<Message>>(
-          stream: _messages,
-          builder: (BuildContext context, AsyncSnapshot<List<Message>> snapshot) {
-            List<Widget> children;
-            if (snapshot.hasError) {
-              children = [Text('${snapshot.error}')];
-            }
-            if (!snapshot.hasData) {
-              children = const <Widget>[CircularProgressIndicator()];
-            } else {
-              List<Message> messages = snapshot.data as List<Message>;
-              List<Widget> childrn = [];
-              for (int i = 0; i < messages.length; i++) {
-                childrn.add(MessageDisplay(
-                  message: messages[i],
-                  myID: myID,
-                  otherID: otherID,
-                ));
+      child: StreamBuilder<List<Message>>(
+        stream: _messages.stream,
+        builder: (BuildContext context, AsyncSnapshot<List<Message>> snapshot) {
 
-                if(i == messages.length - 1) continue;
-                if(messages[i].sendDate.day != messages[i+1].sendDate.day){
-                  childrn.add(
-                    Container(
-                      margin: const EdgeInsets.all(10),
-                      alignment: Alignment.center,
-                      child: Text(
-                        "${messages[i+1].sendDate.day}/${messages[i+1].sendDate.month}/${messages[i+1].sendDate.year}",
-                        style: const TextStyle(fontSize: 20),
-                      ),
+          List<Widget> children;
+          if (snapshot.hasError) {
+            children = [Text('${snapshot.error}')];
+          }
+          if (!snapshot.hasData) {
+            children = const <Widget>[CircularProgressIndicator()];
+          } else {
+            List<Message> messages = snapshot.data as List<Message>;
+            List<Widget> childrn = [];
+            for (int i = 0; i < messages.length; i++) {
+              childrn.add(MessageDisplay(
+                message: messages[i],
+                myID: myID,
+                otherID: otherID,
+              ));
+
+              if (i == messages.length - 1) continue;
+              if (messages[i].sendDate.day !=
+                  messages[i + 1].sendDate.day) {
+                childrn.add(
+                  Container(
+                    margin: const EdgeInsets.all(10),
+                    alignment: Alignment.center,
+                    child: Text(
+                      "${messages[i + 1].sendDate.day}/${messages[i + 1]
+                          .sendDate.month}/${messages[i + 1].sendDate
+                          .year}",
+                      style: const TextStyle(fontSize: 20),
                     ),
-                  );
-                }
+                  ),
+                );
               }
-              children = childrn;
             }
-            ListView LV = ListView(
+            children = childrn;
+          }
+
+          return Scaffold(
+            appBar: AppBar(
+              backgroundColor: Theme
+                  .of(context)
+                  .colorScheme
+                  .inversePrimary,
+              title: Text("$otherName's Chat"),
+            ),
+            body: ListView(
               controller: listViewController,
-                reverse: true,
-                children: [
-                  for (final element in children.reversed.toList())
-                    element
-                ]
-            );
-            return LV;
-          },
-        ),
-        resizeToAvoidBottomInset: false,
-        //When the keyboard is open put the NavigationBar on top of the keyboard
-        bottomNavigationBar: const NavigationBar(),
-      )
+              reverse: true,
+              children: [
+                for (final element in children.reversed.toList())
+                  element
+              ]
+            ),
+            bottomNavigationBar: NavigationBarChat(),
+          );
+        },
+      ),
     );
   }
 
   @override
-  void initState()
-  {
+  void initState() {
     super.initState();
     notif.Notification.initialize(notPlugin);
   }
@@ -209,23 +261,24 @@ class MessageDisplay extends StatelessWidget {
   }
 }
 
-class NavigationBar extends StatefulWidget {
-  const NavigationBar({Key? key}) : super(key: key);
+class NavigationBarChat extends StatefulWidget {
+  const NavigationBarChat({Key? key}) : super(key: key);
 
   @override
-  State<NavigationBar> createState() => _NavigationBarState();
+  State<NavigationBarChat> createState() => _NavigationBarChatState();
 }
 
-class _NavigationBarState extends State<NavigationBar> {
-  Future<void> sendMessage(int myID, int otherID) async{
-    await conn?.query("insert into chat_messages(senderID, receiverID, message, sendDate) values($myID, $otherID, '$toSendMessage', now())");
-    var prev = msgNum;
-    List<Message> received;
-    received = await getMessages();
-    if(msgNum > prev){
-      var msg = received.last;
-      notif.Notification.showBigTextNotification(title: msg.senderName, body: msg.message, fln: notPlugin);
-    }
+class _NavigationBarChatState extends State<NavigationBarChat> {
+  void sendMessage(int myID, int otherID) {
+    Message m = Message(
+      myID,
+      myName!,
+      otherID,
+      otherName!,
+      toSendMessage,
+      DateTime.now(),
+    );
+    chatSocket?.write("NewMessage:${m.compressObject()}");
   }
 
   final textField = TextEditingController();
