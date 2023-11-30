@@ -97,10 +97,10 @@ class Conexion {
   static List<Producto> productosSubastaBasadoPreferencias = [];
   static List<Evento> eventos = [];
 
-  Future<void> conectar() async {
+  Future<bool> conectar() async {
     debugPrint("Conectando");
     if (conn != null) {
-      return;
+      return true;
     }
 
     try {
@@ -113,8 +113,10 @@ class Conexion {
       ));
 
       debugPrint("Conectado");
+      return true;
     } catch (e) {
       debugPrint(e.toString() + "Error");
+      return false;
     }
   }
 

@@ -6,7 +6,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart'
     as noti;
 import 'package:collectify/notification.dart' as notif;
 import 'package:mysql1/mysql1.dart';
-import 'package:workmanager/workmanager.dart';
 
 MySqlConnection? conn;
 String nick = "";
@@ -148,7 +147,7 @@ class Login extends StatelessWidget {
             onPressed: () {
               notif.Notification.showBigTextNotification(
                   title: "Nuevo mensaje",
-                  body: "Baki como se instala el wasa",
+                  body: "Nuevo mensaje de Collectify",
                   fln: notPlugin);
             })
       ],
