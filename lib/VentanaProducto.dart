@@ -10,6 +10,7 @@ import 'package:share_plus/share_plus.dart';
 
 
 Usuario user = Usuario();
+Usuario UserUltPuja = Usuario();
 Producto product = Producto();
 class VentanaProducto extends StatelessWidget {
   const VentanaProducto({super.key, required this.connected, required this.producto});
@@ -21,6 +22,9 @@ class VentanaProducto extends StatelessWidget {
   Widget build(BuildContext context) {
     user = connected;
     product = producto;
+    if(producto.idUserUltimaPuja != null) {
+      UserUltPuja = Conexion().getUsuarioByID(producto.idUserUltimaPuja!) as Usuario;
+    }
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -38,7 +42,10 @@ class VentanaProducto extends StatelessWidget {
             Column(
               children: [
                   Text("Precio inicial : ${producto.precioInicial} €", style: const TextStyle(fontSize: 20, color: Colors.deepPurple),),
-                  Text("Última puja : ${producto.ultimaOferta} €", style: const TextStyle(fontSize: 20, color: Colors.deepPurple),)
+                  if(producto.idUserUltimaPuja != null)
+                    Text("Última puja : ${producto.ultimaOferta} € realizada por ${UserUltPuja.nick}",
+                      style: const TextStyle(fontSize: 15, color: Colors.blueGrey),)
+                  else const Text("Nadie ha pujado todavía", style: TextStyle(fontSize: 15, color: Colors.blueGrey),),
               ],
             )
           else Text("${producto.precio} €", style: const TextStyle(fontSize: 20, color: Colors.deepPurple),),

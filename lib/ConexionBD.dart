@@ -21,6 +21,7 @@ class Producto {
   DateTime? fechaFin;
   int? precioInicial;
   int? ultimaOferta;
+  int? idUserUltimaPuja;
   Producto(
       {this.usuarioID,
       this.productoID,
@@ -228,8 +229,9 @@ class Conexion {
 
   Future<List<Producto>> getProductosSubastaBasadoPreferencias(
       Usuario user) async {
-    if (productosSubastaBasadoPreferencias.isNotEmpty)
+    if (productosSubastaBasadoPreferencias.isNotEmpty) {
       return productosSubastaBasadoPreferencias;
+    }
     if (conn == null) await conectar();
     String categorias = " ";
     List<Producto> productos = [];
@@ -267,6 +269,7 @@ class Conexion {
               producto.fechaFin = row['fechaFin'],
               producto.precioInicial = row['precioInicial'],
               producto.ultimaOferta = row['ultimaOferta'],
+              producto.idUserUltimaPuja = row['idUsuarioUltPuja']
             }
         });
     productosSubastaBasadoPreferencias = productos;
@@ -366,7 +369,7 @@ class Conexion {
     return usuarios;
   }
 
-  Future<Usuario?> getUsuarioByID(int id) async {
+  Future<Usuario?> getUsuarioByID(int? id) async {
     Usuario? usuario;
     if (conn == null) await conectar();
 
@@ -577,6 +580,13 @@ class Conexion {
         "INSERT INTO productos_subasta (idProducto, precioInicial, fechaFin) "
         "VALUES ('$productID', '$precioInicial', '$fechaFinal'); ");
 
+    return true;
+  }
+  Future<bool> addUltimaPuja(int productID, int userID, int ultimaOferta) async {
+    if (conn == null) await conectar();
+    await conn?.query(
+        "UPDATE productos_subasta SET idUsuarioUltPuja = $userID AND ultimaOferta = $ultimaOferta "
+            " WHERE idProducto = $productID; ");
     return true;
   }
 

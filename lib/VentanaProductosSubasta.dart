@@ -170,6 +170,7 @@ class ProductoWidget extends StatelessWidget {
   final Producto producto;
   const ProductoWidget({super.key, required this.producto});
 
+
   String Temporizador(){
     DateTime now= DateTime.now();
     final diferencia = producto.fechaFin?.difference(now);
