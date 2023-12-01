@@ -292,12 +292,9 @@ class Conexion {
 
   //nica
   Future<List<Producto>> searchProductos(String query) async {
-    print('Executing searchProductos with query: $query');
 
     if (conn == null) {
-      print('Connection is null. Connecting...');
       await conectar();
-      print('Connection established.');
     }
 
     //Elimino los espacios antes y después de las letras, también para obtener ayuda para el próximo cheque
@@ -325,7 +322,6 @@ class Conexion {
 
       // Iterar sobre todos los resultados devueltos por la consulta
       for (var row in results) {
-        print('Processing row: $row');
         //crear nuevo objecto producton da anadir a la lista
         Producto producto = Producto(
           usuarioID: row['usuarioID'],
@@ -338,10 +334,8 @@ class Conexion {
         );
 
         productos.add(producto);
-        print('Created Producto: $producto');
       }
     }).catchError((error) {
-      print('Error executing query: $error');
     });
 
     return productos;
@@ -585,8 +579,10 @@ class Conexion {
   Future<bool> addUltimaPuja(int productID, int userID, int ultimaOferta) async {
     if (conn == null) await conectar();
     await conn?.query(
-        "UPDATE productos_subasta SET idUsuarioUltPuja = $userID AND ultimaOferta = $ultimaOferta "
-            " WHERE idProducto = $productID; ");
+        "UPDATE productos_subasta SET idUsuarioUltPuja = $userID, ultimaOferta = $ultimaOferta WHERE idProducto = $productID; "
+    ).then((results) => {print("Puja añadida")});
+
+
     return true;
   }
 
@@ -615,6 +611,7 @@ class Conexion {
               producto.fechaFin = row['fechaFin'],
               producto.precioInicial = row['precioInicial'],
               producto.ultimaOferta = row['ultimaOferta'],
+              producto.idUserUltimaPuja = row['idUsuarioUltPuja'],
               productos.add(producto)
             }
         });
