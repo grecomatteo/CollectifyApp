@@ -13,7 +13,6 @@ import 'VentanaProducto.dart';
 Usuario user = Usuario();
 bool isValid = true;
 bool loading = false;
-
 class ListaProductos extends StatefulWidget {
   const ListaProductos({Key? key, required this.connected}) : super(key: key);
 
@@ -41,7 +40,7 @@ class _ListaProductosState extends State<ListaProductos> {
 
   Future<void> cargarProductos() async {
     List<Producto> allProducts =
-        await Conexion().getProductosBasadoPreferencias(user);
+    await Conexion().getProductosBasadoPreferencias(user);
 
     setState(() {
       _searchResults = allProducts;
@@ -97,71 +96,106 @@ class SearchBar extends StatefulWidget {
 
 class _SearchBarState extends State<SearchBar> {
   final TextEditingController _controller = TextEditingController();
+  final List<String> categories = ["Relojes", "Arte", "Joyeria", "Numismatica"];
+
+  String selectedCategory = "";
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-      child: Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.all(Radius.circular(20)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black12,
-              offset: Offset(0, 2),
-              blurRadius: 4.0,
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.all(Radius.circular(20)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  offset: Offset(0, 2),
+                  blurRadius: 4.0,
+                ),
+              ],
             ),
-          ],
-        ),
-        child: TextField(
-          controller: _controller,
-          onChanged: (query) {
-            if (query.isEmpty) {
-              _handleSearch(_controller.text);
-              setState(() {
-                loading = true;
-              });
-            }
-          },
-          decoration: InputDecoration(
-            hintText: 'Buscar',
-            hintStyle: const TextStyle(
-              color: Colors.grey,
-            ),
-            border: InputBorder.none,
-            suffixIcon: IconButton(
-              icon: const Icon(Icons.send),
-              onPressed: () {
-                setState(() {
-                  loading = true;
-                });
-                _handleSearch(_controller.text);
+            child: TextField(
+              controller: _controller,
+              onChanged: (query) {
+                if (query.isEmpty) {
+                  _handleSearch(_controller.text);
+                  setState(() {
+                    loading = true;
+                  });
+                }
               },
+              decoration: InputDecoration(
+                hintText: 'Buscar',
+                hintStyle: TextStyle(
+                  color: Colors.grey,
+                ),
+                border: InputBorder.none,
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.send),
+                  onPressed: () {
+                    setState(() {
+                      loading = true;
+                    });
+                    _handleSearch(_controller.text);
+                  },
+                ),
+                prefixIcon: Icon(Icons.search),
+              ),
             ),
-            prefixIcon: Icon(Icons.search),
-
           ),
         ),
-      ),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: categories.map((category) {
+              return ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    selectedCategory = category;
+                  });
+                  _handleSearch(_controller.text, category: selectedCategory);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: selectedCategory == category
+                      ? Theme.of(context).colorScheme.primary
+                      : null,
+                ),
+                child: Text(category),
+              );
+            }).toList(),
+          ),
+        ),
+      ],
     );
   }
 
-  void _handleSearch(String query) async {
+
+  void _handleSearch(String query, {String? category}) async {
     List<Producto> searchResults;
 
     //Antes de consultar la base de datos, verifique si no se ha ingresado nada en el campo de búsqueda
-    if (query.isEmpty) {
+    if (query.isEmpty && category== null) {
       searchResults = await Conexion().getProductosBasadoPreferencias(user);
       setState(() {
         loading = false;
       });
-    } else {
+    } else if(query.isEmpty && category != null){
+      searchResults = await Conexion().getProductoPorCategoria(category);
+      setState(() {
+        loading = false;
+      });
+    }
+    else {
       //Mostrar un widget de cargando
 
       // Llama a la lógica de búsqueda de la base de datos usando la clase Conexion
       searchResults = await Conexion().searchProductos(query);
       setState(() {
+
         loading = false;
       });
     }
@@ -170,6 +204,8 @@ class _SearchBarState extends State<SearchBar> {
     widget.onSearchResults(searchResults);
   }
 }
+
+
 
 class ProductList extends StatefulWidget {
   const ProductList({Key? key, this.searchResults = const []})

@@ -181,6 +181,38 @@ class Conexion {
 
     return productos;
   }
+//nica
+  Future<List<Producto>> getProductoPorCategoria(String categoria) async {
+    if (conn == null) await conectar();
+    List<Producto> productos = [];
+
+    await conn?.query('''SELECT producto.*, IMAGEN.image, usuario.esPremium
+      FROM producto
+      JOIN usuario ON producto.usuarioID = usuario.userID
+      JOIN IMAGEN ON producto.pruductoID = IMAGEN.id_producto
+      WHERE producto.categoria = ?
+      ORDER BY usuario.esPremium DESC;
+    ''', [categoria]).then((results) {
+      for (var row in results) {
+        Producto producto = Producto(
+          usuarioID: row['usuarioID'],
+          productoID: row['pruductoID'],
+          nombre: row['nombre'],
+          descripcion: row['descripcion'],
+          precio: row['precio'],
+          // Get blob 'image'
+          image: row['image'],
+          esPremium: row['esPremium'] == 1 ? true : false,
+          esSubasta: row['esSubasta'] == 1 ? true : false,
+        );
+
+        productos.add(producto);
+      }
+    });
+
+    return productos;
+  }
+  //fine nica
 
   Future<List<Producto>> getProductosBasadoPreferencias(Usuario user) async {
     if (productosVentaBasadoPreferencias.isNotEmpty) {
@@ -290,7 +322,7 @@ class Conexion {
     return categorias;
   }
 
-  //nica
+
   Future<List<Producto>> searchProductos(String query) async {
 
     if (conn == null) {
@@ -340,7 +372,7 @@ class Conexion {
 
     return productos;
   }
-  //fine nica
+
 
   Future<List<Usuario>> getUsuarios() async {
     if (conn == null) await conectar();
