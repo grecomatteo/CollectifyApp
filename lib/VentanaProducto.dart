@@ -119,8 +119,8 @@ class VentanaProducto extends StatelessWidget {
               else
                 if(user.usuarioID != producto.usuarioID)
                 ElevatedButton(
-                    onPressed:(){
-                      Conexion().addUltimaPuja(producto.productoID!, user.usuarioID!, product.precioInicial!);
+                    onPressed:() async {
+                      await Conexion().addUltimaPuja(producto.productoID!, user.usuarioID!, product.ultimaOferta!+5 );
                       showDialog(
                           context: context,
                           builder: (buildcontext) {

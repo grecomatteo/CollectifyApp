@@ -289,7 +289,7 @@ class Conexion {
             {
               producto = Producto(
                 usuarioID: row['usuarioID'],
-                productoID: row['productoID'],
+                productoID: row['pruductoID'],
                 nombre: row['nombre'],
                 descripcion: row['descripcion'],
                 precio: row['precio'],
@@ -632,7 +632,7 @@ class Conexion {
             {
               producto = Producto(
                 usuarioID: row['usuarioID'],
-                productoID: row['productoID'],
+                productoID: row['pruductoID'],
                 nombre: row['nombre'],
                 descripcion: row['descripcion'],
                 precio: row['precio'],
