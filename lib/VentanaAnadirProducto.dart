@@ -25,9 +25,10 @@ class VentanaAnadirProducto extends StatelessWidget {
     logged = user;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Anadir nuevo producto'),
+        backgroundColor: Colors.black,
       ),
       body: AddProductForm(),
+      backgroundColor: Colors.black,
     );
   }
 }
@@ -60,9 +61,88 @@ class _AddProductFormState extends State<AddProductForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
+          Text(
+            'Sube tu',
+            style: const TextStyle(
+                fontSize: 50,
+                color: Colors.white,
+                height: 0.5,
+            )
+          ),
+          Text(
+            'artículo',
+            style: const TextStyle(
+              fontSize: 50,
+              color: Colors.lightGreen
+            )
+          ),
+          Text(
+            'Añade fotos',
+            style: const TextStyle(
+              color: Colors.white,
+              height: 4
+            )
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final imagePicker = ImagePicker();
+              pickedFile = await imagePicker.pickImage(source: ImageSource.camera, maxHeight: 150, imageQuality: 90);
+              if (pickedFile != null) {
+                setState(() {
+                  _imageTaken = true;
+                });
+              }
+            },
+            child: Text('Toma una foto'),
+          ),
+          Text(
+            '¿Que quieres vender?',
+              style: const TextStyle(
+                  color: Colors.white,
+                  height: 4
+              )
+          ),
           TextFormField(
             controller: nameController,
-            decoration: InputDecoration(labelText: 'Nombre producto'),
+            decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.white24,
+                border: OutlineInputBorder(),
+                hintText: 'Titulo',
+                hintStyle: const TextStyle(
+                  color: Colors.grey
+                )
+            ),
+            style: const TextStyle(
+              height: 0.05
+            )
+          ),
+          Text(
+            'Categoría',
+            style: const TextStyle(
+                color: Colors.white,
+                height: 4
+            )
+          ),
+          Text(
+              'Cuenta un poco más',
+              style: const TextStyle(
+                  color: Colors.white,
+                  height: 4
+              )
+          ),
+          TextFormField(
+            controller: descriptionController,
+            textAlignVertical: TextAlignVertical.top,
+            decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.white24,
+                border: OutlineInputBorder(),
+                hintText: 'Descripción',
+                hintStyle: const TextStyle(
+                    color: Colors.grey
+                )
+            ),
           ),
           if(esSubasta)
             TextFormField(
@@ -84,10 +164,7 @@ class _AddProductFormState extends State<AddProductForm> {
                 decoration: InputDecoration(labelText: 'Fecha y hora de finalización (YYYY-MM-DD HH:MM)'),
                 keyboardType: TextInputType.numberWithOptions(decimal: true)
             ),
-          TextFormField(
-            controller: descriptionController,
-            decoration: InputDecoration(labelText: 'Descripción'),
-          ),
+
           Row(
             children: [
               Checkbox(
