@@ -36,11 +36,19 @@ class _ListaProductosState extends State<ListaProductosSubasta> {
     user = connected;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text("Lista Productos Subasta"),
-      ),
-      body: Column(
-        children: [
+        backgroundColor: Colors.black,
+        title: const Text("Subastas",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 25,
+            fontWeight: FontWeight.bold,
+          ),),),
+      body: Container(
+        decoration: const BoxDecoration(
+          color: Colors.black,
+        ),
+        //color: Colors.black,
+        child: Column(children:[
           SearchBar(onSearchResults: (results) {
             setState(() {
               _searchResults = results;
@@ -49,7 +57,7 @@ class _ListaProductosState extends State<ListaProductosSubasta> {
           Expanded(
             child: ProductList(searchResults: _searchResults),
           ),
-        ],
+        ],),
       ),
     );
   }
@@ -70,15 +78,8 @@ class _SearchBarState extends State<SearchBar> {
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
       child: Container(
         decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.all(Radius.circular(20)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black12,
-              offset: Offset(0, 2),
-              blurRadius: 4.0,
-            ),
-          ],
+          color: Colors.white10,
+          borderRadius: BorderRadius.all(Radius.circular(60)),
         ),
         child: TextField(
           controller: _controller,
@@ -142,15 +143,10 @@ class ProductListState extends State<ProductList> {
               child: Text('No hay ningún producto con ese nombre'),
             );
           } else {
-            return GridView.count(
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 10,
+            return ListView.builder(
               padding: const EdgeInsets.all(10),
-              crossAxisCount: 2,
-              children: _displayedProducts
-                  .map((e) => ProductoWidget(producto: e))
-                  .toList(),
-            );
+              itemBuilder: (BuildContext context, int index) { return ProductoWidget(producto: _displayedProducts[index]); },
+              itemCount: _displayedProducts.length,);
           }
         } else if (snapshot.hasError) {
           return Center(
@@ -175,16 +171,17 @@ class ProductoWidget extends StatelessWidget {
     DateTime now= DateTime.now();
     final diferencia = producto.fechaFin?.difference(now);
     final Dia = diferencia?.inDays ;
-    if(diferencia!.isNegative){return "¡Terminada!";}
-    else {return "Cierra en: ${Dia} dias";}
+    final Hora = diferencia!.inHours - Dia!*24;
+    if(diferencia.isNegative){return "¡Terminada!";}
+    else {return "Finaliza en ${Dia}d ${Hora}h ";}
   }
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color.fromARGB(250, 240, 217, 248),
+          backgroundColor: Colors.white10,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(20),
           ),
         ),
         onPressed: () {
@@ -197,19 +194,21 @@ class ProductoWidget extends StatelessWidget {
         child: Center(
           child: Column(
             children: [
-              const Spacer(),
+              //const Spacer(),
               Flexible(
-                  flex: 15,
+                  flex: 0,
+                  fit: FlexFit.tight,
                   child: Container(
+                    width: 400,
+                    height: 200,
                     decoration: BoxDecoration(
                       shape: BoxShape.rectangle,
                       image: DecorationImage(
-                        image: Image.memory(const Base64Decoder().convert(producto.image.toString())).image,
-                        fit: BoxFit.cover,
+                          image: Image.memory(const Base64Decoder().convert(producto.image.toString())).image,
+                          fit: BoxFit.cover
                       ),
                       borderRadius: BorderRadius.circular(10),
                     ),
-
                   )
               ),
 
@@ -228,15 +227,7 @@ class ProductoWidget extends StatelessWidget {
                             ),
                           Text(producto.nombre!,
                             style: const TextStyle(
-                              color: Color.fromARGB(255, 50, 50, 50),
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            "${producto.precioInicial} €",
-                            style: const TextStyle(
-                              color: Colors.blueGrey,
+                              color: Colors.white,
                               fontSize: 15,
                               fontWeight: FontWeight.bold,
                             ),
@@ -244,21 +235,28 @@ class ProductoWidget extends StatelessWidget {
                           Text(
                             Temporizador(),
                             style: const TextStyle(
-                              color: Colors.purpleAccent,
+                              color: Colors.white,
                               fontSize: 15,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                         ]
                     ),
-                    const Spacer(),
-                    const Icon(Icons.favorite_border_outlined),
+                    //const Spacer(),
+                    const Icon(
+                        Icons.favorite_border_outlined,
+                        color: Colors.deepOrange,
+                    ),
                   ]
               ),
-              const Spacer(),
+              //const Spacer(),
+              const SizedBox(
+                height: 10,
+                width: 10,
+              )
             ],
           ),
         ));
+
   }
 }
-
