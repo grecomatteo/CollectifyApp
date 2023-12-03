@@ -162,7 +162,16 @@ class _SearchBarState extends State<SearchBar> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: selectedCategory == category
                       ? Theme.of(context).colorScheme.primary
-                      : null,
+                      : Colors.white,
+                  foregroundColor: selectedCategory == category
+                      ? Theme.of(context).colorScheme.onSurface // Colore del testo quando è premuto
+                      : Theme.of(context).colorScheme.primary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    side: BorderSide(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
                 ),
                 child: Text(category),
               );
