@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:collectify/ConexionBD.dart';
-
+import 'package:collectify/Message.dart' as m;
 void main() {
   group("Pruebas Base de Datos", () {
     Usuario? u;
@@ -35,9 +35,49 @@ void main() {
     });
     //Esto literalmente solo se puede hacer 1 vez
 */
+    test('Test getProductoBasadoPreferencias', () async {
+      u = Usuario(usuarioID: 1);
+      List<Producto> productos = await Conexion().getProductosBasadoPreferencias(u!);
+      expect(productos,
+          isA<List<Producto>>());
+      assert(productos.isNotEmpty);
+    });
+    test('Test Search producto', () async {
+      List<Producto> productos = await Conexion().searchProductos("Moneda");
+      expect(productos,
+          isA<List<Producto>>());
+      assert(productos.isNotEmpty);
+    });
+    test('Test getAllProductos', () async {
+      List<Producto> productos = await Conexion().getAllProductos();
+      expect(productos,
+          isA<List<Producto>>());
+      assert(productos.isNotEmpty);
+    });
+    test('Test getListaEventos', () async {
+      List<Evento> eventos = await Conexion().getListaEventos();
+      expect(eventos,
+          isA<List<Evento>>());
+      assert(eventos.isNotEmpty);
+    });
+    test('Test getValoraciones', () async {
+      List<Valoracion> valoraciones = await Conexion().getValoraciones(1);
+      expect(valoraciones,
+          isA<List<Valoracion>>());
+      assert(valoraciones.isNotEmpty);
+    });
+    test('Test getProductosSubasta', () async {
+      List<Producto> productos = await Conexion().getProductosSubasta();
+      expect(productos,
+          isA<List<Producto>>());
+      assert(productos.isNotEmpty);
+    });
+
+
   });
 
   group("Pruebas unitarias", () {
+
     test('Test Usuario', () async {
       Usuario u = Usuario(
           usuarioID: 1,
@@ -67,9 +107,6 @@ void main() {
         precio: 10,
         esPremium: false,
         esSubasta: false,
-
-
-
       );
       expect(p.usuarioID, 1);
       expect(p.productoID, 1);
@@ -78,14 +115,10 @@ void main() {
       expect(p.precio, 10);
       expect(p.esPremium, false);
       expect(p.esSubasta, false);
-
     });
     test('Test Imagen', () async {
-      Imagen i = Imagen(
-        productoID: 1,
-        nombre: "Producto",
-        image: Uint8List(10)
-      );
+      Imagen i =
+          Imagen(productoID: 1, nombre: "Producto", image: Uint8List(10));
       expect(i.productoID, 1);
       expect(i.nombre, "Producto");
       expect(i.image, Uint8List(10));
@@ -98,7 +131,6 @@ void main() {
         descripcion: "Descripcion",
         fechaEvento: DateTime(2000, 12, 12),
         direccion: "Direccion",
-
       );
       expect(e.usuarioID, 1);
       expect(e.idEvento, 1);
@@ -106,7 +138,17 @@ void main() {
       expect(e.descripcion, "Descripcion");
       expect(e.fechaEvento, DateTime(2000, 12, 12));
       expect(e.direccion, "Direccion");
-
+    });
+    test('Test Mensaje', () async {
+      m.Message mes = m.Message(
+        1,"Pepe",2,"Pedro","Contenido",DateTime(2000,12,12)
+      );
+      expect(mes.senderID, 1);
+      expect(mes.senderName, "Pepe");
+      expect(mes.receiverID, 2);
+      expect(mes.receiverName, "Pedro");
+      expect(mes.message, "Contenido");
+      expect(mes.sendDate, DateTime(2000,12,12));
 
     });
   });
