@@ -78,7 +78,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-    return MaterialApp(
+    return SafeArea(child: MaterialApp(
       title: 'Collectify',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
@@ -100,7 +100,7 @@ class MyApp extends StatelessWidget {
                   );
                 });
           }),
-    );
+    ));
   }
 }
 

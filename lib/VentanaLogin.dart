@@ -70,6 +70,55 @@ class Login extends StatelessWidget {
   final TextEditingController usernameText = TextEditingController();
   final TextEditingController passwordText = TextEditingController();
 
+  void subbmitHandler(BuildContext context) async {
+    nick = usernameText.text;
+    pswrd = passwordText.text;
+    if (nick == "" || pswrd == "") {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("Error"),
+              content: Text("Por favor, rellene todos los campos"),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text("OK"))
+              ],
+            );
+          });
+      return;
+    }
+
+    try {
+      await Conexion().login(nick, pswrd).then((value) => {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ListaProductos(connected: value!))),
+          });
+    } catch (e) {
+      debugPrint("Error");
+
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("Error"),
+              content: Text(e.toString()),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text("OK"))
+              ],
+            );
+          });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,62 +128,17 @@ class Login extends StatelessWidget {
         TextField(controller: usernameText, textAlign: TextAlign.center),
         const Text("Contraseña"),
         TextField(
-            controller: passwordText,
-            textAlign: TextAlign.center,
-            obscureText: true),
+          controller: passwordText,
+          textAlign: TextAlign.center,
+          obscureText: true,
+          onSubmitted: (value) {
+            subbmitHandler(context);
+          },
+        ),
         TextButton(
             child: const Text("Iniciar sesión"),
             onPressed: () async {
-
-              nick = usernameText.text;
-              pswrd = passwordText.text;
-              if (nick == "" || pswrd == "") {
-
-                showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text("Error"),
-                        content: Text("Por favor, rellene todos los campos"),
-                        actions: [
-                          TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: Text("OK"))
-                        ],
-                      );
-                    });
-                return;
-              }
-
-              try {
-                await Conexion().login(nick, pswrd).then((value) => {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  ListaProductos(connected: value!))),
-                    });
-              } catch (e) {
-                debugPrint("Error");
-
-                showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text("Error"),
-                        content: Text(e.toString()),
-                        actions: [
-                          TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: Text("OK"))
-                        ],
-                      );
-                    });
-              }
+              subbmitHandler(context);
             }),
         TextButton(
             child: const Text("Registrarse"),
