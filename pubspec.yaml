@@ -30,6 +30,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+    fonts:
+      - family: Aeonik
+        fonts:
+          - asset: assets/fonts/Aeonik-Regular.ttf
   share_plus: ^7.2.1
   uni_links3: ^0.5.3
 

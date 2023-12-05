@@ -29,7 +29,7 @@ class VentanaChat extends StatelessWidget {
         child: Scaffold(
           appBar: AppBar(
             backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-            title: const Text("Chat"),
+            title: const Text("Chats", style: TextStyle(color: Colors.white, fontSize: 50, fontFamily: "Aeonik"),),
           ),
           body: TextAndChat(),
         ));
