@@ -21,6 +21,7 @@ class Producto {
   DateTime? fechaFin;
   int? precioInicial;
   int? ultimaOferta;
+  int? idUserUltimaPuja;
   Producto(
       {this.usuarioID,
       this.productoID,
@@ -97,10 +98,10 @@ class Conexion {
   static List<Producto> productosSubastaBasadoPreferencias = [];
   static List<Evento> eventos = [];
 
-  Future<void> conectar() async {
+  Future<bool> conectar() async {
     debugPrint("Conectando");
     if (conn != null) {
-      return;
+      return true;
     }
 
     try {
@@ -113,8 +114,10 @@ class Conexion {
       ));
 
       debugPrint("Conectado");
+      return true;
     } catch (e) {
       debugPrint(e.toString() + "Error");
+      return false;
     }
   }
 
@@ -178,6 +181,38 @@ class Conexion {
 
     return productos;
   }
+//nica
+  Future<List<Producto>> getProductoPorCategoria(String categoria) async {
+    if (conn == null) await conectar();
+    List<Producto> productos = [];
+
+    await conn?.query('''SELECT producto.*, IMAGEN.image, usuario.esPremium
+      FROM producto
+      JOIN usuario ON producto.usuarioID = usuario.userID
+      JOIN IMAGEN ON producto.pruductoID = IMAGEN.id_producto
+      WHERE producto.categoria = ?
+      ORDER BY usuario.esPremium DESC;
+    ''', [categoria]).then((results) {
+      for (var row in results) {
+        Producto producto = Producto(
+          usuarioID: row['usuarioID'],
+          productoID: row['pruductoID'],
+          nombre: row['nombre'],
+          descripcion: row['descripcion'],
+          precio: row['precio'],
+          // Get blob 'image'
+          image: row['image'],
+          esPremium: row['esPremium'] == 1 ? true : false,
+          esSubasta: row['esSubasta'] == 1 ? true : false,
+        );
+
+        productos.add(producto);
+      }
+    });
+
+    return productos;
+  }
+  //fine nica
 
   Future<List<Producto>> getProductosBasadoPreferencias(Usuario user) async {
     if (productosVentaBasadoPreferencias.isNotEmpty) {
@@ -226,8 +261,9 @@ class Conexion {
 
   Future<List<Producto>> getProductosSubastaBasadoPreferencias(
       Usuario user) async {
-    if (productosSubastaBasadoPreferencias.isNotEmpty)
+    if (productosSubastaBasadoPreferencias.isNotEmpty) {
       return productosSubastaBasadoPreferencias;
+    }
     if (conn == null) await conectar();
     String categorias = " ";
     List<Producto> productos = [];
@@ -253,7 +289,7 @@ class Conexion {
             {
               producto = Producto(
                 usuarioID: row['usuarioID'],
-                productoID: row['productoID'],
+                productoID: row['pruductoID'],
                 nombre: row['nombre'],
                 descripcion: row['descripcion'],
                 precio: row['precio'],
@@ -265,6 +301,7 @@ class Conexion {
               producto.fechaFin = row['fechaFin'],
               producto.precioInicial = row['precioInicial'],
               producto.ultimaOferta = row['ultimaOferta'],
+              producto.idUserUltimaPuja = row['idUsuarioUltPuja']
             }
         });
     productosSubastaBasadoPreferencias = productos;
@@ -285,14 +322,11 @@ class Conexion {
     return categorias;
   }
 
-  //nica
+
   Future<List<Producto>> searchProductos(String query) async {
-    print('Executing searchProductos with query: $query');
 
     if (conn == null) {
-      print('Connection is null. Connecting...');
       await conectar();
-      print('Connection established.');
     }
 
     //Elimino los espacios antes y después de las letras, también para obtener ayuda para el próximo cheque
@@ -320,7 +354,6 @@ class Conexion {
 
       // Iterar sobre todos los resultados devueltos por la consulta
       for (var row in results) {
-        print('Processing row: $row');
         //crear nuevo objecto producton da anadir a la lista
         Producto producto = Producto(
           usuarioID: row['usuarioID'],
@@ -333,15 +366,13 @@ class Conexion {
         );
 
         productos.add(producto);
-        print('Created Producto: $producto');
       }
     }).catchError((error) {
-      print('Error executing query: $error');
     });
 
     return productos;
   }
-  //fine nica
+
 
   Future<List<Usuario>> getUsuarios() async {
     if (conn == null) await conectar();
@@ -364,7 +395,7 @@ class Conexion {
     return usuarios;
   }
 
-  Future<Usuario?> getUsuarioByID(int id) async {
+  Future<Usuario?> getUsuarioByID(int? id) async {
     Usuario? usuario;
     if (conn == null) await conectar();
 
@@ -577,6 +608,15 @@ class Conexion {
 
     return true;
   }
+  Future<bool> addUltimaPuja(int productID, int userID, int ultimaOferta) async {
+    if (conn == null) await conectar();
+    await conn?.query(
+        "UPDATE productos_subasta SET idUsuarioUltPuja = $userID, ultimaOferta = $ultimaOferta WHERE idProducto = $productID; "
+    ).then((results) => {print("Puja añadida")});
+
+
+    return true;
+  }
 
   Future<List<Producto>> getProductosSubasta() async {
     if (conn == null) await conectar();
@@ -592,7 +632,7 @@ class Conexion {
             {
               producto = Producto(
                 usuarioID: row['usuarioID'],
-                productoID: row['productoID'],
+                productoID: row['pruductoID'],
                 nombre: row['nombre'],
                 descripcion: row['descripcion'],
                 precio: row['precio'],
@@ -603,6 +643,7 @@ class Conexion {
               producto.fechaFin = row['fechaFin'],
               producto.precioInicial = row['precioInicial'],
               producto.ultimaOferta = row['ultimaOferta'],
+              producto.idUserUltimaPuja = row['idUsuarioUltPuja'],
               productos.add(producto)
             }
         });

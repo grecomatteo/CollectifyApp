@@ -46,11 +46,12 @@ class _RegistroFormState extends State<RegistroForm> {
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
     );
-    if (picked != null && picked != selectedDate)
+    if (picked != null && picked != selectedDate) {
       setState(() {
         selectedDate = picked;
         birthdateController.text = "${selectedDate.toLocal()}".split(' ')[0];
       });
+    }
   }
 
   void _validateEmail(String email) {

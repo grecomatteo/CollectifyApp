@@ -36,11 +36,19 @@ class _ListaProductosState extends State<ListaProductosSubasta> {
     user = connected;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text("Lista Productos Subasta"),
-      ),
-      body: Column(
-        children: [
+        backgroundColor: Colors.black,
+        title: const Text("Subastas",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 25,
+            fontWeight: FontWeight.bold,
+          ),),),
+      body: Container(
+        decoration: const BoxDecoration(
+          color: Colors.black,
+        ),
+        //color: Colors.black,
+        child: Column(children:[
           SearchBar(onSearchResults: (results) {
             setState(() {
               _searchResults = results;
@@ -49,7 +57,7 @@ class _ListaProductosState extends State<ListaProductosSubasta> {
           Expanded(
             child: ProductList(searchResults: _searchResults),
           ),
-        ],
+        ],),
       ),
     );
   }
@@ -70,15 +78,8 @@ class _SearchBarState extends State<SearchBar> {
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
       child: Container(
         decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.all(Radius.circular(20)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black12,
-              offset: Offset(0, 2),
-              blurRadius: 4.0,
-            ),
-          ],
+          color: Colors.white10,
+          borderRadius: BorderRadius.all(Radius.circular(60)),
         ),
         child: TextField(
           controller: _controller,
@@ -142,15 +143,10 @@ class ProductListState extends State<ProductList> {
               child: Text('No hay ningún producto con ese nombre'),
             );
           } else {
-            return GridView.count(
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 10,
-              padding: const EdgeInsets.all(10),
-              crossAxisCount: 2,
-              children: _displayedProducts
-                  .map((e) => ProductoWidget(producto: e))
-                  .toList(),
-            );
+            return ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+              itemBuilder: (BuildContext context, int index) { return ProductoWidget(producto: _displayedProducts[index]); },
+              itemCount: _displayedProducts.length,);
           }
         } else if (snapshot.hasError) {
           return Center(
@@ -170,94 +166,158 @@ class ProductoWidget extends StatelessWidget {
   final Producto producto;
   const ProductoWidget({super.key, required this.producto});
 
+
   String Temporizador(){
     DateTime now= DateTime.now();
     final diferencia = producto.fechaFin?.difference(now);
     final Dia = diferencia?.inDays ;
-    if(diferencia!.isNegative){return "¡Terminada!";}
-    else {return "Cierra en: ${Dia} dias";}
+    final Hora = diferencia!.inHours - Dia!*24;
+    if(diferencia.isNegative){return "¡Terminada!";}
+    else {return "${Dia}d ${Hora}h";}
   }
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color.fromARGB(250, 240, 217, 248),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
-          ),
-        ),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => VentanaProducto(connected: user, producto: producto)),
-          );
-          //Aqui irá la descripcion detallada de producto
-        },
-        child: Center(
-          child: Column(
-            children: [
-              const Spacer(),
-              Flexible(
-                  flex: 15,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.rectangle,
-                      image: DecorationImage(
-                        image: Image.memory(const Base64Decoder().convert(producto.image.toString())).image,
-                        fit: BoxFit.cover,
-                      ),
-                      borderRadius: BorderRadius.circular(10),
+    return Column(
+      children: [
+        ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white10,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => VentanaProducto(connected: user, producto: producto)),
+              );
+              //Aqui irá la descripcion detallada de producto
+            },
+            child: Center(
+              child: Column(
+                children: [
+                  //const Spacer(),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  Flexible(
+                    flex: 0,
+                    fit: FlexFit.tight,
+                    child: Container(
+                        width:400,
+                        height: 200,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          image: DecorationImage(
+                              image: Image.memory(const Base64Decoder().convert(producto.image.toString())).image,
+                              fit: BoxFit.cover
+                          ),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children:[
+                              Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.rectangle,
+                                  borderRadius: BorderRadius.circular(20),
+                                  color: Colors.white10,
+                                ),
+                                child : Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text("Finaliza en   ", style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 15,
+                                    )),
+                                    Text(Temporizador(), style: const TextStyle(
+                                      color: Colors.deepOrange,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                    ))
+                                  ],
+                                ),
+                              ),
+                              const Icon(Icons.favorite, color: Colors.deepOrangeAccent)
+                            ]
+                        )
                     ),
+                  ),
 
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if(producto.esPremium == true)
+                                const Row(
+                                  children: [
+                                    Icon(Icons.star, color: Colors.yellow,),
+                                    Text("Premium", style: TextStyle(color: Colors.yellow),),
+                                  ],
+                                ),
+                              Text(producto.nombre!,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.rectangle,
+                                  borderRadius: BorderRadius.circular(20),
+                                  color: Colors.deepOrange,
+                                ),
+                                child: const Row(
+                                    children:[
+                                      Text("Editar puja",
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 15
+                                        ))
+                                    ]),
+                              ),
+                            ]
+                        ),
+                        Column(
+
+                          children: [
+                            const Text("Ultima puja", style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 15,
+                            )),
+                            Text("${producto.ultimaOferta} €", style: const TextStyle(
+                              color: Colors.deepOrange,
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            )),
+                          ],
+                        )
+
+                      ]
+                  ),
+                  //const Spacer(),
+                  const SizedBox(
+                    height: 10,
+                    width: 10,
                   )
+                ],
               ),
+            )),
+        const SizedBox(
+          height: 20,
+        )
+      ],
+    );
 
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if(producto.esPremium == true)
-                            const Row(
-                              children: [
-                                Icon(Icons.star, color: Colors.yellow,),
-                                Text("Premium", style: TextStyle(color: Colors.yellow),),
-                              ],
-                            ),
-                          Text(producto.nombre!,
-                            style: const TextStyle(
-                              color: Color.fromARGB(255, 50, 50, 50),
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            "${producto.precioInicial} €",
-                            style: const TextStyle(
-                              color: Colors.blueGrey,
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            Temporizador(),
-                            style: const TextStyle(
-                              color: Colors.purpleAccent,
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ]
-                    ),
-                    const Spacer(),
-                    const Icon(Icons.favorite_border_outlined),
-                  ]
-              ),
-              const Spacer(),
-            ],
-          ),
-        ));
   }
 }
-

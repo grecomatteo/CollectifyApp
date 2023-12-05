@@ -1,15 +1,13 @@
-import 'dart:async';
 import 'dart:convert';
-
 import 'package:collectify/VentanaPerfil.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'ConexionBD.dart';
 import 'VentanaMensajesChat.dart';
 import 'package:share_plus/share_plus.dart';
 
 
 Usuario user = Usuario();
+String? userUltPuja;
 Producto product = Producto();
 class VentanaProducto extends StatelessWidget {
   const VentanaProducto({super.key, required this.connected, required this.producto});
@@ -21,6 +19,11 @@ class VentanaProducto extends StatelessWidget {
   Widget build(BuildContext context) {
     user = connected;
     product = producto;
+    if(product.idUserUltimaPuja != null) {
+      Conexion().getUsuarioByID(product.idUserUltimaPuja).then((results) {
+         userUltPuja = results?.nick;
+      });
+    }
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -31,21 +34,24 @@ class VentanaProducto extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Image.memory(const Base64Decoder().convert(producto!.image.toString()), fit: BoxFit.fill, width: 200, height: 200,),
+          Image.memory(const Base64Decoder().convert(producto.image.toString()), fit: BoxFit.fill, width: 200, height: 200,),
           const Text("Descripción", style: TextStyle(fontSize: 30, color: Colors.deepPurple),),
           Text("${producto.descripcion}.", style: const TextStyle(fontSize: 15, color: Colors.blueGrey),),
           if(producto.esSubasta == true)
             Column(
               children: [
                   Text("Precio inicial : ${producto.precioInicial} €", style: const TextStyle(fontSize: 20, color: Colors.deepPurple),),
-                  Text("Última puja : ${producto.ultimaOferta} €", style: const TextStyle(fontSize: 20, color: Colors.deepPurple),)
+                  if(producto.idUserUltimaPuja != null)
+                    Text("Última puja : ${producto.ultimaOferta} € realizada por $userUltPuja",
+                      style: const TextStyle(fontSize: 15, color: Colors.blueGrey),)
+                  else const Text("Nadie ha pujado todavía", style: TextStyle(fontSize: 15, color: Colors.blueGrey),),
               ],
             )
           else Text("${producto.precio} €", style: const TextStyle(fontSize: 20, color: Colors.deepPurple),),
 
           ElevatedButton(onPressed:
               () {
-            Conexion().getUsuarioByID(producto!.usuarioID!).then((value)
+            Conexion().getUsuarioByID(producto.usuarioID!).then((value)
             {
               Navigator.push(
                 context,
@@ -87,29 +93,58 @@ class VentanaProducto extends StatelessWidget {
           ),
           Row(
             children: [
-              ElevatedButton(
-                onPressed:(){
-                  //abrir ventana de compra
-                  showDialog(
-                      context: context,
-                      builder: (buildcontext) {
-                        return AlertDialog(
-                          contentPadding: const EdgeInsets.all(8.0),
-                          title: const Text("¡Error!",
-                              style: TextStyle(color: Colors.red)),
-                          content: const Text("tt esperate que esto aun no esta implementao"),
-                          actions: <Widget>[
-                            ElevatedButton(
-                                child: const Text("volver pa tras", style: TextStyle(color: Colors.black),
-                                ),
-                                onPressed: () {Navigator.of(buildcontext).pop();
-                                })
-                          ],
-                        );
-                      });
-                },
-                child: Row(children: [if(producto.esSubasta == true )const Text("Pujar") else const Text("Comprar"),],)
-              ),
+              if(producto.esSubasta == false)
+                ElevatedButton(
+                  onPressed:(){
+                    //abrir ventana de compra
+                    showDialog(
+                        context: context,
+                        builder: (buildcontext) {
+                          return AlertDialog(
+                            contentPadding: const EdgeInsets.all(8.0),
+                            title: const Text("¡Error!",
+                                style: TextStyle(color: Colors.red)),
+                            content: const Text("tt esperate que esto aun no esta implementao"),
+                            actions: <Widget>[
+                              ElevatedButton(
+                                  child: const Text("volver pa tras", style: TextStyle(color: Colors.black),
+                                  ),
+                                  onPressed: () {Navigator.of(buildcontext).pop();
+                                  })
+                            ],
+                          );
+                        });
+                  },
+                  child: const Text("Comprar"))
+              else
+                if(user.usuarioID != producto.usuarioID)
+                ElevatedButton(
+                    onPressed:() async {
+                      await Conexion().addUltimaPuja(producto.productoID!, user.usuarioID!, product.ultimaOferta!+5 );
+                      showDialog(
+                          context: context,
+                          builder: (buildcontext) {
+                            return AlertDialog(
+                              contentPadding: const EdgeInsets.all(8.0),
+                              title: const Text("¡Enhorabuena!",
+                                  style: TextStyle(color: Colors.red)),
+                              content: const Text("Has pujado por este producto."),
+                              actions: <Widget>[
+                                ElevatedButton(
+                                    child: const Text("Ok", style: TextStyle(color: Colors.black),
+                                    ),
+                                    onPressed: () {Navigator.of(buildcontext).pop();
+                                    })
+                              ],
+                            );
+                          });
+                      Navigator.of(context).pop();
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => VentanaProducto(connected: user, producto: producto)),);
+                      },
+                    child: const Text("Pujar"))
+                else const Text("Este producto es tuyo por tanto no puedes pujar por el.", style: TextStyle(fontSize: 15, color: Colors.black),),
             ],
           ),
         ],

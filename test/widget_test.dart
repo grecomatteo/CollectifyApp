@@ -1,30 +1,66 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
+import 'package:collectify/VentanaAnadirProducto.dart';
+import 'package:collectify/VentanaEventos.dart';
+import 'package:mysql1/mysql1.dart';
 
+import 'package:collectify/ConexionBD.dart';
+import 'package:collectify/VentanaInicio.dart';
+import 'package:collectify/VentanaLogin.dart';
+import 'package:collectify/VentanaPerfil.dart';
+import 'package:collectify/VentanaProducto.dart';
+import 'package:collectify/VentanaRegister.dart';
+import 'package:collectify/VentanaListaProductos.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:collectify/main.dart';
-
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
-
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
-
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+  testWidgets("Test Ventana Inicio", (WidgetTester tester) async {
+    await tester.pumpWidget(MaterialApp(home: VentanaInicio()));
   });
+  testWidgets("Test Ventana Login", (WidgetTester tester) async {
+    await tester.pumpWidget(const VentanaLogin());
+  });
+  testWidgets("Test Ventana Register", (WidgetTester tester) async {
+    await tester.pumpWidget(VentanaRegister());
+  });
+
+  testWidgets("Test Ventana Lista Productos", (WidgetTester tester) async {
+    Usuario u = new Usuario(usuarioID: 1);
+    await tester.pumpWidget(MaterialApp(home: ListaProductos(connected: u)), );
+    await tester.pumpAndSettle();
+
+  });
+  testWidgets("Test Ventana Eventos", (WidgetTester tester) async {
+    await tester.pumpWidget(MaterialApp(home: VentanaEventos()));
+  });
+  testWidgets("Test Ventana Añadir Producto", (WidgetTester tester) async {
+    Usuario u = await Conexion().getUsuarioByID(1) as Usuario;
+    await tester.pumpWidget(VentanaAnadirProducto(
+      user: u,
+    ));
+    await tester.pumpAndSettle();
+  });
+  testWidgets("Test Ventana Perfil", (WidgetTester tester) async {
+    Usuario u = await Conexion().getUsuarioByID(1).then((value){
+      debugPrint(value?.nombre.toString());
+      return value as Usuario;
+
+    });
+    Usuario r = await Conexion().getUsuarioByID(2) as Usuario;
+    await tester.pumpWidget(VentanaPerfil(mUser: u, rUser: r));
+  });
+
+
+  testWidgets("Test Ventana Producto", (WidgetTester tester) async {
+    Usuario u = new Usuario(usuarioID: 1);
+    Blob? imagen = await Conexion().obtenerImagen(62);
+    Producto p = new Producto(
+        productoID: 1,
+        nombre: "Moneda",
+        descripcion: "Moneda de 1 euro",
+        image: imagen);
+
+    await tester.pumpWidget(
+        MaterialApp(home: VentanaProducto(connected: u, producto: p)));
+  });
+
 }
