@@ -27,8 +27,9 @@ class VentanaAnadirProducto extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.black,
       ),
-      body: AddProductForm(),
+      body: SingleChildScrollView(child: AddProductForm()),
       backgroundColor: Colors.black,
+      resizeToAvoidBottomInset: false,
     );
   }
 }
@@ -92,8 +93,13 @@ class _AddProductFormState extends State<AddProductForm> {
                   _imageTaken = true;
                 });
               }
+
             },
-            child: Text('Toma una foto'),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent
+              ),
+
+            child: Image(image: AssetImage('lib/assets/Group_277.png')),
           ),
           Text(
             '¿Que quieres vender?',
@@ -143,6 +149,13 @@ class _AddProductFormState extends State<AddProductForm> {
                     color: Colors.grey
                 )
             ),
+          ),
+          Text(
+              'Precio',
+              style: const TextStyle(
+                  color: Colors.white,
+                  height: 4
+              )
           ),
           if(esSubasta)
             TextFormField(
