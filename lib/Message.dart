@@ -14,12 +14,13 @@ class Message {
 
   List<List<int>> compressObject() {
     //Encode each variable separately
-    final senderIDBytes = utf8.encode(senderID.toString());
-    final senderNameBytes = utf8.encode(senderName);
-    final receiverIDBytes = utf8.encode(receiverID.toString());
-    final receiverNameBytes = utf8.encode(receiverName);
-    final messageBytes = utf8.encode(message);
-    final sendDateBytes = utf8.encode(sendDate.toString());
+    var senderIDBytes = utf8.encode(senderID.toString());
+    var senderNameBytes = utf8.encode(senderName);
+    var receiverIDBytes = utf8.encode(receiverID.toString());
+    var receiverNameBytes = utf8.encode(receiverName);
+    var messageBytes = utf8.encode(message);
+    var timeDifference = DateTime.now().timeZoneOffset;
+    var sendDateBytes = utf8.encode(sendDate.add(Duration(hours: timeDifference.inHours)).toString());
 
     //Return a list of all the compressed variables
     return [senderIDBytes, senderNameBytes, receiverIDBytes, receiverNameBytes, messageBytes, sendDateBytes];
@@ -27,12 +28,13 @@ class Message {
 
   factory Message.decompressObject(List<List<int>> compressedBytes) {
 
-    final senderID = int.parse(utf8.decode(compressedBytes[0]));
-    final senderName = utf8.decode(compressedBytes[1]);
-    final receiverID = int.parse(utf8.decode(compressedBytes[2]));
-    final receiverName = utf8.decode(compressedBytes[3]);
-    final message = utf8.decode(compressedBytes[4]);
-    final sendDate = DateTime.parse(utf8.decode(compressedBytes[5]));
+    var senderID = int.parse(utf8.decode(compressedBytes[0]));
+    var senderName = utf8.decode(compressedBytes[1]);
+    var receiverID = int.parse(utf8.decode(compressedBytes[2]));
+    var receiverName = utf8.decode(compressedBytes[3]);
+    var message = utf8.decode(compressedBytes[4]);
+    var timeDifference = DateTime.now().timeZoneOffset;
+    var sendDate = DateTime.parse(utf8.decode(compressedBytes[5])).add(Duration(hours: timeDifference.inHours));
 
     //Return the message
     return Message(senderID, senderName, receiverID, receiverName, message, sendDate);

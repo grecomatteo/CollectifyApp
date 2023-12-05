@@ -28,13 +28,18 @@ class VentanaChat extends StatelessWidget {
         },
         child: Scaffold(
           appBar: AppBar(
-            backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+            iconTheme: const IconThemeData(
+              color: Colors.white,
+              size: 40,
+            ),
+            backgroundColor: Colors.black,
             title: const Text(
               "Chats",
               style: TextStyle(fontFamily: 'Aeonik', fontSize: 50, color: Colors.white),
             ),
           ),
           body: TextAndChat(),
+          backgroundColor: Colors.black,
         ));
   }
 }
@@ -74,10 +79,6 @@ class TextAndChatState extends State<TextAndChat> {
     var split = message.split(":");
     List<Message> gottenMessages = [];
 
-    //Recieved message:
-    /*
-    LastMessage:[[120, 156, 171, 152, 99, 204, 196, 192, 96, 204, 96, 12, 0, 11, 94, 1, 176], [120, 156, 171, 152, 163, 173, 235, 167, 203, 196, 192, 146, 203, 120, 0, 0, 21, 115, 3, 28], [120, 156, 171, 152, 99, 204, 194, 192, 96, 196, 96, 4, 0, 11, 102, 1, 176], [120, 156, 171, 152, 227, 237, 115, 242, 236, 25, 102, 6, 54, 70, 38, 46, 0, 38, 238, 4, 36], [120, 156, 171, 152, 195, 237, 169, 171, 23, 120, 194, 87, 87, 207, 207, 199, 63, 212, 128, 153, 65, 61, 145, 229, 15, 0, 77, 6, 6, 126], [120, 156, 171, 152, 99, 108, 100, 96, 116, 205, 212, 228, 138, 233, 166, 0, 131, 45, 91, 140, 76, 182, 24, 153, 94, 219, 188, 197, 192, 212, 208, 128, 149, 193, 197, 144, 85, 25, 0, 233, 160, 11, 228]];[[120, 156, 171, 152, 99, 204, 198, 192, 96, 194, 96, 2, 0, 11, 122, 1, 182], [120, 156, 171, 152, 243, 249, 172, 143, 190, 239, 89, 70, 6, 14, 33, 166, 20, 0, 48, 35, 4, 235], [120, 156, 171, 152, 99, 204, 194, 192, 96, 196, 96, 4, 0, 11, 102, 1, 176], [120, 156, 171, 152, 227, 237, 115, 242, 236, 25, 102, 6, 54, 70, 38, 46,
-    */
 
     //Remove the first and last character, which are "[" and "]"
     //Split the string by ";"
@@ -92,6 +93,7 @@ class TextAndChatState extends State<TextAndChat> {
       //String to List<List<int>>, remove the "[" from the first string and the "]" from the last string
       List<List<int>> messageCompressed = messagesCompressed[i].split("], [").map((e) => e.replaceAll("[", "").replaceAll("]", "").split(",").map((e) => int.parse(e)).toList()).toList();
       Message m = Message.decompressObject(messageCompressed);
+      print(m.message);
       gottenMessages.add(m);
     }
 
@@ -215,7 +217,6 @@ class TextAndChatState extends State<TextAndChat> {
   Widget build(BuildContext context) {
     buildSocket();
 
-
     return StreamBuilder<List<Message>>(
       stream: _messages.stream,
       builder: (context, snapshot) {
@@ -223,56 +224,68 @@ class TextAndChatState extends State<TextAndChat> {
         if (snapshot.hasError) {
           children = [Text('${snapshot.error}')];
 
-          ListView LV = ListView(
-              controller: listViewController,
-              children: [for (final element in children.toList()) element]);
-          return LV;
+          ListView lv = ListView(
+            controller: listViewController,
+            children: [for (final element in children.toList()) element]);
+          return lv;
         }
         if (!snapshot.hasData) {
           children = const <Widget>[CircularProgressIndicator()];
 
-          ListView LV = ListView(
-              controller: listViewController,
-              children: [for (final element in children.toList()) element]);
-          return LV;
+          ListView lv = ListView(
+            controller: listViewController,
+            children: [for (final element in children.toList()) element]);
+          return lv;
         } else {
+          children.add(
+            const SizedBox(
+              height: 20,
+            ));
+          //Order the messages by date
+          snapshot.data!.sort((a, b) => b.sendDate.compareTo(a.sendDate));
           for (final element in snapshot.data!.toList()) {
             int otherID = element.senderID == myID
                 ? element.receiverID
                 : element.senderID;
             Column c = Column(
               children: [
+                const SizedBox(
+                  height: 5,
+                ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     alignment: Alignment.centerLeft,
-                    backgroundColor: Colors.white,
+                    padding: const EdgeInsets.all(5),
+                    backgroundColor: const Color.fromRGBO(52,52,52, 1),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ventanaMensajesChat = VentanaMensajesChat(myID, otherID, chatSocket!)),
-                    );
+                    try {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ventanaMensajesChat = VentanaMensajesChat(myID, otherID, chatSocket!)),
+                      );
+                    } on SocketException catch (_) {
+                      buildSocket();
+                    }
                   },
                   //Horizontal list
                   child: Column(children: [
-                    const SizedBox(
-                      height: 2,
-                    ),
                     Row(
                       //Align the children to the left
                       mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         //Small image resize to fit the button, add margin and make it circular
                         ClipRRect(
-                          borderRadius: BorderRadius.circular(50),
+                          borderRadius: BorderRadius.circular(10),
                           child: Image.network(
                             "https://picsum.photos/250?image=9",
-                            width: 50,
-                            height: 50,
+                            width: 80,
+                            height: 80,
                           ),
                         ),
                         //Separate the image from the text
@@ -282,11 +295,16 @@ class TextAndChatState extends State<TextAndChat> {
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Text(
                                 element.senderID == myID ? element.receiverName : element.senderName,
                                 style: const TextStyle(
-                                    fontWeight: FontWeight.bold),
+                                    fontFamily: 'Aeonik',
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                    color: Colors.white,
+                                ),
                                 textAlign: TextAlign.left,
                                 softWrap: false,
                                 overflow: TextOverflow.fade,
@@ -296,28 +314,44 @@ class TextAndChatState extends State<TextAndChat> {
                                 textAlign: TextAlign.left,
                                 softWrap: false,
                                 overflow: TextOverflow.fade,
+                                style: const TextStyle(
+                                    fontFamily: 'Aeonik',
+                                    fontSize: 15,
+                                    color: Color.fromRGBO(255, 255, 255, 255*40/100)
+                                ),
                               ),
                             ],
                           ),
                         ),
+                        Text(
+                          //If the date is from today, only show the time in this format hh:mm, if not, show the date in this format dd/mm/yyyy
+                          element.sendDate.day == DateTime.now().day && element.sendDate.month == DateTime.now().month && element.sendDate.year == DateTime.now().year
+                              ? element.sendDate.hour.toString().padLeft(2, '0') + ":" + element.sendDate.minute.toString().padLeft(2, '0')
+                              : element.sendDate.day.toString().padLeft(2, '0') + "/" + element.sendDate.month.toString().padLeft(2, '0') + "/" + element.sendDate.year.toString(),
+                          textAlign: TextAlign.right,
+                          softWrap: false,
+                          overflow: TextOverflow.fade,
+                          style: const TextStyle(
+                              fontFamily: 'Aeonik',
+                              fontSize: 15,
+                              color: Color.fromRGBO(255, 255, 255, 255*40/100)
+                          ),
+                        ),
                       ],
-                    ),
-                    const SizedBox(
-                      height: 2,
                     ),
                   ]),
                 ),
                 const SizedBox(
-                  height: 10,
+                  height: 5,
                 ),
               ],
             );
             children.add(c);
           }
-          ListView LV = ListView(
+          ListView lv = ListView(
               controller: listViewController,
               children: [for (final element in children.toList()) element]);
-          return LV;
+          return lv;
         }
       },
     );
