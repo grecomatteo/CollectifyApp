@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_mlkit_image_labeling/google_mlkit_image_labeling.dart';
+import 'package:google_mlkit_translation/google_mlkit_translation.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'VentanaAnadirProducto.dart';
@@ -16,8 +17,15 @@ import 'dart:io';
 Usuario user = Usuario();
 bool isValid = true;
 bool loading = false;
-ImageLabelerOptions options =  ImageLabelerOptions(confidenceThreshold: 0.75);
+
+//Labelers para imageenes
+ImageLabelerOptions options =  ImageLabelerOptions(confidenceThreshold: 0.76);
 ImageLabeler imageLabeler = ImageLabeler(options: options);
+//Traductor para las labels generadas
+TranslateLanguage sourceLanguage = TranslateLanguage.english;
+TranslateLanguage targetLanguage = TranslateLanguage.spanish;
+
+final onDeviceTranslator = OnDeviceTranslator(sourceLanguage: sourceLanguage, targetLanguage: targetLanguage);
 
 class ListaProductos extends StatefulWidget {
   const ListaProductos({Key? key, required this.connected}) : super(key: key);
@@ -139,15 +147,18 @@ class _SearchBarState extends State<SearchBar> {
                   onPressed: () async {
 
                         ImagePicker picker = ImagePicker();
+
                         final XFile? image = await picker.pickImage(source: ImageSource.camera);
                         //Transforma el XFile en un File
                         File file = File(image!.path);
-                        await imageLabeler.processImage(InputImage.fromFile(file)).then((value){
+                        await imageLabeler.processImage(InputImage.fromFile(file)).then((value) async {
                           if(value.isEmpty){
-                            //error
+                            //mostrar un mensaje en la consola en color rojo
+                            print('\x1B[31m' + 'No se ha podido identificar el producto');
+
                           }
                           else {
-                            _controller.text = value[0].label;
+                            _controller.text = await onDeviceTranslator.translateText(value[0].label);
                             setState(() {
                               loading = true;
                             });
