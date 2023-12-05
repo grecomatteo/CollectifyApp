@@ -25,9 +25,11 @@ class VentanaAnadirProducto extends StatelessWidget {
     logged = user;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Anadir nuevo producto'),
+        backgroundColor: Colors.black,
       ),
-      body: AddProductForm(),
+      body: SingleChildScrollView(child: AddProductForm()),
+      backgroundColor: Colors.black,
+      resizeToAvoidBottomInset: false,
     );
   }
 }
@@ -60,9 +62,109 @@ class _AddProductFormState extends State<AddProductForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
+          Text(
+            'Sube tu',
+            style: const TextStyle(
+                fontSize: 50,
+                color: Colors.white,
+                height: 0.5,
+                fontFamily: 'Aeonik',
+            )
+          ),
+          Text(
+            'artículo',
+            style: const TextStyle(
+              fontSize: 50,
+              color: Colors.lightGreen,
+              fontFamily: 'Aeonik',
+            )
+          ),
+          Text(
+            'Añade fotos',
+            style: const TextStyle(
+              color: Colors.white,
+              height: 4,
+              fontFamily: 'Aeonik',
+            )
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final imagePicker = ImagePicker();
+              pickedFile = await imagePicker.pickImage(source: ImageSource.camera, maxHeight: 150, imageQuality: 90);
+              if (pickedFile != null) {
+                setState(() {
+                  _imageTaken = true;
+                });
+              }
+
+            },
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent
+              ),
+
+            child: Image(image: AssetImage('lib/assets/Group_277.png')),
+          ),
+          Text(
+            '¿Que quieres vender?',
+              style: const TextStyle(
+                  color: Colors.white,
+                  height: 4,
+                  fontFamily: 'Aeonik',
+              )
+          ),
           TextFormField(
             controller: nameController,
-            decoration: InputDecoration(labelText: 'Nombre producto'),
+            decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.white24,
+                border: OutlineInputBorder(),
+                hintText: 'Titulo',
+                hintStyle: const TextStyle(
+                  color: Colors.grey
+                )
+            ),
+            style: const TextStyle(
+              height: 0.05,
+              fontFamily: 'Aeonik',
+            )
+          ),
+          Text(
+            'Categoría',
+            style: const TextStyle(
+                color: Colors.white,
+                height: 4,
+                fontFamily: 'Aeonik',
+            )
+          ),
+          Text(
+              'Cuenta un poco más',
+              style: const TextStyle(
+                  color: Colors.white,
+                  height: 4,
+                  fontFamily: 'Aeonik',
+              )
+          ),
+          TextFormField(
+            controller: descriptionController,
+            textAlignVertical: TextAlignVertical.top,
+            decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.white24,
+                border: OutlineInputBorder(),
+                hintText: 'Descripción',
+                hintStyle: const TextStyle(
+                    color: Colors.grey,
+                    fontFamily: 'Aeonik',
+                )
+            ),
+          ),
+          Text(
+              'Precio',
+              style: const TextStyle(
+                  color: Colors.white,
+                  height: 4,
+                  fontFamily: 'Aeonik',
+              )
           ),
           if(esSubasta)
             TextFormField(
@@ -74,7 +176,19 @@ class _AddProductFormState extends State<AddProductForm> {
           else
           TextFormField(
             controller: priceController,
-            decoration: InputDecoration(labelText: 'Precio'),
+              decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white24,
+                  border: OutlineInputBorder(),
+                  hintText: '€',
+                  hintStyle: const TextStyle(
+                      color: Colors.grey
+                  )
+              ),
+              style: const TextStyle(
+                height: 0.05,
+                fontFamily: 'Aeonik',
+              ),
             inputFormatters: [priceFormatter], // Applica il formatter per il prezzo
             keyboardType: TextInputType.numberWithOptions(decimal: true)
           ),
@@ -84,45 +198,40 @@ class _AddProductFormState extends State<AddProductForm> {
                 decoration: InputDecoration(labelText: 'Fecha y hora de finalización (YYYY-MM-DD HH:MM)'),
                 keyboardType: TextInputType.numberWithOptions(decimal: true)
             ),
-          TextFormField(
-            controller: descriptionController,
-            decoration: InputDecoration(labelText: 'Descripción'),
-          ),
-          Row(
-            children: [
-              Checkbox(
-                  value: esSubasta,
-                  onChanged: (e){
-                      setState(() {
-                      esSubasta = e!;
 
-                      }
-                      );
-                  }
+          const SizedBox(height: 16),
+          const SizedBox(height: 16),
+
+          ElevatedButton(
+              onPressed: () async {
+
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.lightGreen,
+                fixedSize: const Size(350, 60),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5.0),
+                ),
               ),
-              Text("Es subasta"),
-            ],
+              child: Row(
+                children: <Widget>[
+                  Image(image: AssetImage('lib/assets/Group_233.png')),
+                  SizedBox(width: 5),
+                  Text(
+                      'Destaca tu artículo',
+                      style: const TextStyle(
+                          fontSize: 20,
+                          color: Colors.black,
+                          fontFamily: 'Aeonik'
+                      )
+                  ),
+                  SizedBox(width: 5),
+                  Image(image: AssetImage('lib/assets/cPlusText.png')),
+                ]
+              )
           ),
 
           const SizedBox(height: 16),
-          _imageTaken
-              ? Icon(
-            Icons.check_circle,
-            color: Colors.green,
-            size: 48.0,
-          )
-              : ElevatedButton(
-            onPressed: () async {
-              final imagePicker = ImagePicker();
-              pickedFile = await imagePicker.pickImage(source: ImageSource.camera, maxHeight: 150, imageQuality: 90);
-              if (pickedFile != null) {
-                setState(() {
-                  _imageTaken = true;
-                });
-              }
-            },
-            child: Text('Toma una foto'),
-          ),
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: () async {
@@ -180,7 +289,19 @@ class _AddProductFormState extends State<AddProductForm> {
               });
               //Navigator.pop(context);
             },
-            child: Text('Anadir Producto'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.orange,
+              fixedSize: const Size(350, 50),
+            ),
+
+            child: Text(
+                'Subir artículo',
+                style: const TextStyle(
+                  fontSize: 20,
+                  color: Colors.white,
+                  fontFamily: 'Aeonik'
+                )
+            ),
           ),
         ],
       ),
