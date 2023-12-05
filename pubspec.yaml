@@ -62,7 +62,7 @@ flutter:
   fonts:
     - family: Aeonik
       fonts:
-        - asset: assets/fonts/Aeonik-Regular.ttf
+        - asset: lib/assets/fonts/Aeonik-Regular.ttf
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
