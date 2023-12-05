@@ -130,6 +130,7 @@ class _VentanaMensajesChatState extends State<VentanaMensajesChat> {
 
     return WillPopScope(
       onWillPop: () async {
+        chatSocket?.write("GetUsersWithCommunication:$myID");
         return true;
       },
       child: StreamBuilder<List<Message>>(
@@ -174,10 +175,7 @@ class _VentanaMensajesChatState extends State<VentanaMensajesChat> {
 
           return Scaffold(
             appBar: AppBar(
-              backgroundColor: Theme
-                  .of(context)
-                  .colorScheme
-                  .inversePrimary,
+              backgroundColor: Colors.black,
               title: Text("$otherName's Chat"),
             ),
             body: ListView(
@@ -253,7 +251,7 @@ class _NavigationBarChatState extends State<NavigationBarChat> {
       otherID,
       otherName!,
       toSendMessage,
-      DateTime.now(),
+      DateTime.now().toUtc(),
     );
     chatSocket?.write("NewMessage:$otherID:${m.compressObject()}");
   }
