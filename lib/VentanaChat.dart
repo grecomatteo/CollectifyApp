@@ -256,7 +256,7 @@ class TextAndChatState extends State<TextAndChat> {
                   style: ElevatedButton.styleFrom(
                     alignment: Alignment.centerLeft,
                     padding: const EdgeInsets.all(5),
-                    backgroundColor: const Color.fromRGBO(52,52,52, 1),
+                    backgroundColor: const Color.fromRGBO(52,52,52, 30/100),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -317,7 +317,7 @@ class TextAndChatState extends State<TextAndChat> {
                                 style: const TextStyle(
                                     fontFamily: 'Aeonik',
                                     fontSize: 15,
-                                    color: Color.fromRGBO(255, 255, 255, 255*40/100)
+                                    color: Color.fromRGBO(255, 255, 255, 40/100)
                                 ),
                               ),
                             ],
@@ -334,7 +334,7 @@ class TextAndChatState extends State<TextAndChat> {
                           style: const TextStyle(
                               fontFamily: 'Aeonik',
                               fontSize: 15,
-                              color: Color.fromRGBO(255, 255, 255, 255*40/100)
+                              color: Color.fromRGBO(255, 255, 255, 40/100)
                           ),
                         ),
                       ],
