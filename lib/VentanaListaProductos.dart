@@ -1,5 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:google_mlkit_image_labeling/google_mlkit_image_labeling.dart';
+import 'package:image_picker/image_picker.dart';
 
 import 'VentanaAnadirProducto.dart';
 import 'VentanaChat.dart';
@@ -7,14 +10,18 @@ import 'package:collectify/ConexionBD.dart';
 
 import 'VentanaEventos.dart';
 import 'VentanaPerfil.dart';
-import 'VentanaProductosSubasta.dart';
 import 'VentanaProducto.dart';
+import 'dart:io';
 
 Usuario user = Usuario();
 bool isValid = true;
 bool loading = false;
+ImageLabelerOptions options =  ImageLabelerOptions(confidenceThreshold: 0.75);
+ImageLabeler imageLabeler = ImageLabeler(options: options);
+
 class ListaProductos extends StatefulWidget {
   const ListaProductos({Key? key, required this.connected}) : super(key: key);
+
 
   final Usuario connected;
 
@@ -51,30 +58,17 @@ class _ListaProductosState extends State<ListaProductos> {
   Widget build(BuildContext context) {
     user = connected;
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text("Collectify"),
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        ListaProductosSubasta(connected: connected)),
-              );
-            },
-            icon: Icon(Icons.gavel),
-          ),
-        ],
-      ),
+
       body: Column(
+
         children: [
-          SearchBar(onSearchResults: (results) {
-            setState(() {
-              _searchResults = results;
-            });
-          }),
+
+            SearchBar(onSearchResults: (results) {
+              setState(() {
+                _searchResults = results;
+              });
+            }),
+
           Expanded(
             child: ProductList(searchResults: _searchResults),
           ),
@@ -128,6 +122,12 @@ class _SearchBarState extends State<SearchBar> {
                   });
                 }
               },
+              onSubmitted: (query) {
+                setState(() {
+                  loading = true;
+                });
+                _handleSearch(_controller.text);},
+
               decoration: InputDecoration(
                 hintText: 'Buscar',
                 hintStyle: TextStyle(
@@ -135,15 +135,34 @@ class _SearchBarState extends State<SearchBar> {
                 ),
                 border: InputBorder.none,
                 suffixIcon: IconButton(
-                  icon: const Icon(Icons.send),
-                  onPressed: () {
-                    setState(() {
-                      loading = true;
-                    });
-                    _handleSearch(_controller.text);
+                  icon: const Icon(Icons.camera_alt_rounded),
+                  onPressed: () async {
+
+                        ImagePicker picker = ImagePicker();
+                        final XFile? image = await picker.pickImage(source: ImageSource.camera);
+                        //Transforma el XFile en un File
+                        File file = File(image!.path);
+                        await imageLabeler.processImage(InputImage.fromFile(file)).then((value){
+                          if(value.isEmpty){
+                            //error
+                          }
+                          else {
+                            _controller.text = value[0].label;
+                            setState(() {
+                              loading = true;
+                            });
+                            _handleSearch(_controller.text);
+                          }
+                        });
+                        //Hacer como si se pulsar la tecla enter
+
+
+
+
+
                   },
                 ),
-                prefixIcon: Icon(Icons.search),
+                prefixIcon: const Icon(Icons.search),
               ),
             ),
           ),
