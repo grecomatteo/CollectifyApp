@@ -30,10 +30,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-    fonts:
-      - family: Aeonik
-        fonts:
-          - asset: assets/fonts/Aeonik-Regular.ttf
   share_plus: ^7.2.1
   uni_links3: ^0.5.3
 
@@ -63,6 +59,10 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+  fonts:
+    - family: Aeonik
+      fonts:
+        - asset: assets/fonts/Aeonik-Regular.ttf
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
