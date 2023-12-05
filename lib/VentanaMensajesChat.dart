@@ -130,6 +130,7 @@ class _VentanaMensajesChatState extends State<VentanaMensajesChat> {
 
     return WillPopScope(
       onWillPop: () async {
+        chatSocket?.write("GetUsersWithCommunication:$myID");
         return true;
       },
       child: StreamBuilder<List<Message>>(
@@ -145,7 +146,22 @@ class _VentanaMensajesChatState extends State<VentanaMensajesChat> {
           } else {
             List<Message> messages = snapshot.data as List<Message>;
             List<Widget> childrn = [];
+
             for (int i = 0; i < messages.length; i++) {
+
+              if (i == 0) {
+                childrn.add(
+                  Container(
+                    margin: const EdgeInsets.all(10),
+                    alignment: Alignment.center,
+                    child: Text(
+                      "${messages[i].sendDate.day}/${messages[i].sendDate.month}/${messages[i].sendDate.year}",
+                      style: const TextStyle(fontFamily: 'Aeonik', fontSize: 20, color: Color.fromRGBO(255, 255, 255, 40/100)),
+                    ),
+                  ),
+                );
+              }
+
               childrn.add(MessageDisplay(
                 message: messages[i],
                 myID: myID,
@@ -154,16 +170,20 @@ class _VentanaMensajesChatState extends State<VentanaMensajesChat> {
 
               if (i == messages.length - 1) continue;
               if (messages[i].sendDate.day !=
-                  messages[i + 1].sendDate.day) {
+                  messages[i + 1].sendDate.day || messages[i].sendDate.month != messages[i + 1].sendDate.month || messages[i].sendDate.year != messages[i + 1].sendDate.year) {
                 childrn.add(
                   Container(
                     margin: const EdgeInsets.all(10),
                     alignment: Alignment.center,
-                    child: Text(
-                      "${messages[i + 1].sendDate.day}/${messages[i + 1]
-                          .sendDate.month}/${messages[i + 1].sendDate
-                          .year}",
-                      style: const TextStyle(fontSize: 20),
+                    child: messages[i+1].sendDate.day == DateTime.now().day && messages[i+1].sendDate.month == DateTime.now().month && messages[i+1].sendDate.year == DateTime.now().year
+                        ? const Text(
+                      "Today",
+                      style: TextStyle(fontFamily: 'Aeonik', fontSize: 20, color: Color.fromRGBO(255, 255, 255, 40/100)),
+                    )
+                        : Text(
+                      //{day name} {day number} {month name} {year}
+                      "${messages[i+1].sendDate.day}/${messages[i+1].sendDate.month}/${messages[i+1].sendDate.year}",
+                      style: const TextStyle(fontFamily: 'Aeonik', fontSize: 20, color: Color.fromRGBO(255, 255, 255, 40/100)),
                     ),
                   ),
                 );
@@ -174,12 +194,30 @@ class _VentanaMensajesChatState extends State<VentanaMensajesChat> {
 
           return Scaffold(
             appBar: AppBar(
-              backgroundColor: Theme
-                  .of(context)
-                  .colorScheme
-                  .inversePrimary,
-              title: Text("$otherName's Chat"),
+              iconTheme: const IconThemeData(
+                color: Colors.white,
+                size: 40,
+              ),
+              backgroundColor: Colors.black,
+              title: Row(
+                children: [
+                  const SizedBox(width: 10),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.network(
+                      "https://picsum.photos/250?image=9",
+                      width: 40,
+                      height: 40,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Text("$otherName",
+                    style: const TextStyle(fontFamily: 'Aeonik', fontSize: 50, color: Colors.white),
+                  ),
+                ],
+              ),
             ),
+            backgroundColor: Colors.black,
             body: ListView(
               controller: listViewController,
               reverse: true,
@@ -213,25 +251,43 @@ class MessageDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: message.senderID == myID ? Colors.green : Colors.blueGrey,
-      margin: const EdgeInsets.all(10),
-      alignment: message.senderID == myID
-          ? Alignment.centerRight
-          : Alignment.centerLeft,
+      color: message.senderID != myID ? const Color.fromRGBO(52,52,52, 30/100) : const Color.fromRGBO(179,	255,	119, 1),
+      margin: message.senderID != myID ? const EdgeInsets.fromLTRB(10, 10, 150, 10) : const EdgeInsets.fromLTRB(150, 10, 10, 10),
       padding: const EdgeInsets.all(10),
       child: Column(
-        crossAxisAlignment: message.senderID == myID ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            textAlign: TextAlign.start,
-            message.message,
-            style: const TextStyle(fontSize: 20),
+          Column(
+            crossAxisAlignment: message.senderID == myID ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            children: [
+              Text(
+                textAlign: TextAlign.start,
+                message.senderID != myID ? message.senderName : "You",
+                style: message.senderID != myID
+                    ? const TextStyle(fontFamily: 'Aeonik', fontSize: 15, color: Color.fromRGBO(179,	255,	119, 1))
+                    : const TextStyle(fontFamily: 'Aeonik', fontSize: 15, color: Colors.black),
+              ),
+              Text(
+                textAlign: TextAlign.start,
+                message.message,
+                style: message.senderID != myID
+                    ? const TextStyle(fontFamily: 'Aeonik', fontSize: 20, color: Colors.white)
+                    : const TextStyle(fontFamily: 'Aeonik', fontSize: 20, color: Colors.black),
+              ),
+            ],
           ),
-          Text(
-            textAlign: TextAlign.end,
-            "${message.sendDate.hour}:${message.sendDate.minute}",
-            style: const TextStyle(fontSize: 10),
-          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                textAlign: TextAlign.end,
+                "${message.sendDate.hour}:${message.sendDate.minute}",
+                style: message.senderID != myID
+                    ? const TextStyle(fontFamily: 'Aeonik', fontSize: 15, color: Color.fromRGBO(179,	255,	119, 1))
+                    : const TextStyle(fontFamily: 'Aeonik', fontSize: 15, color: Colors.black),
+              ),
+            ],
+          )
         ],
       ),
     );
@@ -253,7 +309,7 @@ class _NavigationBarChatState extends State<NavigationBarChat> {
       otherID,
       otherName!,
       toSendMessage,
-      DateTime.now(),
+      DateTime.now().toUtc(),
     );
     chatSocket?.write("NewMessage:$otherID:${m.compressObject()}");
   }
@@ -266,7 +322,7 @@ class _NavigationBarChatState extends State<NavigationBarChat> {
       //Make height of NavigationBar the same as the height of the keyboard
       height: MediaQuery.of(context).viewInsets.bottom + 70,
       alignment: Alignment.bottomCenter,
-      color: Colors.grey[200],
+      color: Colors.black,
       child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
         Row(
           children: [
@@ -274,7 +330,7 @@ class _NavigationBarChatState extends State<NavigationBarChat> {
               child: Container(
                 margin: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: const Color.fromRGBO(52,52,52, 30/100),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
@@ -284,6 +340,8 @@ class _NavigationBarChatState extends State<NavigationBarChat> {
                       child: TextField(
                         decoration: const InputDecoration(
                           hintText: "Type a message",
+                          labelStyle: TextStyle(fontFamily: 'Aeonik', color: Colors.white),
+                          hintStyle: TextStyle(fontFamily: 'Aeonik', color: Color.fromRGBO(255,255,255,40/100)),
                           border: InputBorder.none,
                         ),
                         onChanged: (text) {
@@ -312,6 +370,7 @@ class _NavigationBarChatState extends State<NavigationBarChat> {
                         FocusScope.of(context).unfocus();
                       },
                       icon: const Icon(Icons.send),
+                      color: Colors.white,
                     ),
                   ],
                 ),
