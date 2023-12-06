@@ -52,11 +52,12 @@ Future<void> initUniLinks() async {
     handleLink(link).then((value) => _streamController.add(value));
   }, onError: (err) {
     // Handle exception by warning the user their action did not succeed
+    debugPrint(err.toString());
   });
 }
 
 Future<Widget> handleLink(String? link) async {
-  if (link != null) {
+  if (link != "" && link != null) {
     List<Producto> productos = await Conexion().getAllProductos();
     Usuario u = await Conexion().getUsuarioByNick('admin') as Usuario;
     for (var p in productos) {
@@ -93,11 +94,7 @@ class MyApp extends StatelessWidget {
                 builder: (context, snapshot) {
                   if (snapshot.hasData) return snapshot.data!;
                   //Loading
-                  return const Scaffold(
-                    body: Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  );
+                  return const VentanaInicio();
                 });
           }),
     ));
