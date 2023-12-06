@@ -9,10 +9,11 @@ import 'VentanaAnadirProducto.dart';
 import 'VentanaChat.dart';
 import 'package:collectify/ConexionBD.dart';
 
-import 'VentanaEventos.dart';
 import 'VentanaPerfil.dart';
 import 'VentanaProducto.dart';
 import 'dart:io';
+
+import 'VentanaProductosSubasta.dart';
 
 Usuario user = Usuario();
 bool isValid = true;
@@ -407,7 +408,7 @@ class NavigationBar extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => VentanaEventos()),
+                builder: (context) => ListaProductosSubasta(connected: user)),
           );
             break;
           case 2:
@@ -442,8 +443,8 @@ class NavigationBar extends StatelessWidget {
           label: "productos",
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.favorite),
-          label: "Home",
+          icon: Icon(Icons.gavel),
+          label: "subastas",
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.add_circle),
