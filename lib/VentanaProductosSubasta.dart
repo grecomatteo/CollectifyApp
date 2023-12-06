@@ -76,7 +76,7 @@ class _ListaProductosState extends State<ListaProductosSubasta> {
                   ],
                 ),
                SizedBox(
-                  height: MediaQuery.of(context).size.height*0.7,
+                 height: MediaQuery.of(context).size.height*0.7,
                  child: Expanded(
                      child:TabBarView(
                        children: [
