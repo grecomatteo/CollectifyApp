@@ -35,31 +35,62 @@ class _ListaProductosState extends State<ListaProductosSubasta> {
   Widget build(BuildContext context) {
     user = connected;
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: const Text("Subastas",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 25,
-            fontWeight: FontWeight.bold,
-          ),),),
+      ),
       body: Container(
-        decoration: const BoxDecoration(
-          color: Colors.black,
-        ),
-        //color: Colors.black,
-        child: Column(children:[
+        //padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+        constraints: const BoxConstraints.expand(),
+        child:Column(
+          children:[
           SearchBar(onSearchResults: (results) {
             setState(() {
               _searchResults = results;
             });
           }),
-          Expanded(
-            child: ProductList(searchResults: _searchResults),
+          const SizedBox(
+            height: 10,
+          ),
+          DefaultTabController(
+            length: 2,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TabBar(
+                  indicator: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    color: Colors.white10,
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+                  splashBorderRadius: BorderRadius.circular(15),
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  indicatorColor: null,
+                  labelColor: Colors.white,
+                  labelStyle: const TextStyle(
+                    fontSize: 30,
+                  ),
+                  tabs: const [
+                    Tab(text: 'Subastas'),
+                    Tab(text: 'Pujas'),
+                  ],
+                ),
+               SizedBox(
+                  height: MediaQuery.of(context).size.height*0.7,
+                 child: Expanded(
+                     child:TabBarView(
+                       children: [
+                         ProductList(searchResults: _searchResults),
+                         ProductList(searchResults: _searchResults),
+                        ],
+                     ),
+                 ),
+               ),
+          ],),
           ),
         ],),
       ),
-    );
+      );
   }
 }
 
@@ -74,9 +105,7 @@ class _SearchBarState extends State<SearchBar> {
   final TextEditingController _controller = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-      child: Container(
+    return Container(
         decoration: const BoxDecoration(
           color: Colors.white10,
           borderRadius: BorderRadius.all(Radius.circular(60)),
@@ -103,8 +132,7 @@ class _SearchBarState extends State<SearchBar> {
             ),
           ),
         ),
-      ),
-    );
+      );
   }
 
   void _handleSearch(String query) async {
@@ -144,9 +172,10 @@ class ProductListState extends State<ProductList> {
             );
           } else {
             return ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+              //padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
               itemBuilder: (BuildContext context, int index) { return ProductoWidget(producto: _displayedProducts[index]); },
-              itemCount: _displayedProducts.length,);
+              itemCount: _displayedProducts.length
+            );
           }
         } else if (snapshot.hasError) {
           return Center(
@@ -177,8 +206,12 @@ class ProductoWidget extends StatelessWidget {
   }
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
+    return Container(
+      decoration: const BoxDecoration(
+        color: Colors.black,
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+      child:
         ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white10,
@@ -313,10 +346,8 @@ class ProductoWidget extends StatelessWidget {
                 ],
               ),
             )),
-        const SizedBox(
-          height: 20,
-        )
-      ],
+
+
     );
 
   }
