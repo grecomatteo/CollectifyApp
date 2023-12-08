@@ -139,40 +139,63 @@ class _SearchBarState extends State<SearchBar> {
 
               decoration: InputDecoration(
                 hintText: 'Buscar',
-                hintStyle: TextStyle(
+                hintStyle: const TextStyle(
                   color: Colors.grey,
                 ),
                 border: InputBorder.none,
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.camera_alt_rounded),
-                  onPressed: () async {
+                suffixIcon: PopupMenuButton<int>(
+                  icon: const Icon(Icons.camera_alt),
+                  onSelected: (int result)  async {
+                    ImagePicker picker = ImagePicker();
+                    if(result==1){
+                      final XFile? image = await picker.pickImage(source: ImageSource.camera);
+                      File file = File(image!.path);
+                      await imageLabeler.processImage(InputImage.fromFile(file)).then((value)async {
+                        if(value.isNotEmpty){
+                          _controller.text = await onDeviceTranslator.translateText(value[0].label);
+                          setState(() {
+                            loading = true;
+                          });
+                          _handleSearch(_controller.text);
+                        }
+                        else{
+                          showError(context);
+                        }
+                      });
+                    }
+                    else {
+                      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+                      File file = File(image!.path);
+                      await imageLabeler.processImage(InputImage.fromFile(file)).then((value)async {
+                        if(value.isNotEmpty){
+                          _controller.text = await onDeviceTranslator.translateText(value[0].label);
+                          setState(() {
+                            loading = true;
+                          });
+                          _handleSearch(_controller.text);
+                        }
+                        else{
+                          showError(context);
+                        }
+                      });
+                    }
 
-                        ImagePicker picker = ImagePicker();
-
-                        final XFile? image = await picker.pickImage(source: ImageSource.camera);
-                        //Transforma el XFile en un File
-                        File file = File(image!.path);
-                        await imageLabeler.processImage(InputImage.fromFile(file)).then((value) async {
-                          if(value.isEmpty){
-                            //mostrar un mensaje en la consola en color rojo
-                            print('\x1B[31m' + 'No se ha podido identificar el producto');
-
-                          }
-                          else {
-                            _controller.text = await onDeviceTranslator.translateText(value[0].label);
-                            setState(() {
-                              loading = true;
-                            });
-                            _handleSearch(_controller.text);
-                          }
-                        });
-                        //Hacer como si se pulsar la tecla enter
+                  }
+                  ,
+                  itemBuilder: (BuildContext context) =>[
+                    const PopupMenuItem(
+                      value: 1,
+                      child: Text("Tomar foto"),
+                    ),
+                    const PopupMenuItem(
+                      value: 2,
+                      child: Text("Seleccionar foto"),
+                    ),
+                  ],
 
 
 
 
-
-                  },
                 ),
                 prefixIcon: const Icon(Icons.search),
               ),
@@ -462,3 +485,52 @@ class NavigationBar extends StatelessWidget {
     );
   }
 }
+
+
+Future<String>getLabelFromXFile(XFile? image)  async{
+  File file = File(image!.path);
+  debugPrint('\n' + " 1 "+ file.path);
+  String label = "";
+  await imageLabeler.processImage(InputImage.fromFile(file)).then((value) {
+    if(value.isNotEmpty){
+      debugPrint('\n' +"2 "+  value[0].label);
+      onDeviceTranslator.translateText(value[0].label).then((value) {
+
+        if(value.isNotEmpty){
+          debugPrint('\n' + " 3" + value);
+          label = value;
+          debugPrint('\n' + " 4" + label);
+          return value;
+        }
+      });
+
+    }
+  });
+  return label;
+
+
+
+
+}
+void showError(BuildContext context){
+  showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Error"),
+          content: const Text(
+              "No se ha podido reconocer el objeto"),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text("OK"))
+          ],
+        );
+      }
+  );
+}
+
+
+
