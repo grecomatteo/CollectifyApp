@@ -11,6 +11,7 @@ import 'VentanaListaProductos.dart';
 class Producto {
   int? usuarioID;
   int? productoID;
+  String? usuarioNick;
   String? nombre;
   String? descripcion;
   double? precio;
@@ -25,6 +26,7 @@ class Producto {
   Producto(
       {this.usuarioID,
       this.productoID,
+      this.usuarioNick,
       this.nombre,
       this.descripcion,
       this.precio,
@@ -125,7 +127,7 @@ class Conexion {
     if (conn == null) await conectar();
     List<Producto> productos = [];
 
-    await conn?.query('''SELECT producto.*, IMAGEN.image, usuario.esPremium
+    await conn?.query('''SELECT producto.*, IMAGEN.image, usuario.esPremium, usuario.nick
         FROM producto
         JOIN usuario ON producto.usuarioID = usuario.userID
         JOIN IMAGEN ON producto.pruductoID = IMAGEN.id_producto
@@ -139,6 +141,7 @@ class Conexion {
           nombre: row['nombre'],
           descripcion: row['descripcion'],
           precio: row['precio'],
+          usuarioNick: row['nick'],
           //Get blob 'image'
           image: row['image'],
           esPremium: row['esPremium'] == 1 ? true : false,
@@ -156,7 +159,7 @@ class Conexion {
     if (conn == null) await conectar();
     List<Producto> productos = [];
 
-    await conn?.query('''SELECT producto.*, IMAGEN.image, usuario.esPremium
+    await conn?.query('''SELECT producto.*, IMAGEN.image, usuario.esPremium, usuario.nick
         FROM producto
         JOIN usuario ON producto.usuarioID = usuario.userID
         JOIN IMAGEN ON producto.pruductoID = IMAGEN.id_producto
@@ -166,6 +169,7 @@ class Conexion {
         Producto producto = Producto(
           usuarioID: row['usuarioID'],
           productoID: row['pruductoID'],
+          usuarioNick: row['nick'],
           nombre: row['nombre'],
           descripcion: row['descripcion'],
           precio: row['precio'],
@@ -186,7 +190,7 @@ class Conexion {
     if (conn == null) await conectar();
     List<Producto> productos = [];
 
-    await conn?.query('''SELECT producto.*, IMAGEN.image, usuario.esPremium
+    await conn?.query('''SELECT producto.*, IMAGEN.image, usuario.esPremium, usuario.nick
       FROM producto
       JOIN usuario ON producto.usuarioID = usuario.userID
       JOIN IMAGEN ON producto.pruductoID = IMAGEN.id_producto
@@ -197,6 +201,7 @@ class Conexion {
         Producto producto = Producto(
           usuarioID: row['usuarioID'],
           productoID: row['pruductoID'],
+          usuarioNick: row['nick'],
           nombre: row['nombre'],
           descripcion: row['descripcion'],
           precio: row['precio'],
@@ -233,7 +238,7 @@ class Conexion {
 
     if (categorias == " ") return await getProductosVenta();
 
-    await conn?.query('''SELECT producto.*, IMAGEN.image, usuario.esPremium
+    await conn?.query('''SELECT producto.*, IMAGEN.image, usuario.esPremium, usuario.nick
         FROM producto
         JOIN usuario ON producto.usuarioID = usuario.userID
         JOIN IMAGEN ON producto.pruductoID = IMAGEN.id_producto
@@ -244,6 +249,7 @@ class Conexion {
         Producto producto = Producto(
             usuarioID: row['usuarioID'],
             productoID: row['pruductoID'],
+            usuarioNick: row['nick'],
             nombre: row['nombre'],
             descripcion: row['descripcion'],
             precio: row['precio'],
@@ -278,7 +284,7 @@ class Conexion {
       categorias = "$categorias ";
     });
     if (categorias == " ") return await getProductosSubasta();
-    await conn?.query('''SELECT p.*, ps.*,i.image, u.esPremium 
+    await conn?.query('''SELECT p.*, ps.*,i.image, u.esPremium, u.nick
         FROM producto p 
         JOIN productos_subasta ps ON ps.idProducto = p.pruductoID 
         JOIN usuario u ON p.usuarioID = u.userID 
@@ -290,6 +296,7 @@ class Conexion {
               producto = Producto(
                 usuarioID: row['usuarioID'],
                 productoID: row['pruductoID'],
+                usuarioNick: row['nick'],
                 nombre: row['nombre'],
                 descripcion: row['descripcion'],
                 precio: row['precio'],
@@ -342,7 +349,7 @@ class Conexion {
     // Usare il metodo rawQuery di SQL per filtrare i prodotti in base alla query
     await conn?.query(
       '''
-    SELECT producto.*, IMAGEN.image
+    SELECT producto.*, IMAGEN.image, usuario.nick
     FROM producto
     JOIN usuario ON producto.usuarioID = usuario.userID
     JOIN IMAGEN ON producto.pruductoID = IMAGEN.id_producto
@@ -358,6 +365,7 @@ class Conexion {
         Producto producto = Producto(
           usuarioID: row['usuarioID'],
           productoID: row['pruductoID'],
+          usuarioNick: row['nick'],
           nombre: row['nombre'],
           descripcion: row['descripcion'],
           precio: row['precio'],
@@ -622,7 +630,7 @@ class Conexion {
     if (conn == null) await conectar();
     List<Producto> productos = [];
     Producto producto;
-    await conn?.query('''SELECT p.*, ps.*,i.image, u.esPremium 
+    await conn?.query('''SELECT p.*, ps.*,i.image, u.esPremium, u.nick
                          FROM producto p 
                          JOIN productos_subasta ps ON ps.idProducto = p.pruductoID 
                          JOIN usuario u ON p.usuarioID = u.userID 
@@ -633,6 +641,7 @@ class Conexion {
               producto = Producto(
                 usuarioID: row['usuarioID'],
                 productoID: row['pruductoID'],
+                usuarioNick: row['nick'],
                 nombre: row['nombre'],
                 descripcion: row['descripcion'],
                 precio: row['precio'],

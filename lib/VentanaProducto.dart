@@ -64,9 +64,14 @@ class VentanaProducto extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const Image(image: AssetImage("lib/assets/productos/pikachu.png"), width: 50, height: 50,),
-                Text(producto.usuarioID.toString()),
+              children:  [
+                const Icon(
+                    Icons.account_circle,
+                    size: 50,
+                ),
+                const Spacer(),
+                Text(producto.usuarioNick.toString()),
+                const Spacer( flex: 5,)
               ],
             ),
           ),
