@@ -1,17 +1,18 @@
 
+import 'package:collectify/VentanaProducto.dart';
 import 'package:flutter/material.dart';
 import 'package:collectify/ConexionBD.dart';
 import 'package:flutter/services.dart';
 import 'package:mysql1/mysql1.dart';
 import 'package:image_picker/image_picker.dart';
 import 'VentanaListaProductos.dart';
+import 'VentanaPerfil.dart' as perfil;
 
 
 
 MySqlConnection? conn;
 String nombre = "";
 String description = "";
-//Placeholder, se debe cambiar
 Usuario logged = new Usuario();
 
 
@@ -136,6 +137,322 @@ class _AddProductFormState extends State<AddProductForm> {
                 fontFamily: 'Aeonik',
             )
           ),
+          Container(
+            height: 130,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: [
+                Card(
+                  margin: EdgeInsets.symmetric(horizontal: 10),
+                  color: Colors.transparent,
+                  child: ElevatedButton(
+                      onPressed: (){
+
+                      },
+                      child: Column(
+                          children: <Widget>[
+                            Expanded(
+                              child: Image.asset(
+                                  'lib/assets/tags/Arte_artesania.png',
+                                  width: 70,
+                                  height: 70
+                              ),
+                            ),
+                            Text(
+                                'Arte y artesanía',
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: 'Aeonik',
+                                )
+                            )
+                          ]
+                      ),
+
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white24,
+                        padding: EdgeInsets.zero,
+                        fixedSize: const Size(80, 130),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
+                      )
+                  ),
+                ),
+                Card(
+                  margin: EdgeInsets.symmetric(horizontal: 10),
+                  color: Colors.transparent,
+                  child: ElevatedButton(
+                      onPressed: (){
+
+                      },
+                      child: Column(
+                          children: <Widget>[
+                            Expanded(
+                              child: Image.asset(
+                                  'lib/assets/tags/Joyas_relojes.png',
+                                  width: 70,
+                                  height: 70
+                              ),
+                            ),
+                            Text(
+                                'Joyas y relojes',
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: 'Aeonik',
+                                )
+                            )
+                          ]
+                      ),
+
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white24,
+                        padding: EdgeInsets.zero,
+                        fixedSize: const Size(80, 130),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
+                      )
+                  ),
+                ),
+                Card(
+                  margin: EdgeInsets.symmetric(horizontal: 10),
+                  color: Colors.transparent,
+                  child: ElevatedButton(
+                      onPressed: (){
+
+                      },
+                      child: Column(
+                          children: <Widget>[
+                            Expanded(
+                              child: Image.asset(
+                                  'lib/assets/tags/Juguetes.png',
+                                  width: 70,
+                                  height: 70
+                              ),
+                            ),
+                            Text(
+                                'Juguetes',
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: 'Aeonik',
+                                )
+                            ),
+                            Text(
+                                ''
+                            )
+                          ]
+                      ),
+
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white24,
+                        padding: EdgeInsets.zero,
+                        fixedSize: const Size(80, 130),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
+                      )
+                  ),
+                ),
+                Card(
+                  margin: EdgeInsets.symmetric(horizontal: 10),
+                  color: Colors.transparent,
+                  child: ElevatedButton(
+                      onPressed: (){
+
+                      },
+                      child: Column(
+                          children: <Widget>[
+                            Expanded(
+                              child: Image.asset(
+                                  'lib/assets/tags/Libros_comics.png',
+                                  width: 70,
+                                  height: 70
+                              ),
+                            ),
+                            Text(
+                                'Libros y comics',
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: 'Aeonik',
+                                )
+                            )
+                          ]
+                      ),
+
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white24,
+                        padding: EdgeInsets.zero,
+                        fixedSize: const Size(80, 130),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
+                      )
+                  ),
+                ),
+                Card(
+                  margin: EdgeInsets.symmetric(horizontal: 10),
+                  color: Colors.transparent,
+                  child: ElevatedButton(
+                      onPressed: (){
+
+                      },
+                      child: Column(
+                          children: <Widget>[
+                            Expanded(
+                              child: Image.asset(
+                                  'lib/assets/tags/Monedas_sellos.png',
+                                  width: 70,
+                                  height: 70
+                              ),
+                            ),
+                            Text(
+                                'Monedas',
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: 'Aeonik',
+                                )
+                            ),
+                            Text(
+                                ''
+                            )
+                          ]
+                      ),
+
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white24,
+                        padding: EdgeInsets.zero,
+                        fixedSize: const Size(80, 130),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
+                      )
+                  ),
+                ),
+                Card(
+                  margin: EdgeInsets.symmetric(horizontal: 10),
+                  color: Colors.transparent,
+                  child: ElevatedButton(
+                      onPressed: (){
+
+                      },
+                      child: Column(
+                          children: <Widget>[
+                            Expanded(
+                              child: Image.asset(
+                                  'lib/assets/tags/Musica.png',
+                                  width: 70,
+                                  height: 70
+                              ),
+                            ),
+                            Text(
+                                'Música',
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: 'Aeonik',
+                                )
+                            ),
+                            Text(
+                                ''
+                            )
+                          ]
+                      ),
+
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white24,
+                        padding: EdgeInsets.zero,
+                        fixedSize: const Size(80, 130),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
+                      )
+                  ),
+                ),
+                Card(
+                  margin: EdgeInsets.symmetric(horizontal: 10),
+                  color: Colors.transparent,
+                  child: ElevatedButton(
+                      onPressed: (){
+
+                      },
+                      child: Column(
+                          children: <Widget>[
+                            Expanded(
+                              child: Image.asset(
+                                  'lib/assets/tags/Postales.png',
+                                  width: 70,
+                                  height: 70
+                              ),
+                            ),
+                            Text(
+                                'Postales y sellos',
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: 'Aeonik',
+                                )
+                            )
+                          ]
+                      ),
+
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white24,
+                        padding: EdgeInsets.zero,
+                        fixedSize: const Size(80, 130),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
+                      )
+                  ),
+                ),
+                Card(
+                  margin: EdgeInsets.symmetric(horizontal: 10),
+                  color: Colors.transparent,
+                  child: ElevatedButton(
+                      onPressed: (){
+
+                      },
+                      child: Column(
+                          children: <Widget>[
+                            Expanded(
+                              child: Image.asset(
+                                  'lib/assets/tags/Ropa.png',
+                                  width: 70,
+                                  height: 70
+                              ),
+                            ),
+                            Text(
+                                'Ropa',
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: 'Aeonik',
+                                )
+                            ),
+                            Text(
+                                ''
+                            )
+                          ]
+                      ),
+
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white24,
+                        padding: EdgeInsets.zero,
+                        fixedSize: const Size(80, 130),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
+                      )
+                  ),
+                ),
+              ]
+            ),
+          ),
           Text(
               'Cuenta un poco más',
               style: const TextStyle(
@@ -204,7 +521,8 @@ class _AddProductFormState extends State<AddProductForm> {
 
           ElevatedButton(
               onPressed: () async {
-
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => perfil.VentanaPerfil(mUser: logged, rUser: null)));
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.lightGreen,
@@ -237,25 +555,23 @@ class _AddProductFormState extends State<AddProductForm> {
             onPressed: () async {
               final productName = nameController.text;
               final productDescription = descriptionController.text;
-              final fecha = fechaFinalController.text;
+              //final fecha = fechaFinalController.text;
               final String precioInicial;
               final String productPrice;
-              DateTime fechaFinal =DateTime.parse(fecha);
-              if(esSubasta){
-                precioInicial= precioInicialController.text;
-                productPrice = precioInicialController.text;
-              }else{
-                precioInicial= priceController.text;
-                productPrice = priceController.text;
-              }
+              //DateTime fechaFinal =DateTime.parse(fecha);
+              precioInicial= priceController.text;
+              productPrice = priceController.text;
               Producto prod = Producto();
               prod.nombre = productName;
-              prod.precio = double.parse(productPrice);
+              //Los doubles le dan ansiedada Flutter, hay que checkear si es null
+              if(productPrice.isNotEmpty && productPrice != null){
+                prod.precio = double.parse(productPrice);
+              }
               prod.descripcion = productDescription;
-              prod.fechaFin = fechaFinal;
+              //prod.fechaFin = fechaFinal;
 
               int productID = 0;
-              await Conexion().anadirProducto(prod,user).then((results){
+              await Conexion().anadirProducto(prod,logged).then((results){
                 debugPrint(results.toString());
                 productID = results;
                 if(results != -1){
@@ -266,9 +582,6 @@ class _AddProductFormState extends State<AddProductForm> {
                               Navigator.of(context).pop();
                       });
                   });
-                  if(esSubasta){
-                    Conexion().anadirProductoSubasta(productID , int.parse(precioInicial),fechaFinal).then((value) => null);
-                  }
                 }
 
                 else{
@@ -300,7 +613,7 @@ class _AddProductFormState extends State<AddProductForm> {
                   fontSize: 20,
                   color: Colors.white,
                   fontFamily: 'Aeonik'
-                )
+                ),
             ),
           ),
         ],
