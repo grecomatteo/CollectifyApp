@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 import 'package:collectify/VentanaProducto.dart';
 import 'package:flutter/material.dart';
 import 'package:collectify/ConexionBD.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'VentanaInicio.dart';
 import 'package:uni_links3/uni_links.dart';
 import 'package:flutter/services.dart'
@@ -13,22 +16,26 @@ import 'package:workmanager/workmanager.dart';
 
 ///////////
 
+int state = 0;
+
+
 
 
 final StreamController<Widget> _streamController =
     StreamController<Widget>.broadcast();
+Socket gSocket = Socket.connect('bytedev.es',55555) as Socket;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Workmanager().initialize(
-      callbackDispatcher,
-      );
+  await Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
+  final pref = await SharedPreferences.getInstance();
 
+  print(await pref.getInt('ID'));
   Workmanager().registerOneOffTask(
-    "task",
-    "simpleTask",
+    "1",
+    "socketTask",
   );
-  
+
   Conexion().conectar();
   initUniLinks();
   runApp( MyApp());
@@ -102,16 +109,42 @@ class MyApp extends StatelessWidget {
 }
 
 @pragma('vm:entry-point')
-void callbackDispatcher(){
-  Workmanager().executeTask((task, inputData)  {
-    notificaciones.Notification.showBigTextNotification(
-        title: "Primera",
-        body: "Primera notificacion",
-        fln: FlutterLocalNotificationsPlugin()
+Future<void> callbackDispatcher() async {
+  print("Se está ejecutando una tarea en segundo plano");
+  await Socket.connect('bytedev.es',55555).then((socket) {
+    gSocket = socket;
+    print('Connected to: ' + '${socket.remoteAddress.address}:${socket.remotePort}');
+    socket.write("ConnectedUser:1");
+    socket.listen(socketDispatcher);
 
-    );
+  });
+  Workmanager().executeTask((task, inputData)  async {
+    print("Se está ejecutando una tarea en segundo plano2...");
+    await Socket.connect('bytedev.es',55555).then((socket) {
+      gSocket = socket;
+      print('Connected to: ' + '${socket.remoteAddress.address}:${socket.remotePort}');
+      socket.write("ConnectedUser:1");
+      socket.listen(socketDispatcher);
+
+    });
 
     return Future.value(true);
   });
 }
+
+@pragma('vm:entry-point')
+void socketDispatcher(List<int> event){
+  print("Manejador de sockets");
+  String message = utf8.decode(event);
+  if(message.startsWith("NewMessage")){
+    print("NewMessage");
+    notificaciones.Notification.showBigTextNotification(
+        title: "Nuevo mensaje",
+        body: "Tienes un nuevo mensaje",
+        fln: FlutterLocalNotificationsPlugin()
+
+    );
+  }
+}
+
 

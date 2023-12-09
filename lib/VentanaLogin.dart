@@ -94,6 +94,7 @@ class Login extends StatelessWidget {
 
     try {
       await Conexion().login(nick, pswrd).then((value) => {
+            Navigator.pop(context),
             Navigator.push(
                 context,
                 MaterialPageRoute(

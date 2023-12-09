@@ -22,12 +22,15 @@ class VentanaInicio extends StatelessWidget {
             const Text('Bienvenido a Collectify'),
             ElevatedButton(
               onPressed: () {
+                Navigator.pop(context);
                 Navigator.push(context, MaterialPageRoute(builder: (context) =>  VentanaLogin()));
+
               },
               child: const Text('Iniciar sesión'),
             ),
             ElevatedButton(
               onPressed: () {
+                Navigator.pop(context);
                 Navigator.push(context, MaterialPageRoute(builder: (context) =>  RegistroUsuariosScreen()));
               },
               child: const Text('Registrarse'),
