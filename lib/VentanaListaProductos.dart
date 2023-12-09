@@ -76,6 +76,9 @@ class _ListaProductosState extends State<ListaProductos> {
               setState(() {
                 _searchResults = results;
               });
+              if (results.isEmpty) {
+                cargarProductos();
+              }
             }),
 
           Expanded(
@@ -208,10 +211,7 @@ class _SearchBarState extends State<SearchBar> {
             children: categories.map((category) {
               return ElevatedButton(
                 onPressed: () {
-                  setState(() {
-                    selectedCategory = category;
-                  });
-                  _handleSearch(_controller.text, category: selectedCategory);
+                  toggleCategory(category);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: selectedCategory == category
@@ -265,6 +265,17 @@ class _SearchBarState extends State<SearchBar> {
 
     // Pasa los resultados de la búsqueda a la función onSearchResults proporcionada como parámetro
     widget.onSearchResults(searchResults);
+  }
+
+  void toggleCategory(String category) {
+    setState(() {
+      if (selectedCategory == category) {
+        selectedCategory = ""; // deselecciona el tag
+      } else {
+        selectedCategory = category; // selecciona el tag
+      }
+    });
+    _handleSearch(_controller.text, category: selectedCategory);
   }
 }
 

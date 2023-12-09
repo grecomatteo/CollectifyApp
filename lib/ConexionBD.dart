@@ -185,7 +185,7 @@ class Conexion {
 
     return productos;
   }
-//nica
+
   Future<List<Producto>> getProductoPorCategoria(String categoria) async {
     if (conn == null) await conectar();
     List<Producto> productos = [];
@@ -217,7 +217,6 @@ class Conexion {
 
     return productos;
   }
-  //fine nica
 
   Future<List<Producto>> getProductosBasadoPreferencias(Usuario user) async {
     if (productosVentaBasadoPreferencias.isNotEmpty) {
