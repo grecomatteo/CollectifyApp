@@ -77,7 +77,6 @@ class _ListaProductosState extends State<ListaProductosSubasta> {
                 ),
                SizedBox(
                  height: MediaQuery.of(context).size.height*0.7,
-                 child: Expanded(
                      child:TabBarView(
                        children: [
                          ProductList(searchResults: _searchResults),
@@ -85,7 +84,6 @@ class _ListaProductosState extends State<ListaProductosSubasta> {
                         ],
                      ),
                  ),
-               ),
           ],),
           ),
         ],),
