@@ -229,14 +229,13 @@ class ProductoWidget extends StatelessWidget {
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   Container(
-                        width:450,
+                        width:400,
                         height: 200,
                         decoration: BoxDecoration(
                           shape: BoxShape.rectangle,
                           image: DecorationImage(
                               image: Image.memory(const Base64Decoder().convert(producto.image.toString())).image,
                               fit: BoxFit.fitWidth,
-                              alignment: Alignment.center
                           ),
                           borderRadius: BorderRadius.circular(20),
                         ),
