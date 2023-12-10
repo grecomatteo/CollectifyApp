@@ -40,30 +40,29 @@ class _ListaProductosState extends State<ListaProductosSubasta> {
         backgroundColor: Colors.black,
       ),
       body: Container(
-        //padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-        constraints: const BoxConstraints.expand(),
+        color: Colors.black,
+        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8.0),
         child:Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children:[
           SearchBar(onSearchResults: (results) {
             setState(() {
               _searchResults = results;
             });
           }),
-          const SizedBox(
-            height: 10,
-          ),
           DefaultTabController(
             length: 2,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TabBar(
                   indicator: BoxDecoration(
                     borderRadius: BorderRadius.circular(15),
-                    color: Colors.white10,
+                    color: Colors.transparent,
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-                  splashBorderRadius: BorderRadius.circular(15),
+                  padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 16.0),
                   indicatorSize: TabBarIndicatorSize.tab,
                   indicatorColor: null,
                   labelColor: Colors.white,
@@ -105,7 +104,7 @@ class _SearchBarState extends State<SearchBar> {
   Widget build(BuildContext context) {
     return Container(
         decoration: const BoxDecoration(
-          color: Colors.white10,
+          color: Colors.black,
           borderRadius: BorderRadius.all(Radius.circular(60)),
         ),
         child: TextField(
@@ -170,7 +169,7 @@ class ProductListState extends State<ProductList> {
             );
           } else {
             return ListView.builder(
-              //padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+              padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 16.0),
               itemBuilder: (BuildContext context, int index) { return ProductoWidget(producto: _displayedProducts[index]); },
               itemCount: _displayedProducts.length
             );
@@ -206,15 +205,15 @@ class ProductoWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        color: Colors.black,
+        color: Colors.transparent,
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 8.0),
       child:
         ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white10,
+              backgroundColor: Colors.transparent,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(0),
               ),
             ),
             onPressed: () {
@@ -224,36 +223,34 @@ class ProductoWidget extends StatelessWidget {
               );
               //Aqui irá la descripcion detallada de producto
             },
-            child: Center(
-              child: Column(
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.max,
                 children: [
-                  //const Spacer(),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  Flexible(
-                    flex: 0,
-                    fit: FlexFit.tight,
-                    child: Container(
-                        width:400,
+                  Container(
+                        width:450,
                         height: 200,
                         decoration: BoxDecoration(
                           shape: BoxShape.rectangle,
                           image: DecorationImage(
                               image: Image.memory(const Base64Decoder().convert(producto.image.toString())).image,
-                              fit: BoxFit.cover
+                              fit: BoxFit.fitWidth,
+                              alignment: Alignment.center
                           ),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.max,
                             children:[
                               Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 8.0),
                                 decoration: BoxDecoration(
                                   shape: BoxShape.rectangle,
-                                  borderRadius: BorderRadius.circular(20),
-                                  color: Colors.white10,
+                                  borderRadius: BorderRadius.circular(0),
+                                  color: Colors.black,
                                 ),
                                 child : Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
@@ -275,7 +272,7 @@ class ProductoWidget extends StatelessWidget {
                             ]
                         )
                     ),
-                  ),
+
 
                   Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -302,7 +299,7 @@ class ProductoWidget extends StatelessWidget {
                                 height: 5,
                               ),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                                padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 8.0),
                                 decoration: BoxDecoration(
                                   shape: BoxShape.rectangle,
                                   borderRadius: BorderRadius.circular(20),
@@ -343,7 +340,7 @@ class ProductoWidget extends StatelessWidget {
                   )
                 ],
               ),
-            )),
+            ),
 
 
     );
