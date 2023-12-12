@@ -335,18 +335,6 @@ class Conexion {
     return categorias;
   }
 
-  Future<String> getCategoria(String categoria) async {
-    if (conn == null) await conectar();
-    //List<String> categorias = [];
-    String categoria = "";
-    await conn
-        ?.query(
-        "select categoria from categorias where categoria = $categoria")
-        .then((results) {
-            categoria = results as String;
-         });
-    return categoria;
-  }
 
 
   Future<List<Producto>> searchProductos(String query) async {
