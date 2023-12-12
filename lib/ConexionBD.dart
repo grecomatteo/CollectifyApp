@@ -23,6 +23,7 @@ class Producto {
   int? precioInicial;
   int? ultimaOferta;
   int? idUserUltimaPuja;
+  String? categoria;
   Producto(
       {this.usuarioID,
       this.productoID,
@@ -32,7 +33,8 @@ class Producto {
       this.precio,
       this.image,
       this.esPremium,
-      this.esSubasta});
+      this.esSubasta,
+      this.categoria});
 //Producto({this.usuarioID,this.productoID, this.nombre, this.descripcion, this.precio, this.imagePath, this.esPremium, this.fechaFin, this.precioInicial, this.ultimaOferta});
 }
 
@@ -506,10 +508,11 @@ class Conexion {
     String? descripcion = product.descripcion;
     //Blob? image = product.image;
     double? precio = product.precio;
+    String? categoria = product.categoria;
     try {
       await conn?.query(
-          "INSERT INTO producto (usuarioID, nombre, descripcion, precio) "
-          "VALUES ('$userID', '$nombre', '$descripcion', '$precio'); ");
+          "INSERT INTO producto (usuarioID, nombre, descripcion, precio, categoria) "
+          "VALUES ('$userID', '$nombre', '$descripcion', '$precio', '$categoria'); ");
 
       var id = await conn?.query("SELECT LAST_INSERT_ID() as id;");
 

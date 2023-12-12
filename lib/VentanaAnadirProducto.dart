@@ -1,4 +1,6 @@
 
+import 'dart:io';
+
 import 'package:collectify/VentanaProducto.dart';
 import 'package:flutter/material.dart';
 import 'package:collectify/ConexionBD.dart';
@@ -26,6 +28,9 @@ class VentanaAnadirProducto extends StatelessWidget {
     logged = user;
     return Scaffold(
       appBar: AppBar(
+        iconTheme: const IconThemeData(
+          color: Colors.white,
+        ),
         backgroundColor: Colors.black,
       ),
       body: SingleChildScrollView(child: AddProductForm()),
@@ -53,8 +58,11 @@ class _AddProductFormState extends State<AddProductForm> {
 
   final priceFormatter = FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}'));
 
-  bool _imageTaken = false; // Per tenere traccia se l'immagine è stata scattata
+  Image photo_image = new Image(image: AssetImage('lib/assets/Group_277.png'));
+  String default_image = 'lib/assets/Group_277.png';
+  bool _imageTaken = false;
   bool esSubasta = false;
+  String tag = "";
   XFile? pickedFile;
   @override
   Widget build(BuildContext context) {
@@ -95,15 +103,16 @@ class _AddProductFormState extends State<AddProductForm> {
               if (pickedFile != null) {
                 setState(() {
                   _imageTaken = true;
+                  final path = pickedFile!.path;
+                  photo_image = Image.file(File(path));
                 });
               }
-
             },
               style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.transparent
               ),
 
-            child: Image(image: AssetImage('lib/assets/Group_277.png')),
+            child: photo_image,
           ),
           Text(
             '¿Que quieres vender?',
@@ -147,7 +156,7 @@ class _AddProductFormState extends State<AddProductForm> {
                   color: Colors.transparent,
                   child: ElevatedButton(
                       onPressed: (){
-
+                        tag = "Arte y artesanía";
                       },
                       child: Column(
                           children: <Widget>[
@@ -184,7 +193,7 @@ class _AddProductFormState extends State<AddProductForm> {
                   color: Colors.transparent,
                   child: ElevatedButton(
                       onPressed: (){
-
+                        tag = "Joyas y relojes";
                       },
                       child: Column(
                           children: <Widget>[
@@ -221,7 +230,7 @@ class _AddProductFormState extends State<AddProductForm> {
                   color: Colors.transparent,
                   child: ElevatedButton(
                       onPressed: (){
-
+                        tag = "Juguetes";
                       },
                       child: Column(
                           children: <Widget>[
@@ -261,7 +270,7 @@ class _AddProductFormState extends State<AddProductForm> {
                   color: Colors.transparent,
                   child: ElevatedButton(
                       onPressed: (){
-
+                        tag = "Libros y comics";
                       },
                       child: Column(
                           children: <Widget>[
@@ -298,7 +307,7 @@ class _AddProductFormState extends State<AddProductForm> {
                   color: Colors.transparent,
                   child: ElevatedButton(
                       onPressed: (){
-
+                        tag = "Monedas";
                       },
                       child: Column(
                           children: <Widget>[
@@ -338,7 +347,7 @@ class _AddProductFormState extends State<AddProductForm> {
                   color: Colors.transparent,
                   child: ElevatedButton(
                       onPressed: (){
-
+                        tag = "Música";
                       },
                       child: Column(
                           children: <Widget>[
@@ -378,7 +387,7 @@ class _AddProductFormState extends State<AddProductForm> {
                   color: Colors.transparent,
                   child: ElevatedButton(
                       onPressed: (){
-
+                        tag = "Postales y sellos";
                       },
                       child: Column(
                           children: <Widget>[
@@ -415,7 +424,7 @@ class _AddProductFormState extends State<AddProductForm> {
                   color: Colors.transparent,
                   child: ElevatedButton(
                       onPressed: (){
-
+                        tag = "Ropa";
                       },
                       child: Column(
                           children: <Widget>[
@@ -568,6 +577,7 @@ class _AddProductFormState extends State<AddProductForm> {
                 prod.precio = double.parse(productPrice);
               }
               prod.descripcion = productDescription;
+              prod.categoria = tag;
               //prod.fechaFin = fechaFinal;
 
               int productID = 0;
