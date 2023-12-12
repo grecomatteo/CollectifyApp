@@ -135,10 +135,11 @@ class _SearchBarState extends State<SearchBar> {
                 }
               },
               onSubmitted: (query) {
+                _handleSearch(_controller.text);
                 setState(() {
                   loading = true;
                 });
-                _handleSearch(_controller.text);},
+                },
 
               decoration: InputDecoration(
                 hintText: 'Buscar',
