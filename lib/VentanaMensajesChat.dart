@@ -251,9 +251,19 @@ class MessageDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: message.senderID != myID ? const Color.fromRGBO(52,52,52, 30/100) : const Color.fromRGBO(179,	255,	119, 1),
+      //color: message.senderID != myID ? const Color.fromRGBO(52,52,52, 70/100) : const Color.fromRGBO(179,	255,	119, 1),
       margin: message.senderID != myID ? const EdgeInsets.fromLTRB(10, 10, 150, 10) : const EdgeInsets.fromLTRB(150, 10, 10, 10),
-      padding: const EdgeInsets.all(10),
+      //quiero hacerlo redondeado
+      decoration:  BoxDecoration(
+        color: message.senderID != myID ? const Color.fromRGBO(52,52,52, 70/100) : const Color.fromRGBO(179,	255,	119, 1),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+          bottomLeft: message.senderID != myID ? Radius.circular(0) : Radius.circular(20),
+          bottomRight: message.senderID != myID ? Radius.circular(20) : Radius.circular(0),
+      ),
+      ),
+      padding: const EdgeInsets.only(left: 10, right: 10, top: 3, bottom: 3),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -264,15 +274,15 @@ class MessageDisplay extends StatelessWidget {
                 textAlign: TextAlign.start,
                 message.senderID != myID ? message.senderName : "You",
                 style: message.senderID != myID
-                    ? const TextStyle(fontFamily: 'Aeonik', fontSize: 15, color: Color.fromRGBO(179,	255,	119, 1))
-                    : const TextStyle(fontFamily: 'Aeonik', fontSize: 15, color: Colors.black),
+                    ? const TextStyle(fontFamily: 'Aeonik', fontSize: 15, color: Color.fromRGBO(179,	255,	119, 1), fontWeight: FontWeight.bold)
+                    : const TextStyle(fontFamily: 'Aeonik', fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold),
               ),
               Text(
                 textAlign: TextAlign.start,
                 message.message,
                 style: message.senderID != myID
                     ? const TextStyle(fontFamily: 'Aeonik', fontSize: 20, color: Colors.white)
-                    : const TextStyle(fontFamily: 'Aeonik', fontSize: 20, color: Colors.black),
+                    : const TextStyle(fontFamily: 'Aeonik', fontSize: 20, color: Color.fromARGB(200, 52, 52, 52)),
               ),
             ],
           ),
@@ -341,12 +351,14 @@ class _NavigationBarChatState extends State<NavigationBarChat> {
                         decoration: const InputDecoration(
                           hintText: "Type a message",
                           labelStyle: TextStyle(fontFamily: 'Aeonik', color: Colors.white),
+
                           hintStyle: TextStyle(fontFamily: 'Aeonik', color: Color.fromRGBO(255,255,255,40/100)),
                           border: InputBorder.none,
                         ),
                         onChanged: (text) {
                           toSendMessage = text;
                         },
+                        style: const TextStyle(fontFamily: 'Aeonik', color: Color.fromRGBO(255,255,255,75/100)),
                         controller: textField,
                       ),
                     ),
