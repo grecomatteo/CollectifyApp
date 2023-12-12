@@ -12,7 +12,6 @@ class VentanaInicio extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: Colors.black,
       body: Container(
@@ -82,20 +81,56 @@ class VentanaInicio extends StatelessWidget {
                 ),
                 const SizedBox(height: 50),
                 ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: Color.fromRGBO(254, 111, 31, 1),
+                    minimumSize: const Size(300, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
                   onPressed: () {
                     Navigator.pop(context);
-                    Navigator.push(context, MaterialPageRoute(builder: (context) =>  VentanaLogin()));
-
+                    Navigator.push(context, MaterialPageRoute(builder: (context) =>  VentanaRegister()));
                   },
-                  child: const Text('Iniciar sesión'),
+                  child: const Text(
+                    'Regístrate',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.normal,
+                      fontFamily: 'Aeonik',
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    Navigator.push(context, MaterialPageRoute(builder: (context) =>  RegistroUsuariosScreen()));
-                  },
-                  child: const Text('Registrarse'),
-                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      '¿Ya eres miembro?',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.normal,
+                        fontFamily: 'Aeonik',
+                        color: Colors.white,
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Navigator.push(context, MaterialPageRoute(builder: (context) =>  VentanaLogin()));
+                      },
+                      child: const Text(
+                        'Inicia sesión',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.normal,
+                          fontFamily: 'Aeonik',
+                          color: Color.fromRGBO(254, 111, 31, 1),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
               ],
             )
           ],

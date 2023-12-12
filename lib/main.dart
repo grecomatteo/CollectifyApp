@@ -11,15 +11,19 @@ import 'package:uni_links3/uni_links.dart';
 import 'package:flutter/services.dart'
     show DeviceOrientation, PlatformException, SystemChrome;
 
-import 'package:collectify/notification.dart' as notificaciones;
 import 'package:workmanager/workmanager.dart';
+
+import 'package:flutter_local_notifications/flutter_local_notifications.dart'
+as noti;
+import 'package:collectify/notification.dart' as notif;
 
 ///////////
 
 int state = 0;
 
 
-
+noti.FlutterLocalNotificationsPlugin notPlugin =
+noti.FlutterLocalNotificationsPlugin();
 
 final StreamController<Widget> _streamController =
     StreamController<Widget>.broadcast();
@@ -41,6 +45,7 @@ Future<void> main() async {
   runApp( MyApp());
 
 
+  notif.Notification.initialize(notPlugin);
 }
 
 Future<void> initUniLinks() async {
@@ -89,7 +94,7 @@ class MyApp extends StatelessWidget {
     return SafeArea(child: MaterialApp(
       title: 'Collectify',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromRGBO(179, 255,	119, 1)),
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
@@ -138,7 +143,7 @@ void socketDispatcher(List<int> event){
   String message = utf8.decode(event);
   if(message.startsWith("NewMessage")){
     print("NewMessage");
-    notificaciones.Notification.showBigTextNotification(
+    notif.Notification.showBigTextNotification(
         title: "Nuevo mensaje",
         body: "Tienes un nuevo mensaje",
         fln: FlutterLocalNotificationsPlugin()

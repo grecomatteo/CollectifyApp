@@ -2,28 +2,12 @@ import 'package:collectify/VentanaLogin.dart';
 import 'package:flutter/material.dart';
 import 'ConexionBD.dart';
 
-void main() {
-  runApp(VentanaRegister());
-}
-
 class VentanaRegister extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: RegistroUsuariosScreen(),
-    );
-  }
-}
-
-class RegistroUsuariosScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Registro de usuarios'),
-      ),
       body: RegistroForm(),
+      backgroundColor: Colors.black,
     );
   }
 }
@@ -83,131 +67,324 @@ class _RegistroFormState extends State<RegistroForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          TextFormField(
-            controller: nameController,
-            decoration: InputDecoration(labelText: 'Nombre'),
-          ),
-          TextFormField(
-              controller: surnameController,
-              decoration: InputDecoration(labelText: 'Apellidos')),
-          TextFormField(
-              controller: mailController,
-              onChanged: _validateEmail,
-              decoration: InputDecoration(labelText: 'Correo')),
-          if (!_isValidEmail)
-            const Text('Por favor, ingrese un correo electrónico válido.',
-                textAlign: TextAlign.left, style: TextStyle(color: Colors.red)),
-          TextFormField(
-              controller: nickController,
-              onChanged: _validateNick,
-              decoration: InputDecoration(labelText: 'Nombre de usuario')),
-          if (!_isValidNick)
-            const Text('Este Nick ya esta en uso. Pruebe con otro',
-                textAlign: TextAlign.left, style: TextStyle(color: Colors.red)),
-          TextFormField(
-            controller: passwordController,
-            decoration: InputDecoration(labelText: 'Contraseña'),
-            obscureText: true,
-          ),
-          TextFormField(
-            controller: birthdateController,
-            readOnly: true,
-            decoration: InputDecoration(
-              labelText: 'Fecha de nacimiento',
-              suffixIcon: ElevatedButton(
-                onPressed: () => _selectDate(context),
-                child: const Text('Seleccionar Fecha'),
-              ),
-            ),
-          ),
-          Row(
-            children: [
-              Checkbox(
-                  value: esEmpresa,
-                  onChanged: (e){
-                    setState(() {
-                      esEmpresa = e!;
 
-                    });
-                  },
+    return Container(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Column(
+            children: [
+              const SizedBox(height: 50),
+              const Text('Bienvenido a',
+                style: TextStyle(
+                  fontSize: 50,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Aeonik',
+                  color: Colors.white,
+                ),
               ),
-              Text("Es empresa"),
+              Container(
+                padding: const EdgeInsets.all(30),
+                //height: 80,
+                transformAlignment: Alignment.center,
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('lib/assets/collectify.png'),
+                    fit: BoxFit.fitHeight,
+                  ),
+                ),
+              ),
             ],
           ),
-          const SizedBox(height: 50.0),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              ElevatedButton(
-                onPressed: () async {
-                  final nick = nickController.text;
-                  final password = passwordController.text;
-                  final name = nameController.text;
-                  final surname = surnameController.text;
-                  final mail = mailController.text;
-                  final birthdate = selectedDate;
+          Expanded(
+              child: Container(
+                  height: 320,
+                  child: ShaderMask(
+                      shaderCallback: (Rect rect) {
+                        return const LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [Colors.purple, Colors.transparent, Colors.transparent, Colors.purple],
+                          stops: [0.0, 0.1, 0.9, 1.0], // 10% purple, 80% transparent, 10% purple
+                        ).createShader(rect);
+                      },
+                      blendMode: BlendMode.dstOut,
+                      child: ListView(
+                        shrinkWrap: true,
 
-                  //Comprueba si los campos del nuevo usuario son correctos
-                  if (_isValidEmail == true &&
-                      _isValidNick == true &&
-                      birthdateController.text != '' &&
-                      nameController.text != '' &&
-                      surnameController.text != '' &&
-                      passwordController.text != '' &&
-                      birthdateController.text != '') {
-                    if (await Conexion().registrarUsuario(
-                        name, surname, nick, mail, password, birthdate)) {
-                      if (esEmpresa){
-                        await Conexion().getUsuarioByNick(nick).then((results) {
-                          int? id = results?.usuarioID;
-                          Conexion().hacerEmpresa(id!);
-                        });
-                      }
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => VentanaLogin()));
-                    }
-                  } else {
-                    showDialog(
-                        context: context,
-                        builder: (buildcontext) {
-                          return AlertDialog(
-                            title: const Text("¡Error!",
-                                style: TextStyle(color: Colors.red)),
-                            content: const Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                Row(children: <Widget>[
-                                  Icon(Icons.error_outline_rounded,
-                                      color: Colors.red),
-                                  SizedBox(width: 10.0),
-                                  Text(
-                                      "Alguno de los campos es erróneo o esta vacío. Haga el favor de revisarlos."),
-                                ]),
-                              ],
+                        padding: const EdgeInsets.all(10.0),
+                        children: [
+                          const SizedBox(height: 25,),
+                          TextFormField(
+                            controller: nameController,
+                              decoration: const InputDecoration(
+                                labelText: 'Nombre',
+                                labelStyle: TextStyle(color: Color.fromRGBO(255,255,255, 0.4)),
+                                filled: true,
+                                fillColor: Color.fromRGBO(52,52,52, 1),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Color.fromRGBO(179, 255, 119, 1), width: 2.0),
+                                ),
+                              )
+                          ),
+                          const SizedBox(height: 20,),
+                          TextFormField(
+                              controller: surnameController,
+                              decoration: const InputDecoration(
+                                labelText: 'Apellidos',
+                                labelStyle: TextStyle(color: Color.fromRGBO(255,255,255, 0.4)),
+                                filled: true,
+                                fillColor: Color.fromRGBO(52,52,52, 1),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Color.fromRGBO(179, 255, 119, 1), width: 2.0),
+                                ),
+                              )
+                          ),
+                          const SizedBox(height: 20,),
+                          TextFormField(
+                              controller: mailController,
+                              onChanged: _validateEmail,
+                              decoration: const InputDecoration(
+                                labelText: 'Correo',
+                                labelStyle: TextStyle(color: Color.fromRGBO(255,255,255, 0.4)),
+                                filled: true,
+                                fillColor: Color.fromRGBO(52,52,52, 1),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Color.fromRGBO(179, 255, 119, 1), width: 2.0),
+                                ),
+                              )
+                          ),
+                          if (!_isValidEmail)
+                            const Text('Por favor, ingrese un correo electrónico válido.',
+                                textAlign: TextAlign.left, style: TextStyle(color: Colors.red)),
+                          const SizedBox(height: 20,),
+                          TextFormField(
+                              controller: nickController,
+                              onChanged: _validateNick,
+                              decoration: const InputDecoration(
+                                labelText: 'Nombre de usuario',
+                                labelStyle: TextStyle(color: Color.fromRGBO(255,255,255, 0.4)),
+                                filled: true,
+                                fillColor: Color.fromRGBO(52,52,52, 1),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Color.fromRGBO(179, 255, 119, 1), width: 2.0),
+                                ),
+                              )
+                          ),
+                          if (!_isValidNick)
+                            const Text('Este Nick ya esta en uso. Pruebe con otro',
+                                textAlign: TextAlign.left, style: TextStyle(color: Colors.red)),
+                          const SizedBox(height: 20,),
+                          TextFormField(
+                            controller: passwordController,
+                            decoration: const InputDecoration(
+                              labelText: 'Contraseña',
+                              labelStyle: TextStyle(color: Color.fromRGBO(255,255,255, 0.4)),
+                              filled: true,
+                              fillColor: Color.fromRGBO(52,52,52, 1),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(10)),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Color.fromRGBO(179, 255, 119, 1), width: 2.0),
+                              ),
                             ),
-                            actions: <Widget>[
-                              ElevatedButton(
-                                  child: const Text(
-                                    "OK",
-                                    style: TextStyle(color: Colors.white),
+                            obscureText: true,
+                          ),
+                          const SizedBox(height: 20,),
+                          Container(
+                            padding: const EdgeInsets.only(right: 2),
+                            decoration: const BoxDecoration(
+                              color: Color.fromRGBO(52,52,52, 1),
+                              borderRadius: BorderRadius.all(Radius.circular(10)),
+                            ),
+                            child: TextFormField(
+                              controller: birthdateController,
+                              readOnly: true,
+                              decoration: InputDecoration(
+                                labelText: 'Fecha de nacimiento',
+                                suffixStyle: const TextStyle(color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.normal,
+                                  fontFamily: 'Aeonik',
+                                ),
+                                suffixIcon: ElevatedButton(
+                                  onPressed: () => _selectDate(context),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color.fromRGBO(0, 0, 0, 1),
+                                    minimumSize: const Size(150, 50),
+                                    alignment: Alignment.center,
+
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    padding: const EdgeInsets.all(20.0),
                                   ),
-                                  onPressed: () {
-                                    Navigator.of(buildcontext).pop();
-                                  })
+                                  child: const Text('Seleccionar Fecha',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.normal,
+                                      fontFamily: 'Aeonik',
+                                    ),
+                                  ),
+                                ),
+                                labelStyle: TextStyle(color: Color.fromRGBO(255,255,255, 0.4)),
+                                filled: true,
+                                fillColor: Color.fromRGBO(52,52,52, 1),
+                                border: const OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                                ),
+                                focusedBorder: const OutlineInputBorder(
+                                  borderSide: BorderSide(color: Color.fromRGBO(179, 255, 119, 1), width: 2.0),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 20,),
+                          Row(
+                            children: [
+                              Checkbox(
+                                value: esEmpresa,
+                                onChanged: (e){
+                                  setState(() {
+                                    esEmpresa = e!;
+
+                                  });
+                                },
+                              ),
+                              const Text("Es empresa", style:
+                                TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.normal,
+                                  fontFamily: 'Aeonik',
+                                ),
+                              ),
                             ],
-                          );
-                        });
-                  }
-                },
-                child: const Text('Registrar'),
+                          ),
+                        ],
+                      )
+                  )
+              )
+          ),
+          Column(
+            children: [
+              const SizedBox(height: 30,),
+              Container(
+                decoration: const BoxDecoration(
+                  color: Color.fromRGBO(254,111,31, 1),
+                  borderRadius: BorderRadius.all(Radius.circular(30)),
+                ),
+                child: IconButton(
+                  onPressed: () async {
+                    final nick = nickController.text;
+                    final password = passwordController.text;
+                    final name = nameController.text;
+                    final surname = surnameController.text;
+                    final mail = mailController.text;
+                    final birthdate = selectedDate;
+
+                    //Comprueba si los campos del nuevo usuario son correctos
+                    if (_isValidEmail == true &&
+                        _isValidNick == true &&
+                        birthdateController.text != '' &&
+                        nameController.text != '' &&
+                        surnameController.text != '' &&
+                        passwordController.text != '' &&
+                        birthdateController.text != '') {
+                      if (await Conexion().registrarUsuario(
+                          name, surname, nick, mail, password, birthdate)) {
+                        if (esEmpresa){
+                          await Conexion().getUsuarioByNick(nick).then((results) {
+                            int? id = results?.usuarioID;
+                            Conexion().hacerEmpresa(id!);
+                          });
+                        }
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => VentanaLogin()));
+                      }
+                    } else {
+                      showDialog(
+                          context: context,
+                          builder: (buildcontext) {
+                            return AlertDialog(
+                              title: const Text("¡Error!",
+                                  style: TextStyle(color: Colors.red)),
+                              content: const Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  Row(children: <Widget>[
+                                    Icon(Icons.error_outline_rounded,
+                                        color: Colors.red),
+                                    SizedBox(width: 10.0),
+                                    Text(
+                                        "Alguno de los campos es erróneo o esta vacío. Haga el favor de revisarlos."),
+                                  ]),
+                                ],
+                              ),
+                              actions: <Widget>[
+                                ElevatedButton(
+                                    child: const Text(
+                                      "OK",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                    onPressed: () {
+                                      Navigator.of(buildcontext).pop();
+                                    })
+                              ],
+                            );
+                          });
+                    }
+                  },
+                  icon: const Icon(Icons.arrow_forward, color: Colors.white),
+                  color: Colors.white,
+                  iconSize: 40,
+                ),
+              ),
+              const SizedBox(height: 30,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    '¿Ya eres miembro?',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.normal,
+                      fontFamily: 'Aeonik',
+                      color: Colors.white,
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.push(context, MaterialPageRoute(builder: (context) =>  VentanaLogin()));
+                    },
+                    child: const Text(
+                      'Inicia sesión',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.normal,
+                        fontFamily: 'Aeonik',
+                        color: Color.fromRGBO(254, 111, 31, 1),
+                      ),
+                    ),
+                  ),
+                ],
               )
             ],
           )
