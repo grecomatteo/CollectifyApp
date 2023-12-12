@@ -46,14 +46,16 @@ class VentanaPerfil extends StatelessWidget {
                 Text(mUser.nombre.toString() + " " + mUser.apellidos.toString(),
                   style: const TextStyle(fontFamily: 'Aeonik', fontSize: 25, color: Colors.green, fontWeight: FontWeight.bold),),
                 Container(
-                  width: 120,
-                  height: 120,
-                  decoration: const BoxDecoration(
+                  width: 90,
+                  height: 90,
+                  decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: AssetImage('lib/assets/productos/gioconda.png'),
-                    ),
+                    color: Colors.white,
+                  ),
+                  child: Icon(
+                    Icons.person,
+                    size: 60, // Imposta la dimensione dell'icona come desiderato
+                    color: Color.fromARGB(255, 34, 34, 34), // Imposta il colore dell'icona
                   ),
                 ),
               ],
