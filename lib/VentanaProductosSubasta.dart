@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:collectify/ConexionBD.dart';
 import 'VentanaProducto.dart';
@@ -35,12 +36,12 @@ class _ListaProductosState extends State<ListaProductosSubasta> {
   Widget build(BuildContext context) {
     user = connected;
     return Scaffold(
-      backgroundColor: Color(0XFF343434),
       appBar: AppBar(
-        backgroundColor: Color(0XFF343434),
+        backgroundColor: Colors.black,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Container(
-        color: Color(0XFF343434),
+        color: Colors.black,
         padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8.0),
         child:Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -56,33 +57,52 @@ class _ListaProductosState extends State<ListaProductosSubasta> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.max,
               children: [
-                TabBar(
+                const TabBar(
+                  isScrollable: true,
+                  dragStartBehavior: DragStartBehavior.start,
+                  enableFeedback: true,
+                  indicatorWeight: 4.0,
                   indicator: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
-                    color: Colors.transparent,
+                    borderRadius: BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15), bottomLeft: Radius.zero, bottomRight: Radius.zero),
+                    color: Color(0XFF161616),
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 16.0),
+                  unselectedLabelStyle: TextStyle(
+                    fontSize: 20,
+                    fontFamily: 'Aeonik',
+                  ),
                   indicatorSize: TabBarIndicatorSize.tab,
-                  indicatorColor: null,
+                  indicatorColor: Colors.transparent,
                   labelColor: Colors.white,
-                  labelStyle: const TextStyle(
-                    fontSize: 30,
+                  labelStyle: TextStyle(
+                    fontSize: 50,
+                    fontFamily: 'Aeonik',
                   ),
-                  tabs: const [
-                    Tab(text: 'Subastas'),
-                    Tab(text: 'Pujas'),
+                  tabs: [
+                    Tab(
+                      text: 'Subastas',
+                      height: 60,
+                    ),
+                    Tab(
+                        text: 'Pujas',
+                        height: 60,
+                    ),
                   ],
                 ),
-               SizedBox(
+               Container(
                  height: MediaQuery.of(context).size.height*0.7,
-                     child:TabBarView(
-                       children: [
-                         ProductList(searchResults: _searchResults),
-                         ProductList(searchResults: _searchResults),
-                        ],
-                     ),
+                 padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 20.0),
+                 decoration: const BoxDecoration(
+                   color: Color(0XFF161616)
                  ),
+                 child:TabBarView(
+                   children: [
+                     ProductList(searchResults: _searchResults),
+                     ProductList(searchResults: _searchResults),
+                   ],
+                 ),
+               ),
           ],),
           ),
         ],),
@@ -104,8 +124,8 @@ class _SearchBarState extends State<SearchBar> {
   Widget build(BuildContext context) {
     return Container(
         decoration: const BoxDecoration(
-          color: Colors.black,
-          borderRadius: BorderRadius.all(Radius.circular(60)),
+          color: Color(0XFF161616),
+          borderRadius: BorderRadius.all(Radius.circular(30)),
         ),
         child: TextField(
           controller: _controller,
@@ -117,6 +137,8 @@ class _SearchBarState extends State<SearchBar> {
             hintText: 'Buscar',
             hintStyle: const TextStyle(
               color: Colors.grey,
+              fontSize: 16.0,
+              fontFamily: 'Aeonik',
             ),
             border: InputBorder.none,
             prefixIcon: IconButton(
@@ -169,7 +191,7 @@ class ProductListState extends State<ProductList> {
             );
           } else {
             return ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 16.0),
+              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 0.0),
               itemBuilder: (BuildContext context, int index) { return ProductoWidget(producto: _displayedProducts[index]); },
               itemCount: _displayedProducts.length
             );
@@ -212,10 +234,9 @@ class ProductoWidget extends StatelessWidget {
         ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.transparent,
+              surfaceTintColor: Colors.transparent,
               shadowColor: Colors.transparent,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(0),
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
             ),
             onPressed: () {
               Navigator.push(
@@ -238,7 +259,7 @@ class ProductoWidget extends StatelessWidget {
                               image: Image.memory(const Base64Decoder().convert(producto.image.toString())).image,
                               fit: BoxFit.fitWidth,
                           ),
-                          borderRadius: const BorderRadius.only(topLeft: Radius.zero, topRight: Radius.zero, bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
+                          borderRadius: const BorderRadius.only(topLeft: Radius.zero, topRight: Radius.circular(25), bottomLeft: Radius.circular(25), bottomRight: Radius.circular(25)),
                         ),
                         child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -246,11 +267,11 @@ class ProductoWidget extends StatelessWidget {
                             mainAxisSize: MainAxisSize.max,
                             children:[
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
-                                decoration: BoxDecoration(
+                                padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
+                                decoration: const BoxDecoration(
                                   shape: BoxShape.rectangle,
-                                  borderRadius: BorderRadius.circular(15),
-                                  color: Color(0XFF343434),
+                                  borderRadius: BorderRadius.only(topLeft: Radius.zero, topRight: Radius.zero, bottomLeft: Radius.zero, bottomRight: Radius.circular(30)),
+                                  color: Color(0XFF161616),
                                 ),
                                 child : Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
@@ -258,17 +279,19 @@ class ProductoWidget extends StatelessWidget {
                                   children: [
                                     const Text("Finaliza en   ", style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: 15,
+                                      fontSize: 13,
+                                      fontFamily: 'Aeonik'
                                     )),
                                     Text(Temporizador(), style: const TextStyle(
                                       color: Color(0XFFB3FF77),
-                                      fontSize: 15,
+                                      fontSize: 13,
                                       fontWeight: FontWeight.bold,
+                                      fontFamily: 'Aeonik'
                                     ))
                                   ],
                                 ),
                               ),
-                              const Icon(Icons.favorite_border, color: Colors.white)
+                              const Icon(Icons.favorite_border, color: Colors.white),
                             ]
                         )
                     ),
@@ -280,23 +303,20 @@ class ProductoWidget extends StatelessWidget {
                         Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              if(producto.esPremium == true)
-                                const Row(
-                                  children: [
-                                    Icon(Icons.star, color: Colors.yellow,),
-                                    Text("Premium", style: TextStyle(color: Colors.yellow),),
-                                  ],
-                                ),
+                              const SizedBox(
+                                height: 15,
+                              ),
                               Text(producto.nombre!,
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 15,
                                   fontWeight: FontWeight.bold,
                                   overflow: TextOverflow.ellipsis,
+                                  fontFamily: 'Aeonik'
                                 ),
                               ),
                               const SizedBox(
-                                height: 5,
+                                height: 15,
                               ),
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
@@ -316,8 +336,7 @@ class ProductoWidget extends StatelessWidget {
                                         child: Icon(Icons.gavel, color:Color(0XFF161616)),
                                       ),
                                       const SizedBox(
-                                        height: 5,
-                                        width: 5,
+                                        width: 10,
                                       ),
                                       const Text("Pujar",
                                         style: TextStyle(
@@ -330,8 +349,20 @@ class ProductoWidget extends StatelessWidget {
                             ]
                         ),
                         Column(
-
                           children: [
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            Text(producto.categoria!,
+                              style: const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 13,
+                                fontFamily: 'Aeonik'
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
                             const Text("Última puja", style: TextStyle(
                               color: Colors.grey,
                               fontSize: 15,
@@ -350,8 +381,7 @@ class ProductoWidget extends StatelessWidget {
                   ),
                   //const Spacer(),
                   const SizedBox(
-                    height: 10,
-                    width: 10,
+                    height: 30,
                   )
                 ],
               ),
