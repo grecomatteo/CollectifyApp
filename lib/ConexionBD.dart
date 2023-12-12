@@ -148,6 +148,7 @@ class Conexion {
           image: row['image'],
           esPremium: row['esPremium'] == 1 ? true : false,
           esSubasta: row['esSubasta'] == 1 ? true : false,
+          categoria: row['categoria'],
         );
 
         productos.add(producto);
@@ -179,6 +180,7 @@ class Conexion {
           image: row['image'],
           esPremium: row['esPremium'] == 1 ? true : false,
           esSubasta: row['esSubasta'] == 1 ? true : false,
+          categoria: row['categoria'],
         );
 
         productos.add(producto);
@@ -211,6 +213,7 @@ class Conexion {
           image: row['image'],
           esPremium: row['esPremium'] == 1 ? true : false,
           esSubasta: row['esSubasta'] == 1 ? true : false,
+          categoria: row['categoria'],
         );
 
         productos.add(producto);
@@ -256,9 +259,10 @@ class Conexion {
             precio: row['precio'],
             //Get blob 'image'
             image: row['image'],
-            //image: row['image'],
             esPremium: row['esPremium'] == 1 ? true : false,
-            esSubasta: row['esSubasta'] == 1 ? true : false);
+            esSubasta: row['esSubasta'] == 1 ? true : false,
+            categoria: row['categoria']
+        );
         productos.add(producto);
       }
     });
@@ -304,6 +308,7 @@ class Conexion {
                 image: row['image'],
                 esPremium: row['esPremium'] == 1 ? true : false,
                 esSubasta: row['esSubasta'] == 1 ? true : false,
+                categoria: row['categoria'],
               ),
               productos.add(producto),
               producto.fechaFin = row['fechaFin'],
@@ -328,6 +333,19 @@ class Conexion {
       }
     });
     return categorias;
+  }
+
+  Future<String> getCategoria(String categoria) async {
+    if (conn == null) await conectar();
+    //List<String> categorias = [];
+    String categoria = "";
+    await conn
+        ?.query(
+        "select categoria from categorias where categoria = $categoria")
+        .then((results) {
+            categoria = results as String;
+         });
+    return categoria;
   }
 
 
@@ -372,6 +390,8 @@ class Conexion {
           precio: row['precio'],
           image: row['image'],
           esPremium: row['esPremium'] == 1,
+          esSubasta: row['esSubasta'] == 1,
+          categoria: row['categoria'],
         );
 
         productos.add(producto);
@@ -512,7 +532,7 @@ class Conexion {
     try {
       await conn?.query(
           "INSERT INTO producto (usuarioID, nombre, descripcion, precio, categoria) "
-          "VALUES ('$userID', '$nombre', '$descripcion', '$precio', '$categoria'); ");
+          "VALUES ('$userID', '$nombre', '$descripcion', '$precio', (SELECT categoria FROM categorias WHERE categoria = '$categoria')); ");
 
       var id = await conn?.query("SELECT LAST_INSERT_ID() as id;");
 
@@ -650,6 +670,7 @@ class Conexion {
                 image: row['image'],
                 esPremium: row['esPremium'] == 1 ? true : false,
                 esSubasta: row['esSubasta'] == 1 ? true : false,
+                categoria: row['categoria'],
               ),
               producto.fechaFin = row['fechaFin'],
               producto.precioInicial = row['precioInicial'],
