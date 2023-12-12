@@ -23,28 +23,82 @@ class VentanaPerfil extends StatelessWidget {
       visibility =  true;
     }
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Perfil'),
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      backgroundColor: const Color.fromARGB(255, 34, 34, 34),
+      appBar: AppBar(
+          iconTheme: const IconThemeData(
+            color: Colors.white,
+            size: 40,
+          ),
+          backgroundColor: Colors.black,
+          title: const Text(
+              "Perfil",
+            style: TextStyle(fontFamily: 'Aeonik', fontSize: 50, color: Colors.white),
+          ),
         ),
         bottomNavigationBar: const NavigationBar(),
         body: Center(
             child: Column(
-          //mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Spacer(),
-            const Text('Perfil'),
-            const Icon(Icons.account_circle, size: 100),
-            const Spacer(),
-            ElevatedButton(
-              onPressed: () async {
-                if (await Conexion()
-                    .esPremium(mUser.usuarioID as int)
-                    .then((value) => value == 1)) {
-                  //Mostrar un cuadro de error
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) => AlertDialog(
+              children: [
+                const SizedBox(height: 12),
+                Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Text(mUser.nombre.toString() + " " + mUser.apellidos.toString(),
+                  style: const TextStyle(fontFamily: 'Aeonik', fontSize: 25, color: Colors.green, fontWeight: FontWeight.bold),),
+                Container(
+                  width: 120,
+                  height: 120,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: AssetImage('lib/assets/productos/gioconda.png'),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+                const SizedBox(height: 20),
+                Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                     Colors.green,
+                    minimumSize: Size(180, 40),
+                  ),
+                  onPressed: () {  },
+                  child: const Text("24 Seguidores",
+                      style: TextStyle(fontFamily: 'Aeonik', fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold)),
+
+                ),
+                const SizedBox(width: 12),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                    Colors.green,
+                    minimumSize: Size(180, 40),
+                  ),
+                  onPressed: () {  },
+                  child: const Text("40 Seguiendo",
+                      style: TextStyle(fontFamily: 'Aeonik', fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold)),
+                ),
+
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: () async {
+                    if (await Conexion()
+                        .esPremium(mUser.usuarioID as int)
+                        .then((value) => value == 1)) {
+                      //Mostrar un cuadro de error
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) => AlertDialog(
                             title: const Text("Error"),
                             content: const Text("Ya eres premium"),
                             actions: [
@@ -55,11 +109,11 @@ class VentanaPerfil extends StatelessWidget {
                                   child: const Text("OK"))
                             ],
                           ));
-                } else {
-                  Conexion().hacerPremium(mUser.usuarioID as int);
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) => AlertDialog(
+                    } else {
+                      Conexion().hacerPremium(mUser.usuarioID as int);
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) => AlertDialog(
                             title: const Text("¡Enhorabuena!"),
                             content: const Text("Ahora eres premium"),
                             actions: [
@@ -70,33 +124,44 @@ class VentanaPerfil extends StatelessWidget {
                                   child: const Text("OK"))
                             ],
                           ));
-                }
-              },
-              style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all<Color>(Colors.yellow),
-              ),
-              child: const Text("Hazte Premium"),
-            ),
-            Visibility(
-                visible: visibility
-                ,
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => VentanaAnadirEvento(user : mUser)),
-                );
-                },
-              style: ButtonStyle(
-                backgroundColor:
-                MaterialStateProperty.all<Color>(Colors.green),
-               ),
-              child: const Text("Crear nuevo evento"),
-              ),
+                    }
+                  },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor:
+                      Colors.grey,
+                      minimumSize: Size(180, 40),
+                    ),
+                  child: const Text("Hazte premium",
+                      style: TextStyle(fontFamily: 'Aeonik', fontSize: 15, color: Colors.black)),
+                ),
+                const SizedBox(width: 12),
+                Visibility(
+                  visible: visibility
+                  ,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => VentanaAnadirEvento(user : mUser)),
+                      );
+                    },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                        Colors.grey,
+                        minimumSize: Size(180, 40),
+                      ),
+                    child: const Text("Crear nuevo evento",
+                        style: TextStyle(fontFamily: 'Aeonik', fontSize: 15, color: Colors.black)),
+
+                  ),
+                  ),
+
+
+              ],
             ),
             const Spacer(),
-            const Text("Valoraciones", style: TextStyle(fontSize: 20, color: Colors.deepPurple),),
+                const Text("Valoraciones",style: TextStyle(fontFamily: 'Aeonik', fontSize: 25,
+                color: Colors.green)),
             const UserValoracion(),
           ],
         )),
