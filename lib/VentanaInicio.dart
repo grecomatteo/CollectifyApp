@@ -1,9 +1,9 @@
-
-
 import 'dart:io';
+import 'dart:math';
 
 import 'package:collectify/VentanaRegister.dart';
 import 'package:flutter/material.dart';
+import 'Gradients/gradient.dart';
 
 import 'VentanaLogin.dart';
 
@@ -12,14 +12,17 @@ class VentanaInicio extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Center(
+      body: Container(
+        padding: const EdgeInsets.all(50),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Column(
               children: [
+                const SizedBox(height: 50),
                 const Text('Bienvenido a',
                   style: TextStyle(
                     fontSize: 50,
@@ -43,15 +46,41 @@ class VentanaInicio extends StatelessWidget {
             ),
             Column(
               children: [
-                const Text('Descubre artículos únicos, conecta con otros amantes de las rarezas y encuentra piezas que hagan brillar tu colección.',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Aeonik',
-                    color: Color.fromRGBO(47,47,47,1),
-                  ),
+                RichText(
                   textAlign: TextAlign.center,
+                  text: TextSpan(
+                    children: <InlineSpan>[
+                      const TextSpan(
+                        text: 'Descubre artículos únicos, conecta con otros amantes de las rarezas y encuentra piezas que hagan',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.normal,
+                          fontFamily: 'Aeonik',
+                          color: Color.fromRGBO(70,70,70,1),
+                        ),
+                      ),
+                      WidgetSpan(
+                        alignment: PlaceholderAlignment.middle,
+                        child: GradientText(' brillar ',
+                          colors: const <Color>[
+                            Color.fromRGBO(255, 84, 0, 1),
+                            Color.fromRGBO(180, 253, 118, 1)
+                          ],
+                        ),
+                      ),
+                      const TextSpan(
+                        text: 'tu colección.',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.normal,
+                          fontFamily: 'Aeonik',
+                          color: Color.fromRGBO(70,70,70,1),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
+                const SizedBox(height: 50),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.pop(context);
