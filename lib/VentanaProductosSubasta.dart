@@ -35,12 +35,12 @@ class _ListaProductosState extends State<ListaProductosSubasta> {
   Widget build(BuildContext context) {
     user = connected;
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Color(0XFF343434),
       appBar: AppBar(
-        backgroundColor: Colors.black,
+        backgroundColor: Color(0XFF343434),
       ),
       body: Container(
-        color: Colors.black,
+        color: Color(0XFF343434),
         padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8.0),
         child:Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -212,6 +212,7 @@ class ProductoWidget extends StatelessWidget {
         ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.transparent,
+              shadowColor: Colors.transparent,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(0),
               ),
@@ -237,7 +238,7 @@ class ProductoWidget extends StatelessWidget {
                               image: Image.memory(const Base64Decoder().convert(producto.image.toString())).image,
                               fit: BoxFit.fitWidth,
                           ),
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: const BorderRadius.only(topLeft: Radius.zero, topRight: Radius.zero, bottomLeft: Radius.circular(15), bottomRight: Radius.circular(15)),
                         ),
                         child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -245,11 +246,11 @@ class ProductoWidget extends StatelessWidget {
                             mainAxisSize: MainAxisSize.max,
                             children:[
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 8.0),
+                                padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
                                 decoration: BoxDecoration(
                                   shape: BoxShape.rectangle,
-                                  borderRadius: BorderRadius.circular(0),
-                                  color: Colors.black,
+                                  borderRadius: BorderRadius.circular(15),
+                                  color: Color(0XFF343434),
                                 ),
                                 child : Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
@@ -260,14 +261,14 @@ class ProductoWidget extends StatelessWidget {
                                       fontSize: 15,
                                     )),
                                     Text(Temporizador(), style: const TextStyle(
-                                      color: Colors.deepOrange,
+                                      color: Color(0XFFB3FF77),
                                       fontSize: 15,
                                       fontWeight: FontWeight.bold,
                                     ))
                                   ],
                                 ),
                               ),
-                              const Icon(Icons.favorite, color: Colors.deepOrangeAccent)
+                              const Icon(Icons.favorite_border, color: Colors.white)
                             ]
                         )
                     ),
@@ -298,18 +299,31 @@ class ProductoWidget extends StatelessWidget {
                                 height: 5,
                               ),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 8.0),
+                                padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
                                 decoration: BoxDecoration(
                                   shape: BoxShape.rectangle,
-                                  borderRadius: BorderRadius.circular(20),
-                                  color: Colors.deepOrange,
+                                  borderRadius: BorderRadius.circular(47),
+                                  color: Color(0XFFB3FF77),
                                 ),
-                                child: const Row(
+                                child: Row(
                                     children:[
-                                      Text("Editar puja",
+                                      Container(
+                                        padding: const EdgeInsets.all(5),
+                                        decoration: const BoxDecoration(
+                                          color: Color(0XFF99DC64),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Icon(Icons.gavel, color:Color(0XFF161616)),
+                                      ),
+                                      const SizedBox(
+                                        height: 5,
+                                        width: 5,
+                                      ),
+                                      const Text("Pujar",
                                         style: TextStyle(
                                           color: Colors.black,
-                                          fontSize: 15
+                                          fontSize: 20,
+                                          fontFamily: 'Aeonik'
                                         ))
                                     ]),
                               ),
@@ -318,14 +332,16 @@ class ProductoWidget extends StatelessWidget {
                         Column(
 
                           children: [
-                            const Text("Ultima puja", style: TextStyle(
+                            const Text("Última puja", style: TextStyle(
                               color: Colors.grey,
                               fontSize: 15,
+                              fontFamily: 'Aeonik'
                             )),
                             Text("${producto.ultimaOferta} €", style: const TextStyle(
-                              color: Colors.deepOrange,
-                              fontSize: 15,
+                              color: Color(0XFFB3FF77),
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
+                              fontFamily: 'Aeonik'
                             )),
                           ],
                         )
