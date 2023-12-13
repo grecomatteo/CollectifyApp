@@ -1,17 +1,20 @@
 import 'dart:convert';
+import 'dart:ui';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:collectify/ConexionBD.dart';
 import 'VentanaProducto.dart';
 
 Usuario user = Usuario();
-bool isValid=true;
+bool isValid = true;
 
 class ListaProductosSubasta extends StatefulWidget {
-  const ListaProductosSubasta({Key? key, required this.connected}) : super(key: key);
+  const ListaProductosSubasta({Key? key, required this.connected})
+      : super(key: key);
   final Usuario connected;
   @override
-  _ListaProductosState createState() => _ListaProductosState(connected: connected);
+  _ListaProductosState createState() =>
+      _ListaProductosState(connected: connected);
 }
 
 class _ListaProductosState extends State<ListaProductosSubasta> {
@@ -26,7 +29,8 @@ class _ListaProductosState extends State<ListaProductosSubasta> {
   }
 
   Future<void> cargarProductos() async {
-    List<Producto> allProducts = await Conexion().getProductosSubastaBasadoPreferencias(user);
+    List<Producto> allProducts =
+        await Conexion().getProductosSubastaBasadoPreferencias(user);
     setState(() {
       _searchResults = allProducts;
     });
@@ -36,78 +40,116 @@ class _ListaProductosState extends State<ListaProductosSubasta> {
   Widget build(BuildContext context) {
     user = connected;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Colors.black,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Container(
         color: Colors.black,
-        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8.0),
         child:Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children:[
-          SearchBar(onSearchResults: (results) {
-            setState(() {
-              _searchResults = results;
-            });
-          }),
-          DefaultTabController(
-            length: 2,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                const TabBar(
-                  isScrollable: true,
-                  dragStartBehavior: DragStartBehavior.start,
-                  enableFeedback: true,
-                  indicatorWeight: 4.0,
-                  indicator: BoxDecoration(
-                    borderRadius: BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15), bottomLeft: Radius.zero, bottomRight: Radius.zero),
-                    color: Color(0XFF161616),
-                  ),
-                  unselectedLabelStyle: TextStyle(
-                    fontSize: 20,
-                    fontFamily: 'Aeonik',
-                  ),
-                  indicatorSize: TabBarIndicatorSize.tab,
-                  indicatorColor: Colors.transparent,
-                  labelColor: Colors.white,
-                  labelStyle: TextStyle(
-                    fontSize: 50,
-                    fontFamily: 'Aeonik',
-                  ),
-                  tabs: [
-                    Tab(
-                      text: 'Subastas',
-                      height: 60,
+          children: [
+            SearchBar(onSearchResults: (results) {
+              setState(() {
+                _searchResults = results;
+              });
+            }),
+            DefaultTabController(
+              length: 2,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  const TabBar(
+                    isScrollable: true,
+                    dragStartBehavior: DragStartBehavior.start,
+                    enableFeedback: true,
+                    indicatorWeight: 4.0,
+                    indicator: BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(15),
+                          topRight: Radius.circular(15),
+                          bottomLeft: Radius.zero,
+                          bottomRight: Radius.zero),
+                      color: Color(0XFF161616),
                     ),
-                    Tab(
+                    unselectedLabelStyle: TextStyle(
+                      fontSize: 20,
+                      fontFamily: 'Aeonik',
+                    ),
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    indicatorColor: Colors.transparent,
+                    labelColor: Colors.white,
+                    labelStyle: TextStyle(
+                      fontSize: 50,
+                      fontFamily: 'Aeonik',
+                    ),
+                    tabs: [
+                      Tab(
+                        text: 'Subastas',
+                        height: 60,
+                      ),
+                      Tab(
                         text: 'Pujas',
                         height: 60,
+                      ),
+                    ],
+                  ),
+                  Container(
+                    height: MediaQuery.of(context).size.height * 0.65,
+                    decoration: const BoxDecoration(color: Color(0XFF161616)),
+                    child: TabBarView(
+                      children: [
+                        ProductList(searchResults: _searchResults),
+                        ProductList(searchResults: _searchResults),
+                      ],
                     ),
-                  ],
-                ),
-               Container(
-                 height: MediaQuery.of(context).size.height*0.7,
-                 padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 20.0),
-                 decoration: const BoxDecoration(
-                   color: Color(0XFF161616)
-                 ),
-                 child:TabBarView(
-                   children: [
-                     ProductList(searchResults: _searchResults),
-                     ProductList(searchResults: _searchResults),
-                   ],
-                 ),
-               ),
-          ],),
-          ),
-        ],),
+                  ),
+                  Container(
+                    decoration: const BoxDecoration(
+                      color: Color(0XFF343434),
+                      shape: BoxShape.rectangle,
+                      borderRadius: BorderRadius.all(Radius.circular(50)),
+                    ),
+                    child: BottomNavigationBar(
+                      type: BottomNavigationBarType.fixed,
+                      backgroundColor: Color(0XFF343434),
+                      selectedItemColor: Color(0XFFB3FF77),
+                      unselectedItemColor: Colors.grey,
+                      items: const <BottomNavigationBarItem>[
+                        BottomNavigationBarItem(
+                          icon: Icon(Icons.home),
+                          label: 'Inicio',
+                        ),
+                        BottomNavigationBarItem(
+                          icon: Icon(Icons.gavel),
+                          label: 'Subastas',
+                        ),
+                        BottomNavigationBarItem(
+                          icon: Icon(Icons.add_circle),
+                          label: 'Añadir',
+                        ),
+                        BottomNavigationBarItem(
+                          icon: Icon(Icons.chat_rounded),
+                          label: 'Chat',
+                        ),
+                        BottomNavigationBarItem(
+                          icon: Icon(Icons.person),
+                          label: 'Perfil',
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
-      );
+    );
   }
 }
 
@@ -123,35 +165,35 @@ class _SearchBarState extends State<SearchBar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        decoration: const BoxDecoration(
-          color: Color(0XFF161616),
-          borderRadius: BorderRadius.all(Radius.circular(30)),
-        ),
-        child: TextField(
-          controller: _controller,
-          onChanged: (query) {
-            // Actualiza la lista de resultados de búsqueda cada vez que cambia el texto
-            _handleSearch(query);
-          },
-          decoration: InputDecoration(
-            hintText: 'Buscar',
-            hintStyle: const TextStyle(
-              color: Colors.grey,
-              fontSize: 16.0,
-              fontFamily: 'Aeonik',
-            ),
-            border: InputBorder.none,
-            prefixIcon: IconButton(
-              icon: const Icon(Icons.search),
-              color: Colors.grey.withOpacity(0.8),
-              onPressed: () {
-                // Acciones a realizar cuando se presiona el ícono de búsqueda
-                _handleSearch(_controller.text);
-              },
-            ),
+      decoration: const BoxDecoration(
+        color: Color(0XFF161616),
+        borderRadius: BorderRadius.all(Radius.circular(30)),
+      ),
+      child: TextField(
+        controller: _controller,
+        onChanged: (query) {
+          // Actualiza la lista de resultados de búsqueda cada vez que cambia el texto
+          _handleSearch(query);
+        },
+        decoration: InputDecoration(
+          hintText: 'Buscar',
+          hintStyle: const TextStyle(
+            color: Colors.grey,
+            fontSize: 16.0,
+            fontFamily: 'Aeonik',
+          ),
+          border: InputBorder.none,
+          prefixIcon: IconButton(
+            icon: const Icon(Icons.search),
+            color: Colors.grey.withOpacity(0.8),
+            onPressed: () {
+              // Acciones a realizar cuando se presiona el ícono de búsqueda
+              _handleSearch(_controller.text);
+            },
           ),
         ),
-      );
+      ),
+    );
   }
 
   void _handleSearch(String query) async {
@@ -163,7 +205,8 @@ class _SearchBarState extends State<SearchBar> {
 }
 
 class ProductList extends StatefulWidget {
-  const ProductList({Key? key, this.searchResults = const []}) : super(key: key);
+  const ProductList({Key? key, this.searchResults = const []})
+      : super(key: key);
   final List<Producto> searchResults;
   @override
   ProductListState createState() => ProductListState();
@@ -177,13 +220,15 @@ class ProductListState extends State<ProductList> {
       future: Conexion().getProductosSubastaBasadoPreferencias(user),
       builder: (BuildContext context, AsyncSnapshot<List<Producto>> snapshot) {
         if (snapshot.hasData) {
-          _displayedProducts =
-          widget.searchResults.isNotEmpty ? widget.searchResults : snapshot.data!;
+          _displayedProducts = widget.searchResults.isNotEmpty
+              ? widget.searchResults
+              : snapshot.data!;
 
-          if (isValid==false) {
-            isValid=true;
+          if (isValid == false) {
+            isValid = true;
             return const Center(
-              child: Text('La búsqueda no es válida. Ingrese un término de búsqueda válido.'),
+              child: Text(
+                  'La búsqueda no es válida. Ingrese un término de búsqueda válido.'),
             );
           } else if (widget.searchResults.isEmpty) {
             return const Center(
@@ -191,10 +236,12 @@ class ProductListState extends State<ProductList> {
             );
           } else {
             return ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 0.0),
-              itemBuilder: (BuildContext context, int index) { return ProductoWidget(producto: _displayedProducts[index]); },
-              itemCount: _displayedProducts.length
-            );
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 0.0),
+                itemBuilder: (BuildContext context, int index) {
+                  return ProductoWidget(producto: _displayedProducts[index]);
+                },
+                itemCount: _displayedProducts.length);
           }
         } else if (snapshot.hasError) {
           return Center(
@@ -214,15 +261,18 @@ class ProductoWidget extends StatelessWidget {
   final Producto producto;
   const ProductoWidget({super.key, required this.producto});
 
-
-  String Temporizador(){
-    DateTime now= DateTime.now();
+  String Temporizador() {
+    DateTime now = DateTime.now();
     final diferencia = producto.fechaFin?.difference(now);
-    final Dia = diferencia?.inDays ;
-    final Hora = diferencia!.inHours - Dia!*24;
-    if(diferencia.isNegative){return "¡Terminada!";}
-    else {return "${Dia}d ${Hora}h";}
+    final Dia = diferencia?.inDays;
+    final Hora = diferencia!.inHours - Dia! * 24;
+    if (diferencia.isNegative) {
+      return "¡Terminada!";
+    } else {
+      return "${Dia}d ${Hora}h";
+    }
   }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -230,165 +280,161 @@ class ProductoWidget extends StatelessWidget {
         color: Colors.transparent,
       ),
       padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 8.0),
-      child:
-        ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.transparent,
-              surfaceTintColor: Colors.transparent,
-              shadowColor: Colors.transparent,
-              padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
-            ),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => VentanaProducto(connected: user, producto: producto)),
-              );
-              //Aqui irá la descripcion detallada de producto
-            },
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Container(
-                        width:400,
-                        height: 200,
-                        decoration: BoxDecoration(
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.transparent,
+          surfaceTintColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+          padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
+        ),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    VentanaProducto(connected: user, producto: producto)),
+          );
+          //Aqui irá la descripcion detallada de producto
+        },
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Container(
+                width: 400,
+                height: 200,
+                decoration: BoxDecoration(
+                  shape: BoxShape.rectangle,
+                  image: DecorationImage(
+                    image: Image.memory(const Base64Decoder()
+                            .convert(producto.image.toString()))
+                        .image,
+                    fit: BoxFit.fitWidth,
+                  ),
+                  borderRadius: const BorderRadius.only(
+                      topLeft: Radius.zero,
+                      topRight: Radius.circular(25),
+                      bottomLeft: Radius.circular(25),
+                      bottomRight: Radius.circular(25)),
+                ),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 15.0, vertical: 15.0),
+                        decoration: const BoxDecoration(
                           shape: BoxShape.rectangle,
-                          image: DecorationImage(
-                              image: Image.memory(const Base64Decoder().convert(producto.image.toString())).image,
-                              fit: BoxFit.fitWidth,
-                          ),
-                          borderRadius: const BorderRadius.only(topLeft: Radius.zero, topRight: Radius.circular(25), bottomLeft: Radius.circular(25), bottomRight: Radius.circular(25)),
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.zero,
+                              topRight: Radius.zero,
+                              bottomLeft: Radius.zero,
+                              bottomRight: Radius.circular(30)),
+                          color: Color(0XFF161616),
                         ),
                         child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.max,
-                            children:[
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 15.0),
-                                decoration: const BoxDecoration(
-                                  shape: BoxShape.rectangle,
-                                  borderRadius: BorderRadius.only(topLeft: Radius.zero, topRight: Radius.zero, bottomLeft: Radius.zero, bottomRight: Radius.circular(30)),
-                                  color: Color(0XFF161616),
-                                ),
-                                child : Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text("Finaliza en   ", style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 13,
-                                      fontFamily: 'Aeonik'
-                                    )),
-                                    Text(Temporizador(), style: const TextStyle(
-                                      color: Color(0XFFB3FF77),
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: 'Aeonik'
-                                    ))
-                                  ],
-                                ),
-                              ),
-                              const Icon(Icons.favorite_border, color: Colors.white),
-                            ]
-                        )
-                    ),
-
-
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(
-                                height: 15,
-                              ),
-                              Text(producto.nombre!,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                  overflow: TextOverflow.ellipsis,
-                                  fontFamily: 'Aeonik'
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 15,
-                              ),
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.rectangle,
-                                  borderRadius: BorderRadius.circular(47),
-                                  color: Color(0XFFB3FF77),
-                                ),
-                                child: Row(
-                                    children:[
-                                      Container(
-                                        padding: const EdgeInsets.all(5),
-                                        decoration: const BoxDecoration(
-                                          color: Color(0XFF99DC64),
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: Icon(Icons.gavel, color:Color(0XFF161616)),
-                                      ),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      const Text("Pujar",
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 20,
-                                          fontFamily: 'Aeonik'
-                                        ))
-                                    ]),
-                              ),
-                            ]
-                        ),
-                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const SizedBox(
-                              height: 15,
-                            ),
-                            Text(producto.categoria!,
-                              style: const TextStyle(
-                                color: Colors.grey,
-                                fontSize: 13,
-                                fontFamily: 'Aeonik'
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 15,
-                            ),
-                            const Text("Última puja", style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 15,
-                              fontFamily: 'Aeonik'
-                            )),
-                            Text("${producto.ultimaOferta} €", style: const TextStyle(
-                              color: Color(0XFFB3FF77),
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Aeonik'
-                            )),
+                            const Text("Finaliza en   ",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 13,
+                                    fontFamily: 'Aeonik')),
+                            Text(Temporizador(),
+                                style: const TextStyle(
+                                    color: Color(0XFFB3FF77),
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Aeonik'))
                           ],
-                        )
+                        ),
+                      ),
+                      const Icon(Icons.favorite_border, color: Colors.white),
+                    ])),
 
-                      ]
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                const SizedBox(
+                  height: 15,
+                ),
+                Text(
+                  producto.nombre!,
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      overflow: TextOverflow.ellipsis,
+                      fontFamily: 'Aeonik'),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 10.0, vertical: 8.0),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.circular(47),
+                    color: Color(0XFFB3FF77),
                   ),
-                  //const Spacer(),
+                  child: Row(children: [
+                    Container(
+                      padding: const EdgeInsets.all(5),
+                      decoration: const BoxDecoration(
+                        color: Color(0XFF99DC64),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(Icons.gavel, color: Color(0XFF161616)),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    const Text("Pujar",
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 20,
+                            fontFamily: 'Aeonik'))
+                  ]),
+                ),
+              ]),
+              Column(
+                children: [
                   const SizedBox(
-                    height: 30,
-                  )
+                    height: 15,
+                  ),
+                  Text(
+                    producto.categoria!,
+                    style: const TextStyle(
+                        color: Colors.grey, fontSize: 13, fontFamily: 'Aeonik'),
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  const Text("Última puja",
+                      style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 15,
+                          fontFamily: 'Aeonik')),
+                  Text("${producto.ultimaOferta} €",
+                      style: const TextStyle(
+                          color: Color(0XFFB3FF77),
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Aeonik')),
                 ],
-              ),
-            ),
-
-
+              )
+            ]),
+            //const Spacer(),
+            const SizedBox(
+              height: 30,
+            )
+          ],
+        ),
+      ),
     );
-
   }
 }
