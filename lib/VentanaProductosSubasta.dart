@@ -3,10 +3,14 @@ import 'dart:ui';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:collectify/ConexionBD.dart';
+import 'VentanaAnadirProducto.dart';
+import 'VentanaChat.dart';
+import 'VentanaPerfil.dart';
 import 'VentanaProducto.dart';
 
 Usuario user = Usuario();
 bool isValid = true;
+bool loading = false;
 
 class ListaProductosSubasta extends StatefulWidget {
   const ListaProductosSubasta({Key? key, required this.connected})
@@ -47,7 +51,7 @@ class _ListaProductosState extends State<ListaProductosSubasta> {
       ),
       body: Container(
         color: Colors.black,
-        child:Column(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -55,6 +59,9 @@ class _ListaProductosState extends State<ListaProductosSubasta> {
               setState(() {
                 _searchResults = results;
               });
+              if (results.isEmpty) {
+                cargarProductos();
+              }
             }),
             DefaultTabController(
               length: 2,
@@ -115,6 +122,47 @@ class _ListaProductosState extends State<ListaProductosSubasta> {
                       borderRadius: BorderRadius.all(Radius.circular(50)),
                     ),
                     child: BottomNavigationBar(
+                      onTap: (int index) {
+                        switch (index) {
+                          case 0:
+                            //Se queda en la misma ventana
+                            break;
+                          case 1: //Articulos con me gusta, por implementar
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      ListaProductosSubasta(connected: user)),
+                            );
+                            break;
+                          case 2:
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      VentanaAnadirProducto(user: user)),
+                            );
+                            break;
+                          case 3:
+                            int uid = user.usuarioID ?? -1;
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => VentanaChat(id: uid)),
+                            );
+                            break;
+                          case 4:
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => VentanaPerfil(
+                                        mUser: user,
+                                        rUser: user,
+                                      )),
+                            );
+                            break;
+                        }
+                      },
                       type: BottomNavigationBarType.fixed,
                       backgroundColor: Color(0XFF343434),
                       selectedItemColor: Color(0XFFB3FF77),
@@ -162,45 +210,122 @@ class SearchBar extends StatefulWidget {
 
 class _SearchBarState extends State<SearchBar> {
   final TextEditingController _controller = TextEditingController();
+  final List<String> categories = ["Relojes", "Arte", "Joyeria", "Numismatica"];
+
+  String selectedCategory = "";
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        color: Color(0XFF161616),
-        borderRadius: BorderRadius.all(Radius.circular(30)),
-      ),
-      child: TextField(
-        controller: _controller,
-        onChanged: (query) {
-          // Actualiza la lista de resultados de búsqueda cada vez que cambia el texto
-          _handleSearch(query);
-        },
-        decoration: InputDecoration(
-          hintText: 'Buscar',
-          hintStyle: const TextStyle(
-            color: Colors.grey,
-            fontSize: 16.0,
-            fontFamily: 'Aeonik',
+    return Column(
+      children: [
+        Container(
+          decoration: const BoxDecoration(
+            color: Color(0XFF161616),
+            borderRadius: BorderRadius.all(Radius.circular(30)),
           ),
-          border: InputBorder.none,
-          prefixIcon: IconButton(
-            icon: const Icon(Icons.search),
-            color: Colors.grey.withOpacity(0.8),
-            onPressed: () {
-              // Acciones a realizar cuando se presiona el ícono de búsqueda
-              _handleSearch(_controller.text);
+          child: TextField(
+            controller: _controller,
+            onChanged: (query) {
+              if (query.isEmpty) {
+                _handleSearch(_controller.text);
+                setState(() {
+                  loading = true;
+                });
+              }
             },
+            onSubmitted: (query) {
+              _handleSearch(_controller.text);
+              setState(() {
+                loading = true;
+              });
+            },
+            decoration: InputDecoration(
+              hintText: 'Buscar',
+              hintStyle: const TextStyle(
+                color: Colors.grey,
+                fontSize: 16.0,
+                fontFamily: 'Aeonik',
+              ),
+              border: InputBorder.none,
+              prefixIcon: IconButton(
+                icon: const Icon(Icons.search),
+                color: Colors.grey.withOpacity(0.8),
+                onPressed: () {
+                  // Acciones a realizar cuando se presiona el ícono de búsqueda
+                  _handleSearch(_controller.text);
+                },
+              ),
+            ),
           ),
         ),
-      ),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: categories.map((category) {
+              return ElevatedButton(
+                onPressed: () {
+                  toggleCategory(category);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: selectedCategory == category
+                      ? Theme.of(context).colorScheme.primary
+                      : Colors.white,
+                  foregroundColor: selectedCategory == category
+                      ? Theme.of(context).colorScheme.onSurface // Colore del testo quando è premuto
+                      : Theme.of(context).colorScheme.primary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    side: BorderSide(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                ),
+                child: Text(category),
+              );
+            }).toList(),
+          ),
+        ),
+      ],
     );
   }
 
-  void _handleSearch(String query) async {
-    // Chiamare la logica di ricerca nel database usando la classe Conexion
-    List<Producto> searchResults = await Conexion().searchProductos(query);
-    // Passare i risultati della ricerca alla funzione onSearchResults fornita come parametro
+  void _handleSearch(String query, {String? category}) async {
+    List<Producto> searchResults;
+
+    //Antes de consultar la base de datos, verifique si no se ha ingresado nada en el campo de búsqueda
+    if (query.isEmpty && category == null) {
+      searchResults =
+          await Conexion().getProductosSubastaBasadoPreferencias(user);
+      setState(() {
+        loading = false;
+      });
+    } else if (query.isEmpty && category != null) {
+      searchResults = await Conexion().getSubastaPorCategoria(category);
+      setState(() {
+        loading = false;
+      });
+    } else {
+      //Mostrar un widget de cargando
+
+      // Llama a la lógica de búsqueda de la base de datos usando la clase Conexion
+      searchResults = await Conexion().searchSubastas(query);
+      setState(() {
+        loading = false;
+      });
+    }
+
+    // Pasa los resultados de la búsqueda a la función onSearchResults proporcionada como parámetro
     widget.onSearchResults(searchResults);
+  }
+
+  void toggleCategory(String category) {
+    setState(() {
+      if (selectedCategory == category) {
+        selectedCategory = ""; // deselecciona el tag
+      } else {
+        selectedCategory = category; // selecciona el tag
+      }
+    });
+    _handleSearch(_controller.text, category: selectedCategory);
   }
 }
 
@@ -263,9 +388,9 @@ class ProductoWidget extends StatelessWidget {
 
   String Temporizador() {
     DateTime now = DateTime.now();
-    final diferencia = producto.fechaFin?.difference(now);
-    final Dia = diferencia?.inDays;
-    final Hora = diferencia!.inHours - Dia! * 24;
+    Duration diferencia = producto.fechaFin!.difference(now);
+    var Dia = diferencia.inDays;
+    var Hora = diferencia.inHours - Dia * 24;
     if (diferencia.isNegative) {
       return "¡Terminada!";
     } else {

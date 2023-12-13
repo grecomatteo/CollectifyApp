@@ -223,6 +223,44 @@ class Conexion {
     return productos;
   }
 
+  Future<List<Producto>> getSubastaPorCategoria(String categoria) async {
+    if (conn == null) await conectar();
+    List<Producto> productos = [];
+
+    await conn?.query('''SELECT producto.*,productos-subasta.*, IMAGEN.image, usuario.esPremium, usuario.nick
+      FROM producto
+      JOIN productos_subasta ON producto.pruductoID = productos_subasta.idProducto
+      JOIN usuario ON producto.usuarioID = usuario.userID
+      JOIN IMAGEN ON producto.pruductoID = IMAGEN.id_producto
+      WHERE producto.categoria = ?
+      ORDER BY usuario.esPremium DESC;
+    ''', [categoria]).then((results) {
+      for (var row in results) {
+        Producto producto = Producto(
+          usuarioID: row['usuarioID'],
+          productoID: row['pruductoID'],
+          usuarioNick: row['nick'],
+          nombre: row['nombre'],
+          descripcion: row['descripcion'],
+          precio: row['precio'],
+          // Get blob 'image'
+          image: row['image'],
+          esPremium: row['esPremium'] == 1 ? true : false,
+          esSubasta: row['esSubasta'] == 1 ? true : false,
+          categoria: row['categoria'],
+        );
+        producto.fechaFin = row['fechaFin'];
+        producto.precioInicial = row['precioInicial'];
+        producto.ultimaOferta = row['ultimaOferta'];
+        producto.idUserUltimaPuja = row['idUsuarioUltPuja'];
+
+        productos.add(producto);
+      }
+    });
+
+    return productos;
+  }
+
   Future<List<Producto>> getProductosBasadoPreferencias(Usuario user) async {
     if (productosVentaBasadoPreferencias.isNotEmpty) {
       return productosVentaBasadoPreferencias;
@@ -382,6 +420,62 @@ class Conexion {
           categoria: row['categoria'],
         );
 
+        productos.add(producto);
+      }
+    }).catchError((error) {
+    });
+
+    return productos;
+  }
+  Future<List<Producto>> searchSubastas(String query) async {
+
+    if (conn == null) {
+      await conectar();
+    }
+
+    //Elimino los espacios antes y después de las letras, también para obtener ayuda para el próximo cheque
+    query = query.trim();
+
+    //Compruebo si query esta toda compuesta por espacios, si es así muestro mensaje de error
+    if (query.isEmpty) {
+      isValid = false;
+    }
+
+    List<Producto> productos = [];
+
+    // Usare il metodo rawQuery di SQL per filtrare i prodotti in base alla query
+    await conn?.query(
+      '''
+    SELECT producto.*,ps.*, IMAGEN.image, usuario.nick
+    FROM producto 
+    JOIN productos_subasta ps ON producto.pruductoID = ps.idProducto
+    JOIN usuario ON producto.usuarioID = usuario.userID
+    JOIN IMAGEN ON producto.pruductoID = IMAGEN.id_producto
+    WHERE LOWER(producto.nombre) LIKE ?;
+    ''',
+      ['%${query.toLowerCase()}%'],
+    ).then((results) {
+      //print('Query executed successfully. Results: $results');
+
+      // Iterar sobre todos los resultados devueltos por la consulta
+      for (var row in results) {
+        //crear nuevo objecto producton da anadir a la lista
+        Producto producto = Producto(
+          usuarioID: row['usuarioID'],
+          productoID: row['pruductoID'],
+          usuarioNick: row['nick'],
+          nombre: row['nombre'],
+          descripcion: row['descripcion'],
+          precio: row['precio'],
+          image: row['image'],
+          esPremium: row['esPremium'] == 1,
+          esSubasta: row['esSubasta'] == 1,
+          categoria: row['categoria'],
+        );
+        producto.fechaFin = row['fechaFin'];
+        producto.precioInicial = row['precioInicial'];
+        producto.ultimaOferta = row['ultimaOferta'];
+        producto.idUserUltimaPuja = row['idUsuarioUltPuja'];
         productos.add(producto);
       }
     }).catchError((error) {
