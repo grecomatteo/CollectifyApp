@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:collectify/ConexionBD.dart';
 import 'VentanaAnadirProducto.dart';
 import 'VentanaChat.dart';
+import 'VentanaListaProductos.dart';
 import 'VentanaPerfil.dart';
 import 'VentanaProducto.dart';
 
@@ -45,16 +46,15 @@ class _ListaProductosState extends State<ListaProductosSubasta> {
     user = connected;
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
       body: Container(
         color: Colors.black,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(
+              height: 20,
+            ),
             SearchBar(onSearchResults: (results) {
               setState(() {
                 _searchResults = results;
@@ -106,7 +106,7 @@ class _ListaProductosState extends State<ListaProductosSubasta> {
                     ],
                   ),
                   Container(
-                    height: MediaQuery.of(context).size.height * 0.63,
+                    height: MediaQuery.of(context).size.height * 0.638,
                     decoration: const BoxDecoration(color: Color(0XFF161616)),
                     child: TabBarView(
                       children: [
@@ -125,15 +125,15 @@ class _ListaProductosState extends State<ListaProductosSubasta> {
                       onTap: (int index) {
                         switch (index) {
                           case 0:
-                            //Se queda en la misma ventana
-                            break;
-                          case 1: //Articulos con me gusta, por implementar
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      ListaProductosSubasta(connected: user)),
+                                      ListaProductos(connected: user)),
                             );
+                            break;
+                          case 1: //Articulos con me gusta, por implementar
+                            //no hace nada
                             break;
                           case 2:
                             Navigator.push(
@@ -210,7 +210,7 @@ class SearchBar extends StatefulWidget {
 
 class _SearchBarState extends State<SearchBar> {
   final TextEditingController _controller = TextEditingController();
-  final List<String> categories = ["Relojes", "Arte", "Joyeria", "Numismatica"];
+  final List<String> categories = ["Joyas y relojes", "Arte y artesanía", "Juguetes", "Libros y comics","Monedas","Música", "Postales y sellos", "Ropa"];
 
   String selectedCategory = "";
   @override
@@ -258,29 +258,38 @@ class _SearchBarState extends State<SearchBar> {
           ),
         ),
         SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 15.0),
           scrollDirection: Axis.horizontal,
           child: Row(
             children: categories.map((category) {
-              return ElevatedButton(
+              return Container(
+                padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                  child: ElevatedButton(
                 onPressed: () {
                   toggleCategory(category);
                 },
                 style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 20.0, vertical: 14.0),
                   backgroundColor: selectedCategory == category
-                      ? Theme.of(context).colorScheme.primary
-                      : Colors.white,
+                      ? Color(0XFFB3FF77)
+                      : Color(0XFF343434),
                   foregroundColor: selectedCategory == category
-                      ? Theme.of(context).colorScheme.onSurface // Colore del testo quando è premuto
-                      : Theme.of(context).colorScheme.primary,
+                      ? Colors.black // Colore del testo quando è premuto
+                      : Colors.black,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
-                    side: BorderSide(
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
                   ),
                 ),
-                child: Text(category),
-              );
+                child: Text(
+                    category,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 15,
+                      fontFamily: 'Aeonik',
+                    ),
+                ),
+              ));
             }).toList(),
           ),
         ),
