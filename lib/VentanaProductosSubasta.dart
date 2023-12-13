@@ -106,7 +106,7 @@ class _ListaProductosState extends State<ListaProductosSubasta> {
                     ],
                   ),
                   Container(
-                    height: MediaQuery.of(context).size.height * 0.65,
+                    height: MediaQuery.of(context).size.height * 0.63,
                     decoration: const BoxDecoration(color: Color(0XFF161616)),
                     child: TabBarView(
                       children: [
