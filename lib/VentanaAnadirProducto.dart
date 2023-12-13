@@ -62,6 +62,7 @@ class _AddProductFormState extends State<AddProductForm> {
   String default_image = 'lib/assets/Group_277.png';
   bool _imageTaken = false;
   bool esSubasta = false;
+  int changeColor = 13; //Este va con rima jejejejejeje
   String tag = "";
   XFile? pickedFile;
   @override
@@ -136,6 +137,7 @@ class _AddProductFormState extends State<AddProductForm> {
             style: const TextStyle(
               height: 0.05,
               fontFamily: 'Aeonik',
+              color: Colors.white,
             )
           ),
           Text(
@@ -157,6 +159,7 @@ class _AddProductFormState extends State<AddProductForm> {
                   child: ElevatedButton(
                       onPressed: (){
                         tag = "Arte y artesanía";
+                        setState((){changeColor = 0;});
                       },
                       child: Column(
                           children: <Widget>[
@@ -179,7 +182,7 @@ class _AddProductFormState extends State<AddProductForm> {
                       ),
 
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white24,
+                        backgroundColor: changeColor==0 ? Colors.lightGreen : Colors.white24,
                         padding: EdgeInsets.zero,
                         fixedSize: const Size(80, 130),
                         shape: RoundedRectangleBorder(
@@ -194,6 +197,7 @@ class _AddProductFormState extends State<AddProductForm> {
                   child: ElevatedButton(
                       onPressed: (){
                         tag = "Joyas y relojes";
+                        setState((){changeColor = 1;});
                       },
                       child: Column(
                           children: <Widget>[
@@ -216,7 +220,7 @@ class _AddProductFormState extends State<AddProductForm> {
                       ),
 
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white24,
+                        backgroundColor: changeColor==1 ? Colors.lightGreen : Colors.white24,
                         padding: EdgeInsets.zero,
                         fixedSize: const Size(80, 130),
                         shape: RoundedRectangleBorder(
@@ -231,6 +235,7 @@ class _AddProductFormState extends State<AddProductForm> {
                   child: ElevatedButton(
                       onPressed: (){
                         tag = "Juguetes";
+                        setState((){changeColor = 2;});
                       },
                       child: Column(
                           children: <Widget>[
@@ -256,7 +261,7 @@ class _AddProductFormState extends State<AddProductForm> {
                       ),
 
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white24,
+                        backgroundColor: changeColor==2 ? Colors.lightGreen : Colors.white24,
                         padding: EdgeInsets.zero,
                         fixedSize: const Size(80, 130),
                         shape: RoundedRectangleBorder(
@@ -271,6 +276,7 @@ class _AddProductFormState extends State<AddProductForm> {
                   child: ElevatedButton(
                       onPressed: (){
                         tag = "Libros y comics";
+                        setState((){changeColor = 3;});
                       },
                       child: Column(
                           children: <Widget>[
@@ -293,7 +299,7 @@ class _AddProductFormState extends State<AddProductForm> {
                       ),
 
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white24,
+                        backgroundColor: changeColor==3 ? Colors.lightGreen : Colors.white24,
                         padding: EdgeInsets.zero,
                         fixedSize: const Size(80, 130),
                         shape: RoundedRectangleBorder(
@@ -308,6 +314,7 @@ class _AddProductFormState extends State<AddProductForm> {
                   child: ElevatedButton(
                       onPressed: (){
                         tag = "Monedas";
+                        setState((){changeColor = 4;});
                       },
                       child: Column(
                           children: <Widget>[
@@ -333,7 +340,7 @@ class _AddProductFormState extends State<AddProductForm> {
                       ),
 
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white24,
+                        backgroundColor: changeColor==4 ? Colors.lightGreen : Colors.white24,
                         padding: EdgeInsets.zero,
                         fixedSize: const Size(80, 130),
                         shape: RoundedRectangleBorder(
@@ -348,6 +355,7 @@ class _AddProductFormState extends State<AddProductForm> {
                   child: ElevatedButton(
                       onPressed: (){
                         tag = "Música";
+                        setState((){changeColor = 5;});
                       },
                       child: Column(
                           children: <Widget>[
@@ -373,7 +381,7 @@ class _AddProductFormState extends State<AddProductForm> {
                       ),
 
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white24,
+                        backgroundColor: changeColor==5 ? Colors.lightGreen : Colors.white24,
                         padding: EdgeInsets.zero,
                         fixedSize: const Size(80, 130),
                         shape: RoundedRectangleBorder(
@@ -388,6 +396,7 @@ class _AddProductFormState extends State<AddProductForm> {
                   child: ElevatedButton(
                       onPressed: (){
                         tag = "Postales y sellos";
+                        setState((){changeColor = 6;});
                       },
                       child: Column(
                           children: <Widget>[
@@ -410,7 +419,7 @@ class _AddProductFormState extends State<AddProductForm> {
                       ),
 
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white24,
+                        backgroundColor: changeColor==6 ? Colors.lightGreen : Colors.white24,
                         padding: EdgeInsets.zero,
                         fixedSize: const Size(80, 130),
                         shape: RoundedRectangleBorder(
@@ -425,6 +434,7 @@ class _AddProductFormState extends State<AddProductForm> {
                   child: ElevatedButton(
                       onPressed: (){
                         tag = "Ropa";
+                        setState((){changeColor = 7;});
                       },
                       child: Column(
                           children: <Widget>[
@@ -450,7 +460,7 @@ class _AddProductFormState extends State<AddProductForm> {
                       ),
 
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white24,
+                        backgroundColor: changeColor==7 ? Colors.lightGreen : Colors.white24,
                         padding: EdgeInsets.zero,
                         fixedSize: const Size(80, 130),
                         shape: RoundedRectangleBorder(
@@ -483,6 +493,11 @@ class _AddProductFormState extends State<AddProductForm> {
                     fontFamily: 'Aeonik',
                 )
             ),
+              style: const TextStyle(
+                height: 0.05,
+                fontFamily: 'Aeonik',
+                color: Colors.white,
+              )
           ),
           Text(
               'Precio',
@@ -514,6 +529,7 @@ class _AddProductFormState extends State<AddProductForm> {
               style: const TextStyle(
                 height: 0.05,
                 fontFamily: 'Aeonik',
+                color: Colors.white
               ),
             inputFormatters: [priceFormatter], // Applica il formatter per il prezzo
             keyboardType: TextInputType.numberWithOptions(decimal: true)
