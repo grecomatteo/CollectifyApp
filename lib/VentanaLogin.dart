@@ -142,7 +142,7 @@ class Login extends StatelessWidget {
                             textAlign: TextAlign.start,
                             style: const TextStyle(color: Colors.white),
                             decoration: const InputDecoration(
-                              labelText: 'Nombre',
+                              labelText: 'Nick',
                               labelStyle: TextStyle(color: Color.fromRGBO(255,255,255, 0.4)),
                               filled: true,
                               fillColor: Color.fromRGBO(52,52,52, 1),

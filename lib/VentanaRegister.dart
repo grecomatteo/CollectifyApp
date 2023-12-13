@@ -117,6 +117,7 @@ class _RegistroFormState extends State<RegistroForm> {
                           const SizedBox(height: 25,),
                           TextFormField(
                             controller: nameController,
+                            style: const TextStyle(color: Colors.white),
                               decoration: const InputDecoration(
                                 labelText: 'Nombre',
                                 labelStyle: TextStyle(color: Color.fromRGBO(255,255,255, 0.4)),
@@ -133,6 +134,7 @@ class _RegistroFormState extends State<RegistroForm> {
                           const SizedBox(height: 20,),
                           TextFormField(
                               controller: surnameController,
+                              style: const TextStyle(color: Colors.white),
                               decoration: const InputDecoration(
                                 labelText: 'Apellidos',
                                 labelStyle: TextStyle(color: Color.fromRGBO(255,255,255, 0.4)),
@@ -149,6 +151,7 @@ class _RegistroFormState extends State<RegistroForm> {
                           const SizedBox(height: 20,),
                           TextFormField(
                               controller: mailController,
+                              style: const TextStyle(color: Colors.white),
                               onChanged: _validateEmail,
                               decoration: const InputDecoration(
                                 labelText: 'Correo',
@@ -170,8 +173,9 @@ class _RegistroFormState extends State<RegistroForm> {
                           TextFormField(
                               controller: nickController,
                               onChanged: _validateNick,
+                              style: const TextStyle(color: Colors.white),
                               decoration: const InputDecoration(
-                                labelText: 'Nombre de usuario',
+                                labelText: 'Nick',
                                 labelStyle: TextStyle(color: Color.fromRGBO(255,255,255, 0.4)),
                                 filled: true,
                                 fillColor: Color.fromRGBO(52,52,52, 1),
@@ -189,6 +193,7 @@ class _RegistroFormState extends State<RegistroForm> {
                           const SizedBox(height: 20,),
                           TextFormField(
                             controller: passwordController,
+                            style: const TextStyle(color: Colors.white),
                             decoration: const InputDecoration(
                               labelText: 'Contraseña',
                               labelStyle: TextStyle(color: Color.fromRGBO(255,255,255, 0.4)),
@@ -212,6 +217,7 @@ class _RegistroFormState extends State<RegistroForm> {
                             ),
                             child: TextFormField(
                               controller: birthdateController,
+                              style: const TextStyle(color: Colors.white),
                               readOnly: true,
                               decoration: InputDecoration(
                                 labelText: 'Fecha de nacimiento',
