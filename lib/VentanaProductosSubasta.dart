@@ -210,7 +210,7 @@ class SearchBar extends StatefulWidget {
 
 class _SearchBarState extends State<SearchBar> {
   final TextEditingController _controller = TextEditingController();
-  final List<String> categories = ["Joyas y relojes", "Arte y artesanía", "Juguetes", "Libros y comics","Monedas","Música", "Postales y sellos", "Ropa"];
+  final List<String> categories = ["Joyas y relojes","Numismatica", "Arte y artesanía", "Juguetes", "Libros y comics","Monedas","Música", "Postales y sellos", "Ropa"];
 
   String selectedCategory = "";
   @override

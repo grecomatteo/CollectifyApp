@@ -227,12 +227,12 @@ class Conexion {
     if (conn == null) await conectar();
     List<Producto> productos = [];
 
-    await conn?.query('''SELECT producto.*,productos-subasta.*, IMAGEN.image, usuario.esPremium, usuario.nick
-      FROM producto
-      JOIN productos_subasta ON producto.pruductoID = productos_subasta.idProducto
-      JOIN usuario ON producto.usuarioID = usuario.userID
-      JOIN IMAGEN ON producto.pruductoID = IMAGEN.id_producto
-      WHERE producto.categoria = ?
+    await conn?.query('''SELECT p.*, ps.*, IMAGEN.image, usuario.esPremium, usuario.nick
+      FROM producto p
+      JOIN productos_subasta ps ON p.pruductoID = ps.idProducto
+      JOIN usuario ON p.usuarioID = usuario.userID
+      JOIN IMAGEN ON p.pruductoID = IMAGEN.id_producto
+      WHERE p.categoria = ?
       ORDER BY usuario.esPremium DESC;
     ''', [categoria]).then((results) {
       for (var row in results) {
