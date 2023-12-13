@@ -106,6 +106,7 @@ class _ListaProductosState extends State<ListaProductosSubasta> {
                     ],
                   ),
                   Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 15.0),
                     height: MediaQuery.of(context).size.height * 0.638,
                     decoration: const BoxDecoration(color: Color(0XFF161616)),
                     child: TabBarView(
