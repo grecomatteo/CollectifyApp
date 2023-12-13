@@ -22,20 +22,45 @@ class ListaProductosSubasta extends StatefulWidget {
       _ListaProductosState(connected: connected);
 }
 
-class _ListaProductosState extends State<ListaProductosSubasta> {
+class _ListaProductosState extends State<ListaProductosSubasta> with SingleTickerProviderStateMixin {
   _ListaProductosState({required this.connected});
   final Usuario connected;
   List<Producto> _searchResults = [];
+  late TabController _tabController;
+
+  void _handleTabSelection() {
+    // Obtener el índice de la pestaña activa
+    int tabIndex = _tabController.index;
+    if (tabIndex == 0) {
+      cargarProductos();
+    } else{
+      cargarPujas();
+    }
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
   @override
   void initState() {
     super.initState();
-    // Inicializa _searchResults con todos los productos al momento de la creación del estado
     cargarProductos();
+    _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(_handleTabSelection);
+    // Inicializa _searchResults con todos los productos al momento de la creación del estado
   }
 
   Future<void> cargarProductos() async {
-    List<Producto> allProducts =
-        await Conexion().getProductosSubastaBasadoPreferencias(user);
+    List<Producto> allProducts = await Conexion().getProductosSubastaBasadoPreferencias(user);
+    setState(() {
+      _searchResults = allProducts;
+    });
+  }
+  Future<void> cargarPujas() async {
+    List<Producto> allProducts = await Conexion().getPujasRealizadas(user);
     setState(() {
       _searchResults = allProducts;
     });
@@ -60,7 +85,7 @@ class _ListaProductosState extends State<ListaProductosSubasta> {
                 _searchResults = results;
               });
               if (results.isEmpty) {
-                cargarProductos();
+                _handleTabSelection();
               }
             }),
             DefaultTabController(
@@ -70,7 +95,8 @@ class _ListaProductosState extends State<ListaProductosSubasta> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  const TabBar(
+                  TabBar(
+                    controller: _tabController,
                     isScrollable: true,
                     dragStartBehavior: DragStartBehavior.start,
                     enableFeedback: true,
@@ -110,9 +136,10 @@ class _ListaProductosState extends State<ListaProductosSubasta> {
                     height: MediaQuery.of(context).size.height * 0.638,
                     decoration: const BoxDecoration(color: Color(0XFF161616)),
                     child: TabBarView(
+                      controller: _tabController,
                       children: [
                         ProductList(searchResults: _searchResults),
-                        ProductList(searchResults: _searchResults),
+                        PujasList(searchResults: _searchResults),
                       ],
                     ),
                   ),
@@ -557,6 +584,228 @@ class ProductoWidget extends StatelessWidget {
                   Text("${producto.ultimaOferta} €",
                       style: const TextStyle(
                           color: Color(0XFFB3FF77),
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Aeonik')),
+                ],
+              )
+            ]),
+            //const Spacer(),
+            const SizedBox(
+              height: 30,
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class PujasList extends StatefulWidget {
+  const PujasList({Key? key, this.searchResults = const []})
+      : super(key: key);
+  final List<Producto> searchResults;
+  @override
+  PujasListState createState() => PujasListState();
+}
+
+class PujasListState extends State<PujasList> {
+  List<Producto> _displayedProducts = [];
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: Conexion().getPujasRealizadas(user),
+      builder: (BuildContext context, AsyncSnapshot<List<Producto>> snapshot) {
+        if (snapshot.hasData) {
+          _displayedProducts = widget.searchResults.isNotEmpty
+              ? widget.searchResults
+              : snapshot.data!;
+
+          if (isValid == false) {
+            isValid = true;
+            return const Center(
+              child: Text(
+                  'La búsqueda no es válida. Ingrese un término de búsqueda válido.'),
+            );
+          } else if (widget.searchResults.isEmpty) {
+            return const Center(
+              child: Text('No hay ningún proudcto'),
+            );
+          } else {
+            return ListView.builder(
+                padding:
+                const EdgeInsets.symmetric(horizontal: 8.0, vertical: 0.0),
+                itemBuilder: (BuildContext context, int index) {
+                  return PujaWidget(producto: _displayedProducts[index]);
+                },
+                itemCount: _displayedProducts.length);
+          }
+        } else if (snapshot.hasError) {
+          return Center(
+            child: Text(snapshot.error.toString()),
+          );
+        } else {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+      },
+    );
+  }
+}
+
+class PujaWidget extends StatelessWidget {
+  final Producto producto;
+  const PujaWidget({super.key, required this.producto});
+
+  String Temporizador() {
+    DateTime now = DateTime.now();
+    Duration diferencia = producto.fechaFin!.difference(now);
+    var Dia = diferencia.inDays;
+    var Hora = diferencia.inHours - Dia * 24;
+    if (diferencia.isNegative) {
+      return "¡Terminada!";
+    } else {
+      return "${Dia}d ${Hora}h";
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+        color: Colors.transparent,
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 8.0),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.transparent,
+          surfaceTintColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+          padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
+        ),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    VentanaProducto(connected: user, producto: producto)),
+          );
+          //Aqui irá la descripcion detallada de producto
+        },
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Container(
+                width: 400,
+                height: 200,
+                decoration: BoxDecoration(
+                  shape: BoxShape.rectangle,
+                  image: DecorationImage(
+                    image: Image.memory(const Base64Decoder()
+                        .convert(producto.image.toString()))
+                        .image,
+                    fit: BoxFit.fitWidth,
+                  ),
+                  borderRadius: const BorderRadius.only(
+                      topLeft: Radius.zero,
+                      topRight: Radius.circular(25),
+                      bottomLeft: Radius.circular(25),
+                      bottomRight: Radius.circular(25)),
+                ),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 15.0, vertical: 15.0),
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.zero,
+                              topRight: Radius.zero,
+                              bottomLeft: Radius.zero,
+                              bottomRight: Radius.circular(30)),
+                          color: Color(0XFF161616),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text("Finaliza en   ",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 13,
+                                    fontFamily: 'Aeonik')),
+                            Text(Temporizador(),
+                                style: const TextStyle(
+                                    color: Color(0XFFFE6F1F),
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Aeonik'))
+                          ],
+                        ),
+                      ),
+                      const Icon(Icons.favorite_border, color: Colors.white),
+                    ])),
+
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                const SizedBox(
+                  height: 15,
+                ),
+                Text(
+                  producto.nombre!,
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      overflow: TextOverflow.ellipsis,
+                      fontFamily: 'Aeonik'),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 11.0, vertical: 11.0),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.circular(47),
+                    color: Color(0XFFFE6F1F),
+                  ),
+                  child:  Text("Editar Puja",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontFamily: 'Aeonik')),
+                ),
+              ]),
+              Column(
+                children: [
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  Text(
+                    producto.categoria!,
+                    style: const TextStyle(
+                        color: Colors.grey, fontSize: 13, fontFamily: 'Aeonik'),
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  const Text("Última puja",
+                      style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 15,
+                          fontFamily: 'Aeonik')),
+                  Text("tus ${producto.ultimaOferta} €",
+                      style: const TextStyle(
+                          color: Color(0XFFFE6F1F),
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                           fontFamily: 'Aeonik')),

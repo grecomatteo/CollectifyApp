@@ -359,6 +359,43 @@ class Conexion {
     return productos;
   }
 
+
+  Future<List<Producto>> getPujasRealizadas(Usuario user) async {
+    if (conn == null) await conectar();
+    List<Producto> productos = [];
+    Producto producto;
+    await conn?.query('''SELECT p.*, ps.*,i.image, u.esPremium, u.nick
+        FROM producto p 
+        JOIN productos_subasta ps ON ps.idProducto = p.pruductoID 
+        JOIN usuario u ON p.usuarioID = u.userID 
+        JOIN imagen i ON p.pruductoID = i.id_producto
+        WHERE ps.idUsuarioUltPuja = ${user.usuarioID}
+        ORDER BY fechaFin ASC;
+    ''').then((results) => {
+      for (var row in results)
+        {
+          producto = Producto(
+            usuarioID: row['usuarioID'],
+            productoID: row['pruductoID'],
+            usuarioNick: row['nick'],
+            nombre: row['nombre'],
+            descripcion: row['descripcion'],
+            precio: row['precio'],
+            image: row['image'],
+            esPremium: row['esPremium'] == 1 ? true : false,
+            esSubasta: row['esSubasta'] == 1 ? true : false,
+            categoria: row['categoria'],
+          ),
+          producto.fechaFin = row['fechaFin'],
+          producto.precioInicial = row['precioInicial'],
+          producto.ultimaOferta = row['ultimaOferta'],
+          producto.idUserUltimaPuja = row['idUsuarioUltPuja'],
+          productos.add(producto)
+        }
+    });
+    return productos;
+  }
+
   Future<List<String>> getCategoriasUsuario(Usuario user) async {
     if (conn == null) await conectar();
     List<String> categorias = [];
