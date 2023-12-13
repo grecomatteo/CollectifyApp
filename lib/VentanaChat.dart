@@ -63,6 +63,14 @@ class TextAndChatState extends State<TextAndChat> {
     split.removeWhere((element) => element == "");
     //Remove duplicates
     split = split.toSet().toList();
+
+    //Check if the user has any communication
+    if(split.length == 0){
+      messages = [];
+      _messages.add(messages);
+      return;
+    }
+
     //Get all messages between the main user and the other users, all the users are passed in the message
     socket.write("GetLastMessage:$myID:${split.join(":")}");
   }
@@ -79,6 +87,11 @@ class TextAndChatState extends State<TextAndChat> {
     var split = message.split(":");
     List<Message> gottenMessages = [];
 
+    if(split[1] == ""){
+      messages = [];
+      _messages.add(messages);
+      return;
+    }
 
     //Remove the first and last character, which are "[" and "]"
     //Split the string by ";"
@@ -230,7 +243,15 @@ class TextAndChatState extends State<TextAndChat> {
           return lv;
         }
         if (!snapshot.hasData) {
-          children = const <Widget>[CircularProgressIndicator()];
+          children = const <Widget>[
+            Center(
+              child: SizedBox(
+                child: CircularProgressIndicator(),
+                width: 60,
+                height: 60,
+              ),
+            )
+          ];
 
           ListView lv = ListView(
             controller: listViewController,
@@ -241,6 +262,22 @@ class TextAndChatState extends State<TextAndChat> {
             const SizedBox(
               height: 20,
             ));
+
+          //Check if the user has any communication
+          if(snapshot.data!.length == 0){
+            children.add(
+              const Text(
+                "No tienes ningún chat",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: 'Aeonik',
+                  fontSize: 20,
+                  color: Colors.white,
+                ),
+              ),
+            );
+          }
+
           //Order the messages by date
           snapshot.data!.sort((a, b) => b.sendDate.compareTo(a.sendDate));
           for (final element in snapshot.data!.toList()) {

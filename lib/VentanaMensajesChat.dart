@@ -44,6 +44,13 @@ class _VentanaMensajesChatState extends State<VentanaMensajesChat> {
 
   void handleGetAllMessages(String message) {
     var split = message.split(":");
+
+    if(split[1] == ""){
+      messagesChat = [];
+      _messagesChat.add(messagesChat);
+      return;
+    }
+
     var messageListStr = split[1].split(";");
     //What we get is a list of strings, each string is a list of integers
     //We need to convert each string to a list of integers
