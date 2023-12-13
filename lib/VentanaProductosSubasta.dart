@@ -150,6 +150,7 @@ class _ListaProductosState extends State<ListaProductosSubasta> with SingleTicke
                       borderRadius: BorderRadius.all(Radius.circular(50)),
                     ),
                     child: BottomNavigationBar(
+                      currentIndex: 1,
                       onTap: (int index) {
                         switch (index) {
                           case 0:
