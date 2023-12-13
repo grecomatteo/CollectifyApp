@@ -451,7 +451,7 @@ class Conexion {
     JOIN productos_subasta ps ON producto.pruductoID = ps.idProducto
     JOIN usuario ON producto.usuarioID = usuario.userID
     JOIN IMAGEN ON producto.pruductoID = IMAGEN.id_producto
-    WHERE LOWER(producto.nombre) LIKE ?;
+    WHERE LOWER(producto.descripcion) LIKE ?;
     ''',
       ['%${query.toLowerCase()}%'],
     ).then((results) {
