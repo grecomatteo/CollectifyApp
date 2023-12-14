@@ -3,12 +3,10 @@
 import 'package:flutter/material.dart';
 import 'package:collectify/ConexionBD.dart';
 import 'package:flutter/services.dart';
-import 'package:mysql1/mysql1.dart';
 import 'VentanaListaProductos.dart';
 
 
 
-MySqlConnection? conn;
 String nombre = "";
 String description = "";
 //Placeholder, se debe cambiar

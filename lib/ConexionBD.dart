@@ -124,7 +124,7 @@ class Conexion {
       debugPrint("Conectado");
       return true;
     } catch (e) {
-      debugPrint(e.toString() + "Error");
+      debugPrint(e.toString() + "Error al conectar");
       return false;
     }
   }
