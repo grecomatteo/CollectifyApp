@@ -27,14 +27,13 @@ noti.FlutterLocalNotificationsPlugin();
 
 final StreamController<Widget> _streamController =
     StreamController<Widget>.broadcast();
-Socket gSocket = Socket.connect('bytedev.es',55555) as Socket;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
   final pref = await SharedPreferences.getInstance();
 
-  print(await pref.getInt('ID'));
+  //print(await pref.getInt('ID'));
   Workmanager().registerOneOffTask(
     "1",
     "socketTask",
@@ -116,22 +115,9 @@ class MyApp extends StatelessWidget {
 @pragma('vm:entry-point')
 Future<void> callbackDispatcher() async {
   print("Se está ejecutando una tarea en segundo plano");
-  await Socket.connect('bytedev.es',55555).then((socket) {
-    gSocket = socket;
-    print('Connected to: ' + '${socket.remoteAddress.address}:${socket.remotePort}');
-    socket.write("ConnectedUser:1");
-    socket.listen(socketDispatcher);
 
-  });
   Workmanager().executeTask((task, inputData)  async {
     print("Se está ejecutando una tarea en segundo plano2...");
-    await Socket.connect('bytedev.es',55555).then((socket) {
-      gSocket = socket;
-      print('Connected to: ' + '${socket.remoteAddress.address}:${socket.remotePort}');
-      socket.write("ConnectedUser:1");
-      socket.listen(socketDispatcher);
-
-    });
 
     return Future.value(true);
   });

@@ -110,11 +110,15 @@ class Conexion {
 
     try {
       conn = await MySqlConnection.connect(ConnectionSettings(
-        host: "bytedev.es",
+        host: "143.47.181.8",
         port: 3306,
-        user: "pin2023",
-        password: "AsLpqR_23",
-        db: "collectifyDB",
+        user: "root",
+        password: "root",
+        db: "collectifydb",
+        //Quiero que sea insensible a mayusculas
+        //useCompression: false,
+
+
       ));
 
       debugPrint("Conectado");
@@ -129,10 +133,10 @@ class Conexion {
     if (conn == null) await conectar();
     List<Producto> productos = [];
 
-    await conn?.query('''SELECT producto.*, IMAGEN.image, usuario.esPremium, usuario.nick
+    await conn?.query('''SELECT producto.*, imagen.image, usuario.esPremium, usuario.nick
         FROM producto
         JOIN usuario ON producto.usuarioID = usuario.userID
-        JOIN IMAGEN ON producto.pruductoID = IMAGEN.id_producto
+        JOIN imagen ON producto.pruductoID = imagen.id_producto
         WHERE esSubasta = false
         ORDER BY usuario.esPremium DESC;
       ''').then((results) {
@@ -162,10 +166,10 @@ class Conexion {
     if (conn == null) await conectar();
     List<Producto> productos = [];
 
-    await conn?.query('''SELECT producto.*, IMAGEN.image, usuario.esPremium, usuario.nick
+    await conn?.query('''SELECT producto.*, imagen.image, usuario.esPremium, usuario.nick
         FROM producto
         JOIN usuario ON producto.usuarioID = usuario.userID
-        JOIN IMAGEN ON producto.pruductoID = IMAGEN.id_producto
+        JOIN imagen ON producto.pruductoID = imagen.id_producto
         ORDER BY usuario.esPremium DESC;
       ''').then((results) {
       for (var row in results) {
@@ -194,10 +198,10 @@ class Conexion {
     if (conn == null) await conectar();
     List<Producto> productos = [];
 
-    await conn?.query('''SELECT producto.*, IMAGEN.image, usuario.esPremium, usuario.nick
+    await conn?.query('''SELECT producto.*, imagen.image, usuario.esPremium, usuario.nick
       FROM producto
       JOIN usuario ON producto.usuarioID = usuario.userID
-      JOIN IMAGEN ON producto.pruductoID = IMAGEN.id_producto
+      JOIN imagen ON producto.pruductoID = imagen.id_producto
       WHERE producto.categoria = ?
       ORDER BY usuario.esPremium DESC;
     ''', [categoria]).then((results) {
@@ -227,11 +231,11 @@ class Conexion {
     if (conn == null) await conectar();
     List<Producto> productos = [];
 
-    await conn?.query('''SELECT p.*, ps.*, IMAGEN.image, usuario.esPremium, usuario.nick
+    await conn?.query('''SELECT p.*, ps.*, imagen.image, usuario.esPremium, usuario.nick
       FROM producto p
       JOIN productos_subasta ps ON p.pruductoID = ps.idProducto
       JOIN usuario ON p.usuarioID = usuario.userID
-      JOIN IMAGEN ON p.pruductoID = IMAGEN.id_producto
+      JOIN imagen ON p.pruductoID = imagen.id_producto
       WHERE p.categoria = ?
       ORDER BY usuario.esPremium DESC;
     ''', [categoria]).then((results) {
@@ -280,10 +284,10 @@ class Conexion {
 
     if (categorias == " ") return await getProductosVenta();
 
-    await conn?.query('''SELECT producto.*, IMAGEN.image, usuario.esPremium, usuario.nick
+    await conn?.query('''SELECT producto.*, imagen.image, usuario.esPremium, usuario.nick
         FROM producto
         JOIN usuario ON producto.usuarioID = usuario.userID
-        JOIN IMAGEN ON producto.pruductoID = IMAGEN.id_producto
+        JOIN imagen ON producto.pruductoID = imagen.id_producto
         WHERE esSubasta = false
         ORDER BY FIELD(categoria,${categorias}) DESC, usuario.esPremium ASC;
     ''').then((results) {
@@ -431,10 +435,10 @@ class Conexion {
     // Usare il metodo rawQuery di SQL per filtrare i prodotti in base alla query
     await conn?.query(
       '''
-    SELECT producto.*, IMAGEN.image, usuario.nick
+    SELECT producto.*, imagen.image, usuario.nick
     FROM producto
     JOIN usuario ON producto.usuarioID = usuario.userID
-    JOIN IMAGEN ON producto.pruductoID = IMAGEN.id_producto
+    JOIN imagen ON producto.pruductoID = imagen.id_producto
     WHERE NOT producto.esSubasta AND LOWER(producto.descripcion) LIKE ?;
     ''',
       ['%${query.toLowerCase()}%'],
@@ -483,11 +487,11 @@ class Conexion {
     // Usare il metodo rawQuery di SQL per filtrare i prodotti in base alla query
     await conn?.query(
       '''
-    SELECT producto.*,ps.*, IMAGEN.image, usuario.nick
+    SELECT producto.*,ps.*, imagen.image, usuario.nick
     FROM producto 
     JOIN productos_subasta ps ON producto.pruductoID = ps.idProducto
     JOIN usuario ON producto.usuarioID = usuario.userID
-    JOIN IMAGEN ON producto.pruductoID = IMAGEN.id_producto
+    JOIN imagen ON producto.pruductoID = imagen.id_producto
     WHERE LOWER(producto.descripcion) LIKE ?;
     ''',
       ['%${query.toLowerCase()}%'],
@@ -710,7 +714,7 @@ class Conexion {
 
     try {
       await conn
-          ?.query("SELECT image FROM IMAGEN WHERE id_producto = $id")
+          ?.query("SELECT image FROM imagen WHERE id_producto = $id")
           .then((results) {
         for (var row in results) {
           image = row['image'];
