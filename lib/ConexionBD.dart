@@ -227,12 +227,12 @@ class Conexion {
     if (conn == null) await conectar();
     List<Producto> productos = [];
 
-    await conn?.query('''SELECT producto.*,productos-subasta.*, IMAGEN.image, usuario.esPremium, usuario.nick
-      FROM producto
-      JOIN productos_subasta ON producto.pruductoID = productos_subasta.idProducto
-      JOIN usuario ON producto.usuarioID = usuario.userID
-      JOIN IMAGEN ON producto.pruductoID = IMAGEN.id_producto
-      WHERE producto.categoria = ?
+    await conn?.query('''SELECT p.*, ps.*, IMAGEN.image, usuario.esPremium, usuario.nick
+      FROM producto p
+      JOIN productos_subasta ps ON p.pruductoID = ps.idProducto
+      JOIN usuario ON p.usuarioID = usuario.userID
+      JOIN IMAGEN ON p.pruductoID = IMAGEN.id_producto
+      WHERE p.categoria = ?
       ORDER BY usuario.esPremium DESC;
     ''', [categoria]).then((results) {
       for (var row in results) {
@@ -356,6 +356,43 @@ class Conexion {
             }
         });
     productosSubastaBasadoPreferencias = productos;
+    return productos;
+  }
+
+
+  Future<List<Producto>> getPujasRealizadas(Usuario user) async {
+    if (conn == null) await conectar();
+    List<Producto> productos = [];
+    Producto producto;
+    await conn?.query('''SELECT p.*, ps.*,i.image, u.esPremium, u.nick
+        FROM producto p 
+        JOIN productos_subasta ps ON ps.idProducto = p.pruductoID 
+        JOIN usuario u ON p.usuarioID = u.userID 
+        JOIN imagen i ON p.pruductoID = i.id_producto
+        WHERE ps.idUsuarioUltPuja = ${user.usuarioID}
+        ORDER BY fechaFin ASC;
+    ''').then((results) => {
+      for (var row in results)
+        {
+          producto = Producto(
+            usuarioID: row['usuarioID'],
+            productoID: row['pruductoID'],
+            usuarioNick: row['nick'],
+            nombre: row['nombre'],
+            descripcion: row['descripcion'],
+            precio: row['precio'],
+            image: row['image'],
+            esPremium: row['esPremium'] == 1 ? true : false,
+            esSubasta: row['esSubasta'] == 1 ? true : false,
+            categoria: row['categoria'],
+          ),
+          producto.fechaFin = row['fechaFin'],
+          producto.precioInicial = row['precioInicial'],
+          producto.ultimaOferta = row['ultimaOferta'],
+          producto.idUserUltimaPuja = row['idUsuarioUltPuja'],
+          productos.add(producto)
+        }
+    });
     return productos;
   }
 
