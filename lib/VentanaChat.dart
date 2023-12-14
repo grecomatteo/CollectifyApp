@@ -4,12 +4,10 @@ import 'dart:core';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:mysql1/mysql1.dart';
 import 'package:collectify/VentanaMensajesChat.dart';
 import 'package:collectify/Message.dart';
 
 int myID = 0;
-MySqlConnection? conn;
 Socket? chatSocket;
 VentanaMensajesChat? ventanaMensajesChat;
 
