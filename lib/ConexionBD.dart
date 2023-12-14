@@ -110,7 +110,7 @@ class Conexion {
 
     try {
       conn = await MySqlConnection.connect(ConnectionSettings(
-        host: "collectify-server-mysql.mysql.database.azure.com",
+        host: "bytedev.es",
         port: 3306,
         user: "pin2023",
         password: "AsLpqR_23",
