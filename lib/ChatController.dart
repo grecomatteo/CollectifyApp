@@ -74,9 +74,6 @@ class ChatController {
   }
 
   void handleUsersWithCommunication(String message)  {
-    if(chatSocket == null){
-       createConnection(myID);
-    }
     var split = message.split(":");
     split.removeAt(0);
     //Remove empty strings
@@ -96,9 +93,6 @@ class ChatController {
   }
 
   void handleLastMessage(String message)  {
-    if(chatSocket == null){
-       createConnection(myID);
-    }
     var split = message.split(":");
     List<Message> gottenMessages = [];
 
@@ -131,9 +125,6 @@ class ChatController {
   }
 
   void handleNewMessage(String message)  {
-    if(chatSocket == null){
-       createConnection(myID);
-    }
     var split = message.split(":");
     //Remove the first and last character, which are "[" and "]"
     split[1] = split[1].substring(1, split[1].length - 1);
@@ -182,9 +173,6 @@ class ChatController {
   }
 
   void handleGetAllMessages(String message)  {
-    if(chatSocket == null){
-       createConnection(myID);
-    }
     var split = message.split(":");
 
     if(split[1] == ""){
@@ -232,9 +220,6 @@ class ChatController {
   }
 
   void handleGetNewMessage(String message)  {
-    if(chatSocket == null){
-       createConnection(myID);
-    }
     var split = message.split(":");
     //Remove the first and last character, which are "[" and "]"
     split[1] = split[1].substring(1, split[1].length - 1);
@@ -261,27 +246,21 @@ class ChatController {
   }
 
   void getLastMessage(int myID) {
-    if(chatSocket == null){
-       createConnection(myID);
-    }
+    createConnection(myID);
     chatSocket?.write("UsersWithCommunication:$myID");
   }
 
   void getMessages(int myID, int otherID) {
-    if(chatSocket == null){
-      createConnection(myID);
-    }
+    createConnection(myID);
     ChatController.chatSocket?.write("GetMessages:$myID:$otherID");
   }
 
   void getUsersWithCommunication(int myID) {
-    if(chatSocket == null){
-      createConnection(myID);
-    }
     ChatController.chatSocket?.write("GetUsersWithCommunication:$myID");
   }
 
   void sendMessage(int myID, int otherID, Message toSendMessage) {
+    createConnection(myID);
     ChatController.chatSocket?.write("NewMessage:$otherID:${toSendMessage.compressObject()}");
   }
 
