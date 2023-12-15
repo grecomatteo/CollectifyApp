@@ -38,23 +38,21 @@ class _RegistroFormState extends State<RegistroForm> {
     }
   }
 
-  void _validateEmail(String email) {
-
-    final emailRegExp = RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
-    if(emailRegExp.hasMatch(email)){
-      Conexion().getUsuarioByEmail(email).then((value) => setState(() {
-        if(value!=null)
-          _isValidEmail = "El correo ya esta en uso";
-        else
-          _isValidEmail = "true";
-        }));
-    }
-    else {
+  Future<void> _validateEmail(String email) async {
+    final emailRegExp =
+        RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
+    if (emailRegExp.hasMatch(email)) {
+      await Conexion().getUsuarioByEmail(email).then((value) => setState(() {
+            if (value != null)
+              _isValidEmail = "El correo ya esta en uso";
+            else
+              _isValidEmail = "true";
+          }));
+    } else {
       setState(() {
         _isValidEmail = "Ingrese un correo valido";
       });
     }
-
   }
 
   void _validateNick(String nick) {
@@ -204,12 +202,10 @@ class _RegistroFormState extends State<RegistroForm> {
                                       width: 2.0),
                                 ),
                               )),
-                          if (_isValidEmail!="true")
-                             Text(
-                                _isValidEmail.toString(),
+                          if (_isValidEmail != "true")
+                            Text(_isValidEmail.toString(),
                                 textAlign: TextAlign.left,
                                 style: TextStyle(color: Colors.red)),
-
                           const SizedBox(
                             height: 20,
                           ),
@@ -368,7 +364,7 @@ class _RegistroFormState extends State<RegistroForm> {
                     final birthdate = selectedDate;
 
                     //Comprueba si los campos del nuevo usuario son correctos
-                    if (_isValidEmail!="true") {
+                    if (_isValidEmail != "true") {
                       showErrorDialog(context, _isValidEmail);
                       return;
                     }
@@ -403,19 +399,24 @@ class _RegistroFormState extends State<RegistroForm> {
                     }
 
                     try {
-                      await Conexion().registrarUsuario(
-                          name, surname, nick, mail, password, birthdate);
-                      if (esEmpresa) {
-                        await Conexion().getUsuarioByNick(nick).then((results) {
-                          int? id = results?.usuarioID;
-                          Conexion().hacerEmpresa(id!);
-                        });
-
+                      Conexion()
+                          .registrarUsuario(
+                              name, surname, nick, mail, password, birthdate)
+                          .then((value) async {
+                        print("se ha creado el usuario");
+                        if (esEmpresa) {
+                          await Conexion()
+                              .getUsuarioByNick(nick)
+                              .then((results) {
+                            int? id = results?.usuarioID;
+                            Conexion().hacerEmpresa(id!);
+                          });
+                        }
                         Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => VentanaLogin()));
-                      }
+                      });
                     } catch (e) {
                       //Mostrar cuadro de error
                       showErrorDialog(context, e.toString());
