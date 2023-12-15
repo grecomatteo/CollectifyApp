@@ -158,29 +158,6 @@ class VentanaProducto extends StatelessWidget {
     );
   }
 }
-VentanaMensajesChat? ventanaMensajesChat;
-void buildSocket(BuildContext context, int myID, int otherID) {
-  Socket.connect('bytedev.es', 55555).then((socket) {
-    print('Connected to: ${socket.remoteAddress.address}:${socket.remotePort}');
-    socket.write("ConnectedUser:$myID");
-    socket.listen((event) {
-      String message = utf8.decode(event);
-      print(message);
-      if(message.startsWith("ConnectedUser:")){
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => ventanaMensajesChat = VentanaMensajesChat(myID, otherID, socket)),
-        );
-      }
-      else if(message.startsWith("Messages:")){
-        ventanaMensajesChat?.ventana?.handleGetAllMessages(message);
-      }
-      else if (message.startsWith("NewMessage:")){
-        ventanaMensajesChat?.ventana?.handleGetNewMessage(message);
-      }
-    });
-  });
-}
 
 class ChatButton extends StatelessWidget {
   final Producto producto;
@@ -191,7 +168,10 @@ class ChatButton extends StatelessWidget {
     if(producto.usuarioID == user.usuarioID) return const SizedBox.shrink();
     return ElevatedButton(
       onPressed: () {
-        buildSocket(context, user.usuarioID!, producto.usuarioID!);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => VentanaMensajesChat(myID, otherID)),
+        );
       },
       child: const Icon(Icons.chat),
     );
