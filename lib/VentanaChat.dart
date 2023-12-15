@@ -53,7 +53,7 @@ class TextAndChat extends StatefulWidget {
 class TextAndChatState extends State<TextAndChat> {
   @override
   Widget build(BuildContext context) {
-    ChatController().getLastMessage(myID);
+    ChatController().createConnection(myID);
 
     return StreamBuilder<List<Message>>(
       stream: ChatController.lastMessageStream.stream,

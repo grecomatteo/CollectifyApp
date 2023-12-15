@@ -245,13 +245,7 @@ class ChatController {
     messageStream.add(messages);
   }
 
-  void getLastMessage(int myID) {
-    createConnection(myID);
-    chatSocket?.write("UsersWithCommunication:$myID");
-  }
-
   void getMessages(int myID, int otherID) {
-    createConnection(myID);
     ChatController.chatSocket?.write("GetMessages:$myID:$otherID");
   }
 
