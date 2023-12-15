@@ -1,3 +1,4 @@
+import 'package:collectify/ChatController.dart';
 import 'package:collectify/ConexionBD.dart';
 import 'package:collectify/VentanaListaProductos.dart';
 import 'package:flutter/material.dart';
@@ -61,6 +62,7 @@ class Login extends StatelessWidget {
 
     try {
       await Conexion().login(nick, pswrd).then((value) => {
+            ChatController().createConnection(value!.usuarioID!),
             Navigator.pop(context),
             Navigator.push(
                 context,

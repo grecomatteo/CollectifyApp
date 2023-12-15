@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:collectify/Message.dart';
 import 'package:collectify/notification.dart' as notif;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart' as noti;
+import 'package:collectify/ChatController.dart';
 
 String toSendMessage = "";
 
@@ -13,135 +14,54 @@ String? myName = "";
 int otherID = 0;
 String? otherName = "";
 int msgNum = 0;
-Socket? chatSocket;
 
 noti.FlutterLocalNotificationsPlugin notPlugin = noti.FlutterLocalNotificationsPlugin();
 
 //List view controller
 final listViewController = ScrollController();
 class VentanaMensajesChat extends StatefulWidget {
-  VentanaMensajesChat(this.iD, this.oID, this.socket);
+  VentanaMensajesChat(this.iD, this.oID);
 
   final int iD;
   final int oID;
-  Socket? socket;
 
   _VentanaMensajesChatState? ventana;
 
   @override
-  State<VentanaMensajesChat> createState() => ventana = _VentanaMensajesChatState(iD, oID, socket);
+  State<VentanaMensajesChat> createState() => ventana = _VentanaMensajesChatState(iD, oID);
 }
 
 class _VentanaMensajesChatState extends State<VentanaMensajesChat> {
-  _VentanaMensajesChatState(this.iD, this.oID, this.socket);
+  _VentanaMensajesChatState(this.iD, this.oID);
 
   final int iD;
   final int oID;
-  final Socket? socket;
 
-  List<Message> messagesChat = [];
-  StreamController<List<Message>> _messagesChat = StreamController<List<Message>>.broadcast();
-
-  void handleGetAllMessages(String message) {
-    var split = message.split(":");
-
-    if(split[1] == ""){
-      messagesChat = [];
-      _messagesChat.add(messagesChat);
-      return;
-    }
-
-    var messageListStr = split[1].split(";");
-    //What we get is a list of strings, each string is a list of integers
-    //We need to convert each string to a list of integers
-    List<List<List<int>>> messageList = [];
-    for (int i = 0; i < messageListStr.length; i++) {
-      //Remove the first and last character, which are "[" and "]"
-      messageListStr[i] =
-          messageListStr[i].substring(1, messageListStr[i].length - 1);
-      //Get the array of strings, they are in this format: [values], [values], [values]
-      var split2 = messageListStr[i].split("], [");
-      //Remove the "[" from the first string and the "]" from the last string
-      split2[0] = split2[0].substring(1);
-      split2[split2.length - 1] = split2[split2.length - 1].substring(
-          0, split2[split2.length - 1].length - 1);
-
-      List<List<int>> messageVarList = [];
-      for (int j = 0; j < split2.length; j++) {
-        //Split the string by ","
-        var split3 = split2[j].split(",");
-        List<int> varList = [];
-        for (int k = 0; k < split3.length; k++) {
-          varList.add(int.parse(split3[k]));
-        }
-        messageVarList.add(varList);
-      }
-      messageList.add(messageVarList);
-    }
-
-    List<Message> gottenMessages = [];
-    for (int i = 0; i < messageList.length; i++) {
-      Message m = Message.decompressObject(messageList[i]);
-      gottenMessages.add(m);
-    }
-    messagesChat = gottenMessages;
-
-    _messagesChat.add(messagesChat);
-  }
-
-  void handleGetNewMessage(String message) {
-    var split = message.split(":");
-    //Remove the first and last character, which are "[" and "]"
-    split[1] = split[1].substring(1, split[1].length - 1);
-    //Get the array of strings, they are in this format: [values], [values], [values]
-    var split2 = split[1].split("], [");
-    //Remove the "[" from the first string and the "]" from the last string
-    split2[0] = split2[0].substring(1);
-    split2[split2.length - 1] = split2[split2.length - 1].substring(0, split2[split2.length - 1].length - 1);
-
-    List<List<int>> messageVarList = [];
-    for(int j = 0; j < split2.length; j++){
-      //Split the string by ","
-      var split3 = split2[j].split(",");
-      List<int> varList = [];
-      for(int k = 0; k < split3.length; k++){
-        varList.add(int.parse(split3[k]));
-      }
-      messageVarList.add(varList);
-    }
-    Message m = Message.decompressObject(messageVarList);
-
-    messagesChat.add(m);
-    _messagesChat.add(messagesChat);
-  }
 
   void getNames() async {
     await Conexion().getUsuarioByID(myID)?.then((value) =>
     myName = value?.nick);
     await Conexion().getUsuarioByID(otherID)?.then((value) =>
     otherName = value?.nick);
-    _messagesChat.add(messagesChat);
+    ChatController.messageStream.add(ChatController.messages);
   }
 
   @override
   Widget build(BuildContext context) {
     myID = iD;
     otherID = oID;
-    if(socket != null) {
-      chatSocket = socket;
-    }
     getNames();
 
 
-    chatSocket?.write("GetMessages:$myID:$otherID");
+    ChatController.chatSocket?.write("GetMessages:$myID:$otherID");
 
     return WillPopScope(
       onWillPop: () async {
-        chatSocket?.write("GetUsersWithCommunication:$myID");
+        ChatController.chatSocket?.write("GetUsersWithCommunication:$myID");
         return true;
       },
       child: StreamBuilder<List<Message>>(
-        stream: _messagesChat.stream,
+        stream: ChatController.messageStream.stream,
         builder: (BuildContext context, AsyncSnapshot<List<Message>> snapshot) {
 
           List<Widget> children;
@@ -328,7 +248,7 @@ class _NavigationBarChatState extends State<NavigationBarChat> {
       toSendMessage,
       DateTime.now().toUtc(),
     );
-    chatSocket?.write("NewMessage:$otherID:${m.compressObject()}");
+    ChatController.chatSocket?.write("NewMessage:$otherID:${m.compressObject()}");
   }
 
   final textField = TextEditingController();
