@@ -22,6 +22,7 @@ class VentanaChat extends StatelessWidget {
 
     return WillPopScope(
         onWillPop: () async {
+          ChatController().closeConnection();
           return true;
         },
         child: Scaffold(
@@ -55,7 +56,7 @@ class TextAndChatState extends State<TextAndChat> {
     ChatController().getLastMessage(myID);
 
     return StreamBuilder<List<Message>>(
-      stream: ChatController.messageStream.stream,
+      stream: ChatController.lastMessageStream.stream,
       builder: (context, snapshot) {
         List<Widget> children = [];
         if (snapshot.hasError) {

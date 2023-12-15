@@ -12,11 +12,14 @@ class ChatController {
 
   static List<Message> messages = [];
   static StreamController<List<Message>> messageStream = StreamController<List<Message>>.broadcast();
+  static List<Message> lastMessages = [];
+  static StreamController<List<Message>> lastMessageStream = StreamController<List<Message>>.broadcast();
 
   void createConnection(int id) {
 
     if(chatSocket != null){
-      return;
+      chatSocket?.close();
+      chatSocket = null;
     }
     print("Creating connection with id: $id and chatSocket: $chatSocket");
 
@@ -100,8 +103,8 @@ class ChatController {
     List<Message> gottenMessages = [];
 
     if(split[1] == ""){
-      messages = [];
-      messageStream.add(messages);
+      lastMessages = [];
+      lastMessageStream.add(lastMessages);
       return;
     }
 
@@ -122,9 +125,9 @@ class ChatController {
       gottenMessages.add(m);
     }
 
-    messages = gottenMessages;
+    lastMessages = gottenMessages;
 
-    messageStream.add(messages);
+    lastMessageStream.add(lastMessages);
   }
 
   void handleNewMessage(String message)  {
@@ -163,36 +166,19 @@ class ChatController {
       }
     }
     messages.add(m);
-    messageStream.add(messages);
-  }
-
-  void handleMessages(String message)  {
-    if(chatSocket == null){
-       createConnection(myID);
-    }
-    //Get all the messages between the main user and the other user
-    var split = message.split(":");
-    //Remove the first and last character, which are "[" and "]"
-    split[1] = split[1].substring(1, split[1].length - 1);
-    //Get the array of strings, they are in this format: [values], [values], [values]
-    var split2 = split[1].split("], [");
-    //Remove the "[" from the first string and the "]" from the last string
-    split2[0] = split2[0].substring(1);
-    split2[split2.length - 1] = split2[split2.length - 1].substring(0, split2[split2.length - 1].length - 1);
-
-    List<List<int>> messageVarList = [];
-    for(int j = 0; j < split2.length; j++){
-      //Split the string by ","
-      var split3 = split2[j].split(",");
-      List<int> varList = [];
-      for(int k = 0; k < split3.length; k++){
-        varList.add(int.parse(split3[k]));
+    //Change last message list to add the new message and remove the old one
+    for(int i = 0; i < lastMessages.length; i++){
+      if(lastMessages[i].senderID == m.senderID && lastMessages[i].receiverID == m.receiverID){
+        lastMessages.removeAt(i);
+        break;
       }
-      messageVarList.add(varList);
+      else if(lastMessages[i].senderID == m.receiverID && lastMessages[i].receiverID == m.senderID){
+        lastMessages.removeAt(i);
+        break;
+      }
     }
-    Message m = Message.decompressObject(messageVarList);
-    messages.add(m);
     messageStream.add(messages);
+    lastMessageStream.add(lastMessages);
   }
 
   void handleGetAllMessages(String message)  {
@@ -278,7 +264,7 @@ class ChatController {
     if(chatSocket == null){
        createConnection(myID);
     }
-    chatSocket?.write("GetLastMessage:$myID");
+    chatSocket?.write("UsersWithCommunication:$myID");
   }
 
   void getMessages(int myID, int otherID) {
@@ -297,5 +283,11 @@ class ChatController {
 
   void sendMessage(int myID, int otherID, Message toSendMessage) {
     ChatController.chatSocket?.write("NewMessage:$otherID:${toSendMessage.compressObject()}");
+  }
+
+  void closeConnection()
+  {
+    chatSocket?.close();
+    chatSocket = null;
   }
 }
