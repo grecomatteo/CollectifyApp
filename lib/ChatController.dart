@@ -68,7 +68,6 @@ class ChatController {
     }
     else if (message.startsWith("NewMessage:")){
       handleNewMessage(message);
-      handleGetNewMessage(message);
     }
   }
 
@@ -218,32 +217,6 @@ class ChatController {
     messageStream.add(messages);
   }
 
-  void handleGetNewMessage(String message)  {
-    var split = message.split(":");
-    //Remove the first and last character, which are "[" and "]"
-    split[1] = split[1].substring(1, split[1].length - 1);
-    //Get the array of strings, they are in this format: [values], [values], [values]
-    var split2 = split[1].split("], [");
-    //Remove the "[" from the first string and the "]" from the last string
-    split2[0] = split2[0].substring(1);
-    split2[split2.length - 1] = split2[split2.length - 1].substring(0, split2[split2.length - 1].length - 1);
-
-    List<List<int>> messageVarList = [];
-    for(int j = 0; j < split2.length; j++){
-      //Split the string by ","
-      var split3 = split2[j].split(",");
-      List<int> varList = [];
-      for(int k = 0; k < split3.length; k++){
-        varList.add(int.parse(split3[k]));
-      }
-      messageVarList.add(varList);
-    }
-    Message m = Message.decompressObject(messageVarList);
-
-    messages.add(m);
-    messageStream.add(messages);
-  }
-
   void getMessages(int myID, int otherID) {
     ChatController.chatSocket?.write("GetMessages:$myID:$otherID");
   }
@@ -253,7 +226,6 @@ class ChatController {
   }
 
   void sendMessage(int myID, int otherID, Message toSendMessage) {
-    createConnection(myID);
     ChatController.chatSocket?.write("NewMessage:$otherID:${toSendMessage.compressObject()}");
   }
 
