@@ -567,6 +567,7 @@ class Conexion {
         );
       }
     });
+
     if (usuario == null) throw new Exception("Usuario no encontrado");
     return usuario;
   }

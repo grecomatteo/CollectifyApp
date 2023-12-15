@@ -53,11 +53,11 @@ class _VentanaMensajesChatState extends State<VentanaMensajesChat> {
     getNames();
 
 
-    ChatController.chatSocket?.write("GetMessages:$myID:$otherID");
+    ChatController().getMessages(myID, otherID);
 
     return WillPopScope(
       onWillPop: () async {
-        ChatController.chatSocket?.write("GetUsersWithCommunication:$myID");
+        ChatController().getUsersWithCommunication(myID);
         return true;
       },
       child: StreamBuilder<List<Message>>(
@@ -248,7 +248,7 @@ class _NavigationBarChatState extends State<NavigationBarChat> {
       toSendMessage,
       DateTime.now().toUtc(),
     );
-    ChatController.chatSocket?.write("NewMessage:$otherID:${m.compressObject()}");
+    ChatController().sendMessage(myID, otherID, m);
   }
 
   final textField = TextEditingController();

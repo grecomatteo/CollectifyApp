@@ -14,31 +14,40 @@ class ChatController {
   static StreamController<List<Message>> messageStream = StreamController<List<Message>>.broadcast();
 
   void createConnection(int id) {
-    if(myID == -1){
-      return;
-    }
 
     if(chatSocket != null){
       return;
     }
+    print("Creating connection with id: $id and chatSocket: $chatSocket");
 
-    myID = id;
-
-    Socket.connect('bytedev.es', 55555).then((socket) {
-      chatSocket = socket;
-      print('Connected to: ${socket.remoteAddress.address}:${socket.remotePort}');
-      socket.write("ConnectedUser:$myID");
-      socket.listen((event) {
-        handleConnection(event);
-      },
-          onError: (error) {
-            print(error);
-            createConnection(myID);
-          });
-    });
+    try {
+      Socket.connect('bytedev.es', 55555).then((socket) {
+        chatSocket = socket;
+        myID = id;
+        print('Connected to: ${socket.remoteAddress.address}:${socket.remotePort}');
+        socket.write("ConnectedUser:$myID");
+        socket.listen((event) {
+          handleConnection(event);
+        },
+            onError: (error) {
+              print(error);
+              chatSocket?.close();
+              chatSocket = null;
+            },
+            onDone: () {
+              print('Connection has been closed.');
+              chatSocket?.close();
+              chatSocket = null;
+            }
+        );
+      });
+    }
+    catch(e){
+      print(e);
+    }
   }
 
-  void handleConnection(List<int> event) {
+  void handleConnection(List<int> event)  {
     String message = utf8.decode(event);
     if(message.startsWith("ConnectedUser:"))
     {
@@ -46,26 +55,25 @@ class ChatController {
     }
     else if(message.startsWith("UsersWithCommunication:"))
     {
-      handleUsersWithCommunication(chatSocket!, message);
-    }
-    else if(message.startsWith("DisconnectedUser:"))
-    {
-      handleDisconnectedUser(chatSocket!, message);
+      handleUsersWithCommunication(message);
     }
     else if (message.startsWith("LastMessage:"))
     {
-      handleLastMessage(chatSocket!, message);
+      handleLastMessage(message);
     }
     else if(message.startsWith("Messages:")){
       handleGetAllMessages(message);
     }
     else if (message.startsWith("NewMessage:")){
-      handleNewMessage(chatSocket!, message);
+      handleNewMessage(message);
       handleGetNewMessage(message);
     }
   }
 
-  void handleUsersWithCommunication(Socket socket, String message){
+  void handleUsersWithCommunication(String message)  {
+    if(chatSocket == null){
+       createConnection(myID);
+    }
     var split = message.split(":");
     split.removeAt(0);
     //Remove empty strings
@@ -81,18 +89,13 @@ class ChatController {
     }
 
     //Get all messages between the main user and the other users, all the users are passed in the message
-    socket.write("GetLastMessage:$myID:${split.join(":")}");
+    chatSocket?.write("GetLastMessage:$myID:${split.join(":")}");
   }
 
-  void handleDisconnectedUser(Socket socket, String message){
-    var split = message.split(":");
-    int userID = int.parse(split[1]);
-    messages = [];
-    messageStream.add(messages);
-    chatSocket?.close();
-  }
-
-  void handleLastMessage(Socket socket, String message){
+  void handleLastMessage(String message)  {
+    if(chatSocket == null){
+       createConnection(myID);
+    }
     var split = message.split(":");
     List<Message> gottenMessages = [];
 
@@ -124,7 +127,10 @@ class ChatController {
     messageStream.add(messages);
   }
 
-  void handleNewMessage(Socket socket, String message){
+  void handleNewMessage(String message)  {
+    if(chatSocket == null){
+       createConnection(myID);
+    }
     var split = message.split(":");
     //Remove the first and last character, which are "[" and "]"
     split[1] = split[1].substring(1, split[1].length - 1);
@@ -160,7 +166,10 @@ class ChatController {
     messageStream.add(messages);
   }
 
-  void handleMessages(Socket socket, String message){
+  void handleMessages(String message)  {
+    if(chatSocket == null){
+       createConnection(myID);
+    }
     //Get all the messages between the main user and the other user
     var split = message.split(":");
     //Remove the first and last character, which are "[" and "]"
@@ -186,7 +195,10 @@ class ChatController {
     messageStream.add(messages);
   }
 
-  void handleGetAllMessages(String message) {
+  void handleGetAllMessages(String message)  {
+    if(chatSocket == null){
+       createConnection(myID);
+    }
     var split = message.split(":");
 
     if(split[1] == ""){
@@ -233,7 +245,10 @@ class ChatController {
     messageStream.add(messages);
   }
 
-  void handleGetNewMessage(String message) {
+  void handleGetNewMessage(String message)  {
+    if(chatSocket == null){
+       createConnection(myID);
+    }
     var split = message.split(":");
     //Remove the first and last character, which are "[" and "]"
     split[1] = split[1].substring(1, split[1].length - 1);
@@ -257,5 +272,30 @@ class ChatController {
 
     messages.add(m);
     messageStream.add(messages);
+  }
+
+  void getLastMessage(int myID) {
+    if(chatSocket == null){
+       createConnection(myID);
+    }
+    chatSocket?.write("GetLastMessage:$myID");
+  }
+
+  void getMessages(int myID, int otherID) {
+    if(chatSocket == null){
+      createConnection(myID);
+    }
+    ChatController.chatSocket?.write("GetMessages:$myID:$otherID");
+  }
+
+  void getUsersWithCommunication(int myID) {
+    if(chatSocket == null){
+      createConnection(myID);
+    }
+    ChatController.chatSocket?.write("GetUsersWithCommunication:$myID");
+  }
+
+  void sendMessage(int myID, int otherID, Message toSendMessage) {
+    ChatController.chatSocket?.write("NewMessage:$otherID:${toSendMessage.compressObject()}");
   }
 }
