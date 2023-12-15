@@ -18,8 +18,7 @@ class ChatController {
   void createConnection(int id) {
 
     if(chatSocket != null){
-      chatSocket?.close();
-      chatSocket = null;
+      return;
     }
     print("Creating connection with id: $id and chatSocket: $chatSocket");
 
