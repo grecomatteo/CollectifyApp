@@ -19,7 +19,7 @@ class RegistroForm extends StatefulWidget {
 
 class _RegistroFormState extends State<RegistroForm> {
   DateTime selectedDate = DateTime.now();
-  bool _isValidEmail = true;
+  String _isValidEmail = "true";
   bool _isValidNick = true;
   bool ok = true;
 
@@ -39,20 +39,35 @@ class _RegistroFormState extends State<RegistroForm> {
   }
 
   void _validateEmail(String email) {
-    final emailRegExp =
-        RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
-    setState(() {
-      _isValidEmail = emailRegExp.hasMatch(email);
-    });
+
+    final emailRegExp = RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
+    if(emailRegExp.hasMatch(email)){
+      Conexion().getUsuarioByEmail(email).then((value) => setState(() {
+        if(value!=null)
+          _isValidEmail = "El correo ya esta en uso";
+        else
+          _isValidEmail = "true";
+        }));
+    }
+    else {
+      setState(() {
+        _isValidEmail = "Ingrese un correo valido";
+      });
+    }
+
   }
 
   void _validateNick(String nick) {
-    Conexion().getUsuarioByNick(nick).then((value) =>
-        setState(() {
+    //Comprobar si el nick tiene espacios
+    if (nick.contains(' ')) {
+      setState(() {
+        _isValidNick = false;
+      });
+      return;
+    }
+    Conexion().getUsuarioByNick(nick).then((value) => setState(() {
           _isValidNick = value == null;
-        })
-    );
-
+        }));
   }
 
   final TextEditingController nickController = TextEditingController();
@@ -64,10 +79,8 @@ class _RegistroFormState extends State<RegistroForm> {
 
   bool esEmpresa = false;
 
-
   @override
   Widget build(BuildContext context) {
-
     return Container(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -75,7 +88,8 @@ class _RegistroFormState extends State<RegistroForm> {
           Column(
             children: [
               const SizedBox(height: 50),
-              const Text('Bienvenido a',
+              const Text(
+                'Bienvenido a',
                 style: TextStyle(
                   fontSize: 50,
                   fontWeight: FontWeight.bold,
@@ -104,116 +118,159 @@ class _RegistroFormState extends State<RegistroForm> {
                         return const LinearGradient(
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
-                          colors: [Colors.purple, Colors.transparent, Colors.transparent, Colors.purple],
-                          stops: [0.0, 0.1, 0.9, 1.0], // 10% purple, 80% transparent, 10% purple
+                          colors: [
+                            Colors.purple,
+                            Colors.transparent,
+                            Colors.transparent,
+                            Colors.purple
+                          ],
+                          stops: [
+                            0.0,
+                            0.1,
+                            0.9,
+                            1.0
+                          ], // 10% purple, 80% transparent, 10% purple
                         ).createShader(rect);
                       },
                       blendMode: BlendMode.dstOut,
                       child: ListView(
                         shrinkWrap: true,
-
                         padding: const EdgeInsets.all(10.0),
                         children: [
-                          const SizedBox(height: 25,),
+                          const SizedBox(
+                            height: 25,
+                          ),
                           TextFormField(
-                            controller: nameController,
-                            style: const TextStyle(color: Colors.white),
+                              controller: nameController,
+                              style: const TextStyle(color: Colors.white),
                               decoration: const InputDecoration(
                                 labelText: 'Nombre',
-                                labelStyle: TextStyle(color: Color.fromRGBO(255,255,255, 0.4)),
+                                labelStyle: TextStyle(
+                                    color: Color.fromRGBO(255, 255, 255, 0.4)),
                                 filled: true,
-                                fillColor: Color.fromRGBO(52,52,52, 1),
+                                fillColor: Color.fromRGBO(52, 52, 52, 1),
                                 border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10)),
                                 ),
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Color.fromRGBO(179, 255, 119, 1), width: 2.0),
+                                  borderSide: BorderSide(
+                                      color: Color.fromRGBO(179, 255, 119, 1),
+                                      width: 2.0),
                                 ),
-                              )
+                              )),
+                          const SizedBox(
+                            height: 20,
                           ),
-                          const SizedBox(height: 20,),
                           TextFormField(
                               controller: surnameController,
                               style: const TextStyle(color: Colors.white),
                               decoration: const InputDecoration(
                                 labelText: 'Apellidos',
-                                labelStyle: TextStyle(color: Color.fromRGBO(255,255,255, 0.4)),
+                                labelStyle: TextStyle(
+                                    color: Color.fromRGBO(255, 255, 255, 0.4)),
                                 filled: true,
-                                fillColor: Color.fromRGBO(52,52,52, 1),
+                                fillColor: Color.fromRGBO(52, 52, 52, 1),
                                 border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10)),
                                 ),
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Color.fromRGBO(179, 255, 119, 1), width: 2.0),
+                                  borderSide: BorderSide(
+                                      color: Color.fromRGBO(179, 255, 119, 1),
+                                      width: 2.0),
                                 ),
-                              )
+                              )),
+                          const SizedBox(
+                            height: 20,
                           ),
-                          const SizedBox(height: 20,),
                           TextFormField(
                               controller: mailController,
                               style: const TextStyle(color: Colors.white),
                               onChanged: _validateEmail,
                               decoration: const InputDecoration(
                                 labelText: 'Correo',
-                                labelStyle: TextStyle(color: Color.fromRGBO(255,255,255, 0.4)),
+                                labelStyle: TextStyle(
+                                    color: Color.fromRGBO(255, 255, 255, 0.4)),
                                 filled: true,
-                                fillColor: Color.fromRGBO(52,52,52, 1),
+                                fillColor: Color.fromRGBO(52, 52, 52, 1),
                                 border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10)),
                                 ),
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Color.fromRGBO(179, 255, 119, 1), width: 2.0),
+                                  borderSide: BorderSide(
+                                      color: Color.fromRGBO(179, 255, 119, 1),
+                                      width: 2.0),
                                 ),
-                              )
+                              )),
+                          if (_isValidEmail!="true")
+                             Text(
+                                _isValidEmail.toString(),
+                                textAlign: TextAlign.left,
+                                style: TextStyle(color: Colors.red)),
+
+                          const SizedBox(
+                            height: 20,
                           ),
-                          if (!_isValidEmail)
-                            const Text('Por favor, ingrese un correo electrónico válido.',
-                                textAlign: TextAlign.left, style: TextStyle(color: Colors.red)),
-                          const SizedBox(height: 20,),
                           TextFormField(
                               controller: nickController,
                               onChanged: _validateNick,
                               style: const TextStyle(color: Colors.white),
                               decoration: const InputDecoration(
                                 labelText: 'Nick',
-                                labelStyle: TextStyle(color: Color.fromRGBO(255,255,255, 0.4)),
+                                labelStyle: TextStyle(
+                                    color: Color.fromRGBO(255, 255, 255, 0.4)),
                                 filled: true,
-                                fillColor: Color.fromRGBO(52,52,52, 1),
+                                fillColor: Color.fromRGBO(52, 52, 52, 1),
                                 border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10)),
                                 ),
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Color.fromRGBO(179, 255, 119, 1), width: 2.0),
+                                  borderSide: BorderSide(
+                                      color: Color.fromRGBO(179, 255, 119, 1),
+                                      width: 2.0),
                                 ),
-                              )
-                          ),
+                              )),
                           if (!_isValidNick)
-                            const Text('Este Nick ya esta en uso. Pruebe con otro',
-                                textAlign: TextAlign.left, style: TextStyle(color: Colors.red)),
-                          const SizedBox(height: 20,),
+                            const Text(
+                                'Este Nick ya esta en uso. Pruebe con otro',
+                                textAlign: TextAlign.left,
+                                style: TextStyle(color: Colors.red)),
+                          const SizedBox(
+                            height: 20,
+                          ),
                           TextFormField(
                             controller: passwordController,
                             style: const TextStyle(color: Colors.white),
                             decoration: const InputDecoration(
                               labelText: 'Contraseña',
-                              labelStyle: TextStyle(color: Color.fromRGBO(255,255,255, 0.4)),
+                              labelStyle: TextStyle(
+                                  color: Color.fromRGBO(255, 255, 255, 0.4)),
                               filled: true,
-                              fillColor: Color.fromRGBO(52,52,52, 1),
+                              fillColor: Color.fromRGBO(52, 52, 52, 1),
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.all(Radius.circular(10)),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10)),
                               ),
                               focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Color.fromRGBO(179, 255, 119, 1), width: 2.0),
+                                borderSide: BorderSide(
+                                    color: Color.fromRGBO(179, 255, 119, 1),
+                                    width: 2.0),
                               ),
                             ),
                             obscureText: true,
                           ),
-                          const SizedBox(height: 20,),
+                          const SizedBox(
+                            height: 20,
+                          ),
                           Container(
                             padding: const EdgeInsets.only(right: 2),
                             decoration: const BoxDecoration(
-                              color: Color.fromRGBO(52,52,52, 1),
-                              borderRadius: BorderRadius.all(Radius.circular(10)),
+                              color: Color.fromRGBO(52, 52, 52, 1),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)),
                             ),
                             child: TextFormField(
                               controller: birthdateController,
@@ -221,7 +278,8 @@ class _RegistroFormState extends State<RegistroForm> {
                               readOnly: true,
                               decoration: InputDecoration(
                                 labelText: 'Fecha de nacimiento',
-                                suffixStyle: const TextStyle(color: Colors.white,
+                                suffixStyle: const TextStyle(
+                                  color: Colors.white,
                                   fontSize: 15,
                                   fontWeight: FontWeight.normal,
                                   fontFamily: 'Aeonik',
@@ -229,16 +287,17 @@ class _RegistroFormState extends State<RegistroForm> {
                                 suffixIcon: ElevatedButton(
                                   onPressed: () => _selectDate(context),
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color.fromRGBO(0, 0, 0, 1),
+                                    backgroundColor:
+                                        const Color.fromRGBO(0, 0, 0, 1),
                                     minimumSize: const Size(150, 50),
                                     alignment: Alignment.center,
-
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(10),
                                     ),
                                     padding: const EdgeInsets.all(20.0),
                                   ),
-                                  child: const Text('Seleccionar Fecha',
+                                  child: const Text(
+                                    'Seleccionar Fecha',
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 15,
@@ -247,32 +306,38 @@ class _RegistroFormState extends State<RegistroForm> {
                                     ),
                                   ),
                                 ),
-                                labelStyle: TextStyle(color: Color.fromRGBO(255,255,255, 0.4)),
+                                labelStyle: TextStyle(
+                                    color: Color.fromRGBO(255, 255, 255, 0.4)),
                                 filled: true,
-                                fillColor: Color.fromRGBO(52,52,52, 1),
+                                fillColor: Color.fromRGBO(52, 52, 52, 1),
                                 border: const OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10)),
                                 ),
                                 focusedBorder: const OutlineInputBorder(
-                                  borderSide: BorderSide(color: Color.fromRGBO(179, 255, 119, 1), width: 2.0),
+                                  borderSide: BorderSide(
+                                      color: Color.fromRGBO(179, 255, 119, 1),
+                                      width: 2.0),
                                 ),
                               ),
                             ),
                           ),
-                          const SizedBox(height: 20,),
+                          const SizedBox(
+                            height: 20,
+                          ),
                           Row(
                             children: [
                               Checkbox(
                                 value: esEmpresa,
-                                onChanged: (e){
+                                onChanged: (e) {
                                   setState(() {
                                     esEmpresa = e!;
-
                                   });
                                 },
                               ),
-                              const Text("Es empresa", style:
-                                TextStyle(
+                              const Text(
+                                "Es empresa",
+                                style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 15,
                                   fontWeight: FontWeight.normal,
@@ -282,16 +347,15 @@ class _RegistroFormState extends State<RegistroForm> {
                             ],
                           ),
                         ],
-                      )
-                  )
-              )
-          ),
+                      )))),
           Column(
             children: [
-              const SizedBox(height: 30,),
+              const SizedBox(
+                height: 30,
+              ),
               Container(
                 decoration: const BoxDecoration(
-                  color: Color.fromRGBO(254,111,31, 1),
+                  color: Color.fromRGBO(254, 111, 31, 1),
                   borderRadius: BorderRadius.all(Radius.circular(30)),
                 ),
                 child: IconButton(
@@ -304,57 +368,57 @@ class _RegistroFormState extends State<RegistroForm> {
                     final birthdate = selectedDate;
 
                     //Comprueba si los campos del nuevo usuario son correctos
-                    if (_isValidEmail == true &&
-                        _isValidNick == true &&
-                        birthdateController.text != '' &&
-                        nameController.text != '' &&
-                        surnameController.text != '' &&
-                        passwordController.text != '' &&
-                        birthdateController.text != '') {
-                      if (await Conexion().registrarUsuario(
-                          name, surname, nick, mail, password, birthdate)) {
-                        if (esEmpresa){
-                          await Conexion().getUsuarioByNick(nick).then((results) {
-                            int? id = results?.usuarioID;
-                            Conexion().hacerEmpresa(id!);
-                          });
-                        }
+                    if (_isValidEmail!="true") {
+                      showErrorDialog(context, _isValidEmail);
+                      return;
+                    }
+
+                    if (!_isValidNick) {
+                      showErrorDialog(
+                          context, 'Este Nick ya esta en uso. Pruebe con otro');
+                      return;
+                    }
+                    if (birthdateController.text == '') {
+                      showErrorDialog(context,
+                          'Por favor, ingrese una fecha de nacimiento.');
+                      return;
+                    }
+                    if (nameController.text == '') {
+                      showErrorDialog(context, 'Por favor, ingrese un nombre.');
+                      return;
+                    }
+                    if (surnameController.text == '') {
+                      showErrorDialog(
+                          context, 'Por favor, ingrese un apellido.');
+                      return;
+                    }
+                    if (passwordController.text == '') {
+                      showErrorDialog(
+                          context, 'Por favor, ingrese una contraseña.');
+                      return;
+                    }
+                    if (nickController.text == '') {
+                      showErrorDialog(context, 'Por favor, ingrese un nick.');
+                      return;
+                    }
+
+                    try {
+                      await Conexion().registrarUsuario(
+                          name, surname, nick, mail, password, birthdate);
+                      if (esEmpresa) {
+                        await Conexion().getUsuarioByNick(nick).then((results) {
+                          int? id = results?.usuarioID;
+                          Conexion().hacerEmpresa(id!);
+                        });
+
                         Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => VentanaLogin()));
                       }
-                    } else {
-                      showDialog(
-                          context: context,
-                          builder: (buildcontext) {
-                            return AlertDialog(
-                              title: const Text("¡Error!",
-                                  style: TextStyle(color: Colors.red)),
-                              content: const Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  Row(children: <Widget>[
-                                    Icon(Icons.error_outline_rounded,
-                                        color: Colors.red),
-                                    SizedBox(width: 10.0),
-                                    Text(
-                                        "Alguno de los campos es erróneo o esta vacío. Haga el favor de revisarlos."),
-                                  ]),
-                                ],
-                              ),
-                              actions: <Widget>[
-                                ElevatedButton(
-                                    child: const Text(
-                                      "OK",
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                    onPressed: () {
-                                      Navigator.of(buildcontext).pop();
-                                    })
-                              ],
-                            );
-                          });
+                    } catch (e) {
+                      //Mostrar cuadro de error
+                      showErrorDialog(context, e.toString());
                     }
                   },
                   icon: const Icon(Icons.arrow_forward, color: Colors.white),
@@ -362,7 +426,9 @@ class _RegistroFormState extends State<RegistroForm> {
                   iconSize: 40,
                 ),
               ),
-              const SizedBox(height: 30,),
+              const SizedBox(
+                height: 30,
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -378,7 +444,10 @@ class _RegistroFormState extends State<RegistroForm> {
                   TextButton(
                     onPressed: () {
                       Navigator.pop(context);
-                      Navigator.push(context, MaterialPageRoute(builder: (context) =>  VentanaLogin()));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => VentanaLogin()));
                     },
                     child: const Text(
                       'Inicia sesión',
@@ -398,4 +467,22 @@ class _RegistroFormState extends State<RegistroForm> {
       ),
     );
   }
+}
+
+void showErrorDialog(BuildContext context, String error) {
+  showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: Text(error),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Aceptar'))
+          ],
+        );
+      });
 }

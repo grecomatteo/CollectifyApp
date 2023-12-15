@@ -570,6 +570,30 @@ class Conexion {
     if (usuario == null) throw new Exception("Usuario no encontrado");
     return usuario;
   }
+  Future<Usuario?> getUsuarioByEmail(String email) async{
+    Usuario? usuario;
+    if (conn == null) await conectar();
+
+    await conn
+        ?.query("select * from usuario where correo = '$email' limit 1")
+        .then((results) {
+      for (var row in results) {
+        usuario = Usuario(
+          usuarioID: row[0],
+          nombre: row[1],
+          apellidos: row[2],
+          nick: row[3],
+          correo: row[4],
+          contrasena: row[5],
+          fechaNacimiento: row[6],
+          esEmpresa: row[8],
+        );
+      }
+    });
+    if (usuario == null) return null;
+    return usuario;
+
+  }
 
   Future<Usuario?> getUsuarioByNick(String nick) async {
     Usuario? usuario;
@@ -639,6 +663,9 @@ class Conexion {
           "insert into usuario(nombre,apellidos,nick,correo,contrasena,fechaNac) values('$nombre', '$apellido', '$nick', '$correo', '$contrasena', '$fechaNac')");
     } catch (e) {
       debugPrint(e.toString());
+
+      throw Exception(e.toString());
+
     }
 
     return true;
