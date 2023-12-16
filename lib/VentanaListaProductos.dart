@@ -20,17 +20,17 @@ bool isValid = true;
 bool loading = false;
 
 //Labelers para imageenes
-ImageLabelerOptions options =  ImageLabelerOptions(confidenceThreshold: 0.76);
+ImageLabelerOptions options = ImageLabelerOptions(confidenceThreshold: 0.76);
 ImageLabeler imageLabeler = ImageLabeler(options: options);
 //Traductor para las labels generadas
 TranslateLanguage sourceLanguage = TranslateLanguage.english;
 TranslateLanguage targetLanguage = TranslateLanguage.spanish;
 
-final onDeviceTranslator = OnDeviceTranslator(sourceLanguage: sourceLanguage, targetLanguage: targetLanguage);
+final onDeviceTranslator = OnDeviceTranslator(
+    sourceLanguage: sourceLanguage, targetLanguage: targetLanguage);
 
 class ListaProductos extends StatefulWidget {
   const ListaProductos({Key? key, required this.connected}) : super(key: key);
-
 
   final Usuario connected;
 
@@ -56,7 +56,7 @@ class _ListaProductosState extends State<ListaProductos> {
 
   Future<void> cargarProductos() async {
     List<Producto> allProducts =
-    await Conexion().getProductosBasadoPreferencias(user);
+        await Conexion().getProductosBasadoPreferencias(user);
 
     setState(() {
       _searchResults = allProducts;
@@ -67,11 +67,12 @@ class _ListaProductosState extends State<ListaProductos> {
   Widget build(BuildContext context) {
     user = connected;
     return Scaffold(
-
-      body: Column(
-
-        children: [
-
+      resizeToAvoidBottomInset: false,
+      body: Container(
+        color: Colors.black,
+        child: Column(
+          children: [
+            //SizedBox(height: 20),
             SearchBar(onSearchResults: (results) {
               setState(() {
                 _searchResults = results;
@@ -80,11 +81,12 @@ class _ListaProductosState extends State<ListaProductos> {
                 cargarProductos();
               }
             }),
-
-          Expanded(
-            child: ProductList(searchResults: _searchResults),
-          ),
-        ],
+            const SizedBox(height: 15),
+            Expanded(
+              child: ProductList(searchResults: _searchResults),
+            ),
+          ],
+        ),
       ),
       bottomNavigationBar: const NavigationBar(),
     );
@@ -102,7 +104,17 @@ class SearchBar extends StatefulWidget {
 
 class _SearchBarState extends State<SearchBar> {
   final TextEditingController _controller = TextEditingController();
-  final List<String> categories = ["Relojes", "Arte", "Joyeria", "Numismatica"];
+  final List<String> categories = [
+    "Joyas y relojes",
+    "Numismatica",
+    "Arte y artesanía",
+    "Juguetes",
+    "Libros y comics",
+    "Monedas",
+    "Música",
+    "Postales y sellos",
+    "Ropa"
+  ];
 
   String selectedCategory = "";
 
@@ -111,18 +123,11 @@ class _SearchBarState extends State<SearchBar> {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 20.0),
           child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.all(Radius.circular(20)),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black12,
-                  offset: Offset(0, 2),
-                  blurRadius: 4.0,
-                ),
-              ],
+            decoration: const BoxDecoration(
+              color: Color(0XFF161616),
+              borderRadius: BorderRadius.all(Radius.circular(30)),
             ),
             child: TextField(
               controller: _controller,
@@ -139,96 +144,120 @@ class _SearchBarState extends State<SearchBar> {
                 setState(() {
                   loading = true;
                 });
-                },
-
+              },
               decoration: InputDecoration(
                 hintText: 'Buscar',
                 hintStyle: const TextStyle(
                   color: Colors.grey,
+                  fontSize: 16.0,
+                  fontFamily: 'Aeonik',
                 ),
                 border: InputBorder.none,
                 suffixIcon: PopupMenuButton<int>(
-                  icon: const Icon(Icons.camera_alt),
-                  onSelected: (int result)  async {
+                  icon: const Icon(Icons.camera_alt, color: Colors.grey),
+                  onSelected: (int result) async {
                     ImagePicker picker = ImagePicker();
-                    if(result==1){
-                      final XFile? image = await picker.pickImage(source: ImageSource.camera);
+                    if (result == 1) {
+                      final XFile? image =
+                          await picker.pickImage(source: ImageSource.camera);
                       File file = File(image!.path);
-                      await imageLabeler.processImage(InputImage.fromFile(file)).then((value)async {
-                        if(value.isNotEmpty){
-                          _controller.text = await onDeviceTranslator.translateText(value[0].label);
+                      await imageLabeler
+                          .processImage(InputImage.fromFile(file))
+                          .then((value) async {
+                        if (value.isNotEmpty) {
+                          _controller.text = await onDeviceTranslator
+                              .translateText(value[0].label);
                           setState(() {
                             loading = true;
                           });
                           _handleSearch(_controller.text);
-                        }
-                        else{
+                        } else {
                           showError(context);
                         }
                       });
-                    }
-                    else {
-                      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+                    } else {
+                      final XFile? image =
+                          await picker.pickImage(source: ImageSource.gallery);
                       File file = File(image!.path);
-                      await imageLabeler.processImage(InputImage.fromFile(file)).then((value)async {
-                        if(value.isNotEmpty){
-                          _controller.text = await onDeviceTranslator.translateText(value[0].label);
+                      await imageLabeler
+                          .processImage(InputImage.fromFile(file))
+                          .then((value) async {
+                        if (value.isNotEmpty) {
+                          _controller.text = await onDeviceTranslator
+                              .translateText(value[0].label);
                           setState(() {
                             loading = true;
                           });
                           _handleSearch(_controller.text);
-                        }
-                        else{
+                        } else {
                           showError(context);
                         }
                       });
                     }
-
-                  }
-                  ,
-                  itemBuilder: (BuildContext context) =>[
+                  },
+                  itemBuilder: (BuildContext context) => [
                     const PopupMenuItem(
                       value: 1,
-                      child: Text("Tomar foto"),
+                      child: Text(
+                        "Tomar foto",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16.0,
+                          fontFamily: 'Aeonik',
+                        ),
+                      ),
                     ),
                     const PopupMenuItem(
                       value: 2,
-                      child: Text("Seleccionar foto"),
+                      child: Text(
+                        "Seleccionar foto",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16.0,
+                          fontFamily: 'Aeonik',
+                        ),
+                      ),
                     ),
                   ],
-
-
-
-
                 ),
-                prefixIcon: const Icon(Icons.search),
+                prefixIcon: const Icon(Icons.search, color: Colors.grey),
               ),
             ),
           ),
         ),
         SingleChildScrollView(
+          //padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 15.0),
           scrollDirection: Axis.horizontal,
           child: Row(
             children: categories.map((category) {
-              return ElevatedButton(
-                onPressed: () {
-                  toggleCategory(category);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: selectedCategory == category
-                      ? Theme.of(context).colorScheme.primary
-                      : Colors.white,
-                  foregroundColor: selectedCategory == category
-                      ? Theme.of(context).colorScheme.onSurface // Colore del testo quando è premuto
-                      : Theme.of(context).colorScheme.primary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    side: BorderSide(
-                      color: Theme.of(context).colorScheme.primary,
+              return Container(
+                padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                child: ElevatedButton(
+                  onPressed: () {
+                    toggleCategory(category);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20.0, vertical: 14.0),
+                    backgroundColor: selectedCategory == category
+                        ? Color(0XFFFE6F1F)
+                        : Color(0XFF343434),
+                    foregroundColor: selectedCategory == category
+                        ? Colors.black // Colore del testo quando è premuto
+                        : Colors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                  child: Text(
+                    category,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 15,
+                      fontFamily: 'Aeonik',
                     ),
                   ),
                 ),
-                child: Text(category),
               );
             }).toList(),
           ),
@@ -237,29 +266,26 @@ class _SearchBarState extends State<SearchBar> {
     );
   }
 
-
   void _handleSearch(String query, {String? category}) async {
     List<Producto> searchResults;
 
     //Antes de consultar la base de datos, verifique si no se ha ingresado nada en el campo de búsqueda
-    if (query.isEmpty && category== null) {
+    if (query.isEmpty && category == null) {
       searchResults = await Conexion().getProductosBasadoPreferencias(user);
       setState(() {
         loading = false;
       });
-    } else if(query.isEmpty && category != null){
+    } else if (query.isEmpty && category != null) {
       searchResults = await Conexion().getProductoPorCategoria(category);
       setState(() {
         loading = false;
       });
-    }
-    else {
+    } else {
       //Mostrar un widget de cargando
 
       // Llama a la lógica de búsqueda de la base de datos usando la clase Conexion
       searchResults = await Conexion().searchProductos(query);
       setState(() {
-
         loading = false;
       });
     }
@@ -279,8 +305,6 @@ class _SearchBarState extends State<SearchBar> {
     _handleSearch(_controller.text, category: selectedCategory);
   }
 }
-
-
 
 class ProductList extends StatefulWidget {
   const ProductList({Key? key, this.searchResults = const []})
@@ -320,9 +344,10 @@ class ProductListState extends State<ProductList> {
             );
           } else {
             return GridView.count(
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 10,
-              padding: const EdgeInsets.all(10),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 0, vertical: 10.0),
+              mainAxisSpacing: 5,
+              crossAxisSpacing: 0,
               crossAxisCount: 2,
               children: _displayedProducts
                   .map((e) => ProductoWidget(producto: e))
@@ -351,78 +376,77 @@ class ProductoWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color.fromARGB(250, 240, 217, 248),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
-          ),
-        ),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    VentanaProducto(connected: user, producto: producto)),
-          );
-          //Aqui irá la descripcion detallada de producto
-        },
-        child: Center(
-          child: Column(
-            children: [
-              const Spacer(),
-              Flexible(
-                  flex: 15,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.rectangle,
-                      image: DecorationImage(
-                        image: Image.memory(const Base64Decoder()
-                                .convert(producto.image.toString()))
-                            .image,
-                        fit: BoxFit.cover,
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  )),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  if (producto.esPremium == true)
-                    const Row(
-                      children: [
-                        Icon(
-                          Icons.star,
-                          color: Colors.yellow,
-                        ),
-                        Text(
-                          "Premium",
-                          style: TextStyle(color: Colors.yellow),
-                        ),
-                      ],
-                    ),
-                  Text(
-                    producto.nombre!,
-                    style: const TextStyle(
-                      color: Color.fromARGB(255, 50, 50, 50),
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
+      style: ElevatedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
+        backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
+        shadowColor: Colors.transparent,
+      ),
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  VentanaProducto(connected: user, producto: producto)),
+        );
+        //Aqui irá la descripcion detallada de producto
+      },
+      child: Column(
+        children: [
+          const Spacer(),
+          Flexible(
+              flex: 100,
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.rectangle,
+                  image: DecorationImage(
+                    image: Image.memory(const Base64Decoder()
+                            .convert(producto.image.toString()))
+                        .image,
+                    fit: BoxFit.cover,
                   ),
-                  Text(
-                    "${producto.precio} €",
-                    style: const TextStyle(
-                      color: Colors.blueGrey,
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              )),
+          //const Spacer(),
+          const SizedBox(height: 7),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(
+                producto.nombre!,
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    overflow: TextOverflow.ellipsis,
+                    fontFamily: 'Aeonik'),
+              ),
+              Text(
+                "${producto.categoria}",
+                style: const TextStyle(
+                    color: Colors.grey, fontSize: 13, fontFamily: 'Aeonik'),
+              ),
+            ]),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text("${producto.precio} €",
+                      style: const TextStyle(
+                        color: Color(0XFFB3FF77),
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Aeonik',
+                        overflow: TextOverflow.ellipsis,
+                      )),
                 ]),
-                const Spacer(),
-                const Icon(Icons.favorite_border_outlined),
-              ]),
-              const Spacer(),
-            ],
-          ),
-        ));
+          ]),
+          const Spacer(),
+        ],
+      ),
+    );
   }
 }
 
@@ -432,19 +456,21 @@ class NavigationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-      selectedItemColor: Colors.purple,
-      unselectedItemColor: Colors.purpleAccent,
+      type: BottomNavigationBarType.fixed,
+      backgroundColor: Color(0XFF343434),
+      selectedItemColor: Color(0XFFB3FF77),
+      unselectedItemColor: Colors.grey,
       onTap: (int index) {
         switch (index) {
           case 0:
             //Se queda en la misma ventana
             break;
           case 1: //Articulos con me gusta, por implementar
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ListaProductosSubasta(connected: user)),
-          );
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ListaProductosSubasta(connected: user)),
+            );
             break;
           case 2:
             Navigator.push(
@@ -475,63 +501,56 @@ class NavigationBar extends StatelessWidget {
       items: const [
         BottomNavigationBarItem(
           icon: Icon(Icons.home),
-          label: "productos",
+          label: "Productos",
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.gavel),
-          label: "subastas",
+          label: "Subastas",
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.add_circle),
-          label: "Search",
+          label: "Añadir",
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.chat_rounded),
-          label: "chat",
+          label: "Chat",
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.person),
-          label: "Profile",
+          label: "Perfil",
         ),
       ],
     );
   }
 }
 
-
-Future<String>getLabelFromXFile(XFile? image)  async{
+Future<String> getLabelFromXFile(XFile? image) async {
   File file = File(image!.path);
-  debugPrint('\n' + " 1 "+ file.path);
+  debugPrint('\n' + " 1 " + file.path);
   String label = "";
   await imageLabeler.processImage(InputImage.fromFile(file)).then((value) {
-    if(value.isNotEmpty){
-      debugPrint('\n' +"2 "+  value[0].label);
+    if (value.isNotEmpty) {
+      debugPrint('\n' + "2 " + value[0].label);
       onDeviceTranslator.translateText(value[0].label).then((value) {
-
-        if(value.isNotEmpty){
+        if (value.isNotEmpty) {
           debugPrint('\n' + " 3" + value);
           label = value;
           debugPrint('\n' + " 4" + label);
           return value;
         }
       });
-
     }
   });
   return label;
-
-
-
-
 }
-void showError(BuildContext context){
+
+void showError(BuildContext context) {
   showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text("Error"),
-          content: const Text(
-              "No se ha podido reconocer el objeto"),
+          content: const Text("No se ha podido reconocer el objeto"),
           actions: [
             TextButton(
                 onPressed: () {
@@ -540,9 +559,5 @@ void showError(BuildContext context){
                 child: const Text("OK"))
           ],
         );
-      }
-  );
+      });
 }
-
-
-
