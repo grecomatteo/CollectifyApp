@@ -31,7 +31,7 @@ class VentanaProducto extends StatelessWidget {
         children: [
 
           Container(
-            height: MediaQuery.of(context).size.width * 0.75,
+            height: MediaQuery.of(context).size.width * 0.85,
             decoration: BoxDecoration(
               image: DecorationImage(
                 image: MemoryImage(
@@ -39,9 +39,12 @@ class VentanaProducto extends StatelessWidget {
                 ),
                 fit: BoxFit.cover,
               ),
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(16.0),
+                bottomRight: Radius.circular(16.0),
+              )
             ),
           ),
-
 
           Positioned(
             top: 20,
@@ -119,48 +122,116 @@ class VentanaProducto extends StatelessWidget {
             ),
           ),
           Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
             children: [
 
-              Positioned(
-              top: MediaQuery.of(context).size.width * 0.75 + 40,
-              left: 500,
-              right: 500,
+              Align(
+                alignment: Alignment(
+                  0,
+                  (MediaQuery.of(context).size.width * 0.75 + 40) /
+                      MediaQuery.of(context).size.height,
+                ),
               child: Column(
-                //crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
 
-                if(producto.esSubasta == true)
-              Column(
-                children: [
-                    Text("Precio inicial : ${producto.precioInicial} €", style: const TextStyle(fontSize: 20, color: Colors.deepPurple),),
-                    if(producto.idUserUltimaPuja != null)
-                      Text("Última puja : ${producto.ultimaOferta} € realizada por $userUltPuja",
-                        style: const TextStyle(fontSize: 15, color: Colors.blueGrey),)
-                    else const Text("Nadie ha pujado todavía", style: TextStyle(fontSize: 15, color: Colors.blueGrey),),
-                ],
-              )
-              else
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text("buell", style: TextStyle(fontSize: 30, color: Colors.deepPurple),),
-                Text("${producto.descripcion}.", style: const TextStyle(fontSize: 15, color: Colors.blueGrey),),
                 if(producto.esSubasta == true)
                   Column(
                     children: [
-                        Text("Precio inicial : ${producto.precioInicial} €", style: const TextStyle(fontSize: 20, color: Colors.deepPurple),),
-                        if(producto.idUserUltimaPuja != null)
-                          Text("Última puja : ${producto.ultimaOferta} € realizada por $userUltPuja",
-                            style: const TextStyle(fontSize: 15, color: Colors.blueGrey),)
-                        else const Text("Nadie ha pujado todavía", style: TextStyle(fontSize: 15, color: Colors.blueGrey),),
-                    ],
-                  )
-                else Text("${producto.precio} €", style: const TextStyle(fontSize: 20, color: Colors.deepPurple),),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                                "${producto.nombre}",
+                                style: const TextStyle(
+                                  fontSize: 25,
+                                  fontFamily: "Aeonik",
+                                  color: Colors.white,
+                                ),
+                              ),
+                        ],
+                      ),
+                     Row(
+                       mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                      Text(
+                            "${producto.categoria} ",
+                            style: const TextStyle(
+                                fontSize: 15,
+                                fontFamily: "Aeonik",
+                                color: Colors.white24,
+                            ),
+                          ),
+                      ],
+                     ),
+                  ],
+                )
+              else
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
 
+                    if(producto.esSubasta == true)
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                            Text(
+                              "Precio inicial : ${producto.precioInicial} €",
+                              style: const TextStyle(
+                                  fontSize: 20,
+                                  fontFamily: "Aeonik",
+                                  color: Colors.lightGreenAccent
+                              ),
+                            ),
+                            if(producto.idUserUltimaPuja != null)
+                              Text(
+                                "Última puja : ${producto.ultimaOferta} € realizada por $userUltPuja",
+                                style: const TextStyle(fontSize: 15, color: Colors.blueGrey),
+                              )
+                            else const Text(
+                                "Nadie ha pujado todavía",
+                                style: TextStyle(fontSize: 15, color: Colors.blueGrey),
+                              ),
+                        ],
+                      )
+                else
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "${producto.nombre}",
+                        style: const TextStyle(
+                          fontSize: 25,
+                          fontFamily: "Aeonik",
+                          color: Colors.white,
+                        ),
+                      ),
+                      Container(width:80),
+                      Text(
+                        "${producto.precio} €",
+                        style: const TextStyle(
+                                      fontSize: 30,
+                                      fontFamily: "Aeonik",
+                                      color: Colors.lightGreenAccent
+                                  ),
+                        ),
+                    ],
+                  ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "${producto.categoria}",
+                          style: const TextStyle(
+                            fontSize: 17,
+                            fontFamily: "Aeonik",
+                            color: Colors.white24,
+                          ),
+                        ),
+                      ],
+                    ),
+                  SizedBox(height:20),
                   ElevatedButton(
                     onPressed:() {
                     Conexion().getUsuarioByID(producto.usuarioID!).then((value)
@@ -174,7 +245,7 @@ class VentanaProducto extends StatelessWidget {
                     );
                   },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black12,
+                      backgroundColor: Colors.white12,
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -188,7 +259,7 @@ class VentanaProducto extends StatelessWidget {
                         const Spacer(),
                         Text(producto.usuarioNick.toString(),style: TextStyle(
                             fontFamily: "Aeonik",
-                            color: Colors.black,
+                            color: Colors.white,
                           ),
                         ),
                         const Spacer( flex: 5,)
@@ -202,13 +273,16 @@ class VentanaProducto extends StatelessWidget {
           ],
           ),
 
+
+
+
           Positioned(
             bottom: 20,
             left: 20,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: SizedBox(
-                width: 200,
+                width: 150,
                 height: 50,
                 child: ChatButton(producto: producto),
               ),
@@ -293,6 +367,7 @@ class VentanaProducto extends StatelessWidget {
             ),
         ],
       ),
+
     );
   }
 }
@@ -311,6 +386,9 @@ class ChatButton extends StatelessWidget {
           MaterialPageRoute(builder: (context) => VentanaMensajesChat(user.usuarioID!, producto.usuarioID!)),
         );
       },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.white12,
+      ),
       child: Row(
         children: [
           const SizedBox(width: 8),
@@ -318,7 +396,7 @@ class ChatButton extends StatelessWidget {
             TextStyle(
               fontSize:20,
               fontFamily: "Aeonik",
-              color: Colors.black,
+              color: Colors.lightGreenAccent,
             )
           ),
         ],
