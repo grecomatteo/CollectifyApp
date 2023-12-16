@@ -22,7 +22,8 @@ class ListaProductosSubasta extends StatefulWidget {
       _ListaProductosState(connected: connected);
 }
 
-class _ListaProductosState extends State<ListaProductosSubasta> with SingleTickerProviderStateMixin {
+class _ListaProductosState extends State<ListaProductosSubasta>
+    with SingleTickerProviderStateMixin {
   _ListaProductosState({required this.connected});
   final Usuario connected;
   List<Producto> _searchResults = [];
@@ -33,7 +34,7 @@ class _ListaProductosState extends State<ListaProductosSubasta> with SingleTicke
     int tabIndex = _tabController.index;
     if (tabIndex == 0) {
       cargarProductos();
-    } else{
+    } else {
       cargarPujas();
     }
   }
@@ -54,11 +55,13 @@ class _ListaProductosState extends State<ListaProductosSubasta> with SingleTicke
   }
 
   Future<void> cargarProductos() async {
-    List<Producto> allProducts = await Conexion().getProductosSubastaBasadoPreferencias(user);
+    List<Producto> allProducts =
+        await Conexion().getProductosSubastaBasadoPreferencias(user);
     setState(() {
       _searchResults = allProducts;
     });
   }
+
   Future<void> cargarPujas() async {
     List<Producto> allProducts = await Conexion().getPujasRealizadas(user);
     setState(() {
@@ -88,137 +91,124 @@ class _ListaProductosState extends State<ListaProductosSubasta> with SingleTicke
                 _handleTabSelection();
               }
             }),
-            DefaultTabController(
-              length: 2,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.max,
+            TabBar(
+              controller: _tabController,
+              isScrollable: true,
+              dragStartBehavior: DragStartBehavior.start,
+              dividerColor: const Color(0XFF161616),
+              enableFeedback: true,
+              //indicatorWeight: 4.0,
+              indicator: const BoxDecoration(
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(15),
+                    topRight: Radius.circular(15),
+                    bottomLeft: Radius.zero,
+                    bottomRight: Radius.zero),
+                color: Color(0XFF161616),
+              ),
+              unselectedLabelStyle: const TextStyle(
+                fontSize: 20,
+                fontFamily: 'Aeonik',
+              ),
+              indicatorSize: TabBarIndicatorSize.tab,
+              labelColor: Colors.white,
+              labelStyle: TextStyle(
+                fontSize: 50,
+                fontFamily: 'Aeonik',
+              ),
+              tabs: [
+                Tab(
+                  text: 'Subastas',
+                  height: 60,
+                ),
+                Tab(
+                  text: 'Pujas',
+                  height: 60,
+                ),
+              ],
+            ),
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
                 children: [
-                  TabBar(
-                    controller: _tabController,
-                    isScrollable: true,
-                    dragStartBehavior: DragStartBehavior.start,
-                    enableFeedback: true,
-                    indicatorWeight: 4.0,
-                    indicator: BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(15),
-                          topRight: Radius.circular(15),
-                          bottomLeft: Radius.zero,
-                          bottomRight: Radius.zero),
-                      color: Color(0XFF161616),
-                    ),
-                    unselectedLabelStyle: TextStyle(
-                      fontSize: 20,
-                      fontFamily: 'Aeonik',
-                    ),
-                    indicatorSize: TabBarIndicatorSize.tab,
-                    indicatorColor: Colors.transparent,
-                    labelColor: Colors.white,
-                    labelStyle: TextStyle(
-                      fontSize: 50,
-                      fontFamily: 'Aeonik',
-                    ),
-                    tabs: [
-                      Tab(
-                        text: 'Subastas',
-                        height: 60,
-                      ),
-                      Tab(
-                        text: 'Pujas',
-                        height: 60,
-                      ),
-                    ],
+                  ProductList(searchResults: _searchResults),
+                  PujasList(searchResults: _searchResults),
+                ],
+              ),
+            ),
+            Container(
+              decoration: const BoxDecoration(
+                color: Color(0XFF343434),
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.all(Radius.circular(50)),
+              ),
+              child: BottomNavigationBar(
+                currentIndex: 1,
+                onTap: (int index) {
+                  switch (index) {
+                    case 0:
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                ListaProductos(connected: user)),
+                      );
+                      break;
+                    case 1: //Articulos con me gusta, por implementar
+                      //no hace nada
+                      break;
+                    case 2:
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                VentanaAnadirProducto(user: user)),
+                      );
+                      break;
+                    case 3:
+                      int uid = user.usuarioID ?? -1;
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => VentanaChat(id: uid)),
+                      );
+                      break;
+                    case 4:
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => VentanaPerfil(
+                                  mUser: user,
+                                  rUser: user,
+                                )),
+                      );
+                      break;
+                  }
+                },
+                type: BottomNavigationBarType.fixed,
+                backgroundColor: Color(0XFF343434),
+                selectedItemColor: Color(0XFFB3FF77),
+                unselectedItemColor: Colors.grey,
+                items: const <BottomNavigationBarItem>[
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.home),
+                    label: 'Inicio',
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 15.0),
-                    height: MediaQuery.of(context).size.height * 0.638,
-                    decoration: const BoxDecoration(color: Color(0XFF161616)),
-                    child: TabBarView(
-                      controller: _tabController,
-                      children: [
-                        ProductList(searchResults: _searchResults),
-                        PujasList(searchResults: _searchResults),
-                      ],
-                    ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.gavel),
+                    label: 'Subastas',
                   ),
-                  Container(
-                    decoration: const BoxDecoration(
-                      color: Color(0XFF343434),
-                      shape: BoxShape.rectangle,
-                      borderRadius: BorderRadius.all(Radius.circular(50)),
-                    ),
-                    child: BottomNavigationBar(
-                      currentIndex: 1,
-                      onTap: (int index) {
-                        switch (index) {
-                          case 0:
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      ListaProductos(connected: user)),
-                            );
-                            break;
-                          case 1: //Articulos con me gusta, por implementar
-                            //no hace nada
-                            break;
-                          case 2:
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      VentanaAnadirProducto(user: user)),
-                            );
-                            break;
-                          case 3:
-                            int uid = user.usuarioID ?? -1;
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => VentanaChat(id: uid)),
-                            );
-                            break;
-                          case 4:
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => VentanaPerfil(
-                                        mUser: user,
-                                        rUser: user,
-                                      )),
-                            );
-                            break;
-                        }
-                      },
-                      type: BottomNavigationBarType.fixed,
-                      backgroundColor: Color(0XFF343434),
-                      selectedItemColor: Color(0XFFB3FF77),
-                      unselectedItemColor: Colors.grey,
-                      items: const <BottomNavigationBarItem>[
-                        BottomNavigationBarItem(
-                          icon: Icon(Icons.home),
-                          label: 'Inicio',
-                        ),
-                        BottomNavigationBarItem(
-                          icon: Icon(Icons.gavel),
-                          label: 'Subastas',
-                        ),
-                        BottomNavigationBarItem(
-                          icon: Icon(Icons.add_circle),
-                          label: 'Añadir',
-                        ),
-                        BottomNavigationBarItem(
-                          icon: Icon(Icons.chat_rounded),
-                          label: 'Chat',
-                        ),
-                        BottomNavigationBarItem(
-                          icon: Icon(Icons.person),
-                          label: 'Perfil',
-                        ),
-                      ],
-                    ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.add_circle),
+                    label: 'Añadir',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.chat_rounded),
+                    label: 'Chat',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.person),
+                    label: 'Perfil',
                   ),
                 ],
               ),
@@ -239,7 +229,17 @@ class SearchBar extends StatefulWidget {
 
 class _SearchBarState extends State<SearchBar> {
   final TextEditingController _controller = TextEditingController();
-  final List<String> categories = ["Joyas y relojes","Numismatica", "Arte y artesanía", "Juguetes", "Libros y comics","Monedas","Música", "Postales y sellos", "Ropa"];
+  final List<String> categories = [
+    "Joyas y relojes",
+    "Numismatica",
+    "Arte y artesanía",
+    "Juguetes",
+    "Libros y comics",
+    "Monedas",
+    "Música",
+    "Postales y sellos",
+    "Ropa"
+  ];
 
   String selectedCategory = "";
   @override
@@ -292,33 +292,33 @@ class _SearchBarState extends State<SearchBar> {
           child: Row(
             children: categories.map((category) {
               return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 2.0),
                   child: ElevatedButton(
-                onPressed: () {
-                  toggleCategory(category);
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 20.0, vertical: 14.0),
-                  backgroundColor: selectedCategory == category
-                      ? Color(0XFFB3FF77)
-                      : Color(0XFF343434),
-                  foregroundColor: selectedCategory == category
-                      ? Colors.black // Colore del testo quando è premuto
-                      : Colors.black,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                child: Text(
-                    category,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 15,
-                      fontFamily: 'Aeonik',
+                    onPressed: () {
+                      toggleCategory(category);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20.0, vertical: 14.0),
+                      backgroundColor: selectedCategory == category
+                          ? Color(0XFFB3FF77)
+                          : Color(0XFF343434),
+                      foregroundColor: selectedCategory == category
+                          ? Colors.black // Colore del testo quando è premuto
+                          : Colors.black,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
                     ),
-                ),
-              ));
+                    child: Text(
+                      category,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                        fontFamily: 'Aeonik',
+                      ),
+                    ),
+                  ));
             }).toList(),
           ),
         ),
@@ -400,7 +400,7 @@ class ProductListState extends State<ProductList> {
           } else {
             return ListView.builder(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 0.0),
+                    const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
                 itemBuilder: (BuildContext context, int index) {
                   return ProductoWidget(producto: _displayedProducts[index]);
                 },
@@ -440,15 +440,15 @@ class ProductoWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        color: Colors.transparent,
+        color: Color(0XFF161616),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 20.0),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.transparent,
           surfaceTintColor: Colors.transparent,
           shadowColor: Colors.transparent,
-          padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
+          padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
         ),
         onPressed: () {
           Navigator.push(
@@ -464,60 +464,71 @@ class ProductoWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.max,
           children: [
-            Container(
-                width: 400,
-                height: 200,
-                decoration: BoxDecoration(
-                  shape: BoxShape.rectangle,
-                  image: DecorationImage(
-                    image: Image.memory(const Base64Decoder()
-                            .convert(producto.image.toString()))
-                        .image,
-                    fit: BoxFit.fitWidth,
-                  ),
-                  borderRadius: const BorderRadius.only(
-                      topLeft: Radius.zero,
-                      topRight: Radius.circular(25),
-                      bottomLeft: Radius.circular(25),
-                      bottomRight: Radius.circular(25)),
-                ),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 15.0, vertical: 15.0),
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.zero,
-                              topRight: Radius.zero,
-                              bottomLeft: Radius.zero,
-                              bottomRight: Radius.circular(30)),
-                          color: Color(0XFF161616),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("Finaliza en   ",
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 13,
-                                    fontFamily: 'Aeonik')),
-                            Text(Temporizador(),
-                                style: const TextStyle(
-                                    color: Color(0XFFB3FF77),
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'Aeonik'))
-                          ],
-                        ),
+            Flexible(
+                flex: 0,
+                child: Container(
+                    height: 180,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.rectangle,
+                      image: DecorationImage(
+                        image: Image.memory(const Base64Decoder()
+                                .convert(producto.image.toString()))
+                            .image,
+                        fit: BoxFit.cover,
                       ),
-                      const Icon(Icons.favorite_border, color: Colors.white),
-                    ])),
+                      borderRadius: const BorderRadius.only(
+                          topLeft: Radius.zero,
+                          topRight: Radius.circular(25),
+                          bottomLeft: Radius.circular(25),
+                          bottomRight: Radius.circular(25)),
+                    ),
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 15.0, vertical: 15.0),
+                            decoration: const BoxDecoration(
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Color(0XFF161616),
+                                  blurRadius: 10.0,
+                                  spreadRadius: 0.0,
+                                  offset: Offset(2.0,
+                                      5.0), // shadow direction: bottom right
+                                )
+                              ],
+                              shape: BoxShape.rectangle,
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.zero,
+                                  topRight: Radius.zero,
+                                  bottomLeft: Radius.zero,
+                                  bottomRight: Radius.circular(30)),
+                              color: Color(0XFF161616),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text("Finaliza en   ",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 13,
+                                        fontFamily: 'Aeonik')),
+                                Text(Temporizador(),
+                                    style: const TextStyle(
+                                        color: Color(0XFFB3FF77),
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: 'Aeonik'))
+                              ],
+                            ),
+                          ),
+                          const Icon(Icons.favorite_border,
+                              color: Colors.white),
+                        ]))),
 
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -592,9 +603,6 @@ class ProductoWidget extends StatelessWidget {
               )
             ]),
             //const Spacer(),
-            const SizedBox(
-              height: 30,
-            )
           ],
         ),
       ),
@@ -603,8 +611,7 @@ class ProductoWidget extends StatelessWidget {
 }
 
 class PujasList extends StatefulWidget {
-  const PujasList({Key? key, this.searchResults = const []})
-      : super(key: key);
+  const PujasList({Key? key, this.searchResults = const []}) : super(key: key);
   final List<Producto> searchResults;
   @override
   PujasListState createState() => PujasListState();
@@ -635,7 +642,7 @@ class PujasListState extends State<PujasList> {
           } else {
             return ListView.builder(
                 padding:
-                const EdgeInsets.symmetric(horizontal: 8.0, vertical: 0.0),
+                    const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
                 itemBuilder: (BuildContext context, int index) {
                   return PujaWidget(producto: _displayedProducts[index]);
                 },
@@ -675,15 +682,15 @@ class PujaWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        color: Colors.transparent,
+        color: Color(0XFF161616),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 20.0),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.transparent,
+          backgroundColor: Color(0XFF161616),
           surfaceTintColor: Colors.transparent,
           shadowColor: Colors.transparent,
-          padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
+          padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
         ),
         onPressed: () {
           Navigator.push(
@@ -699,16 +706,17 @@ class PujaWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.max,
           children: [
-            Container(
-                width: 400,
-                height: 200,
+            Flexible(
+              flex: 0,
+                child: Container(
+                height: 180,
                 decoration: BoxDecoration(
                   shape: BoxShape.rectangle,
                   image: DecorationImage(
                     image: Image.memory(const Base64Decoder()
-                        .convert(producto.image.toString()))
+                            .convert(producto.image.toString()))
                         .image,
-                    fit: BoxFit.fitWidth,
+                    fit: BoxFit.cover,
                   ),
                   borderRadius: const BorderRadius.only(
                       topLeft: Radius.zero,
@@ -725,6 +733,15 @@ class PujaWidget extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 15.0, vertical: 15.0),
                         decoration: const BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                              color: Color(0XFF161616),
+                              blurRadius: 10.0,
+                              spreadRadius: 0.0,
+                              offset: Offset(2.0,
+                                  5.0), // shadow direction: bottom right
+                            )
+                          ],
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.only(
                               topLeft: Radius.zero,
@@ -752,7 +769,7 @@ class PujaWidget extends StatelessWidget {
                         ),
                       ),
                       const Icon(Icons.favorite_border, color: Colors.white),
-                    ])),
+                    ]))),
 
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -779,11 +796,11 @@ class PujaWidget extends StatelessWidget {
                     borderRadius: BorderRadius.circular(47),
                     color: Color(0XFFFE6F1F),
                   ),
-                  child:  Text("Editar Puja",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontFamily: 'Aeonik')),
+                  child: Text("Editar Puja",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontFamily: 'Aeonik')),
                 ),
               ]),
               Column(
@@ -813,10 +830,6 @@ class PujaWidget extends StatelessWidget {
                 ],
               )
             ]),
-            //const Spacer(),
-            const SizedBox(
-              height: 30,
-            )
           ],
         ),
       ),
