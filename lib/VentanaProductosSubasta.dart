@@ -541,7 +541,7 @@ class ProductoWidget extends StatelessWidget {
                           ),
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 10.0, vertical: 10.0),
+                                horizontal: 11.0, vertical: 11.0),
                             child: const Icon(Icons.favorite_border,
                                 color: Colors.white),
                           )
