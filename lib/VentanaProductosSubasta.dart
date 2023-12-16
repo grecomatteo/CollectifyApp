@@ -97,9 +97,11 @@ class _ListaProductosState extends State<ListaProductosSubasta>
               case 0:
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          ListaProductos(connected: user)),
+                  PageRouteBuilder(
+                      pageBuilder: (context,_,__) => ListaProductos(connected: user),
+                      transitionDuration: const Duration(seconds: 0)
+                  ),
+
                 );
                 break;
               case 1: //Articulos con me gusta, por implementar

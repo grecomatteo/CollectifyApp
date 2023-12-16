@@ -491,8 +491,10 @@ class NavigationBar extends StatelessWidget {
           case 1: //Articulos con me gusta, por implementar
             Navigator.push(
               context,
-              MaterialPageRoute(
-                  builder: (context) => ListaProductosSubasta(connected: user)),
+              PageRouteBuilder(
+                  pageBuilder: (context,_,__) => ListaProductosSubasta(connected: user),
+                  transitionDuration: const Duration(seconds: 0)
+              ),
             );
             break;
           case 2:
