@@ -7,7 +7,7 @@ import 'VentanaAnadirProducto.dart';
 import 'VentanaChat.dart';
 import 'VentanaListaProductos.dart';
 import 'VentanaPerfil.dart';
-import 'VentanaProducto.dart';
+import 'VentanaProductoSubasta.dart';
 
 Usuario user = Usuario();
 bool isValid = true;
@@ -470,7 +470,7 @@ class ProductoWidget extends StatelessWidget {
             context,
             MaterialPageRoute(
                 builder: (context) =>
-                    VentanaProducto(connected: user, producto: producto)),
+                    VentanaProductoSubasta(connected: user, producto: producto)),
           );
           //Aqui irá la descripcion detallada de producto
         },
@@ -717,7 +717,7 @@ class PujaWidget extends StatelessWidget {
             context,
             MaterialPageRoute(
                 builder: (context) =>
-                    VentanaProducto(connected: user, producto: producto)),
+                    VentanaProductoSubasta(connected: user, producto: producto)),
           );
           //Aqui irá la descripcion detallada de producto
         },
