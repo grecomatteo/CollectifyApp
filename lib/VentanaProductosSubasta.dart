@@ -97,7 +97,7 @@ class _ListaProductosState extends State<ListaProductosSubasta>
               dragStartBehavior: DragStartBehavior.start,
               dividerColor: const Color(0XFF161616),
               enableFeedback: true,
-              //indicatorWeight: 4.0,
+              indicatorWeight: 4.0,
               indicator: const BoxDecoration(
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(15),
@@ -131,8 +131,14 @@ class _ListaProductosState extends State<ListaProductosSubasta>
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  ProductList(searchResults: _searchResults),
-                  PujasList(searchResults: _searchResults),
+                  Container(decoration: const BoxDecoration(
+                    color: Color(0XFF161616),
+                  ),
+                      child:ProductList(searchResults: _searchResults)),
+                  Container(decoration: const BoxDecoration(
+                    color: Color(0XFF161616),
+                  ),
+                  child:PujasList(searchResults: _searchResults)),
                 ],
               ),
             ),
