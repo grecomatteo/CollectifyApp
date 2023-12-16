@@ -74,6 +74,89 @@ class _ListaProductosState extends State<ListaProductosSubasta>
   Widget build(BuildContext context) {
     user = connected;
     return Scaffold(
+      extendBody: true,
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+        child:
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 0.0),
+          decoration: const BoxDecoration(
+          color: Color(0XFF343434),
+          shape: BoxShape.rectangle,
+          borderRadius: BorderRadius.all(Radius.circular(50)),
+        ),
+        child: BottomNavigationBar(
+          currentIndex: 1,
+          type: BottomNavigationBarType.fixed,
+          backgroundColor: Colors.transparent,
+          selectedItemColor: Color(0XFFB3FF77),
+          unselectedItemColor: Colors.grey,
+          selectedIconTheme: const IconThemeData(size: 30),
+          onTap: (int index) {
+            switch (index) {
+              case 0:
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          ListaProductos(connected: user)),
+                );
+                break;
+              case 1: //Articulos con me gusta, por implementar
+              //no hace nada
+                break;
+              case 2:
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          VentanaAnadirProducto(user: user)),
+                );
+                break;
+              case 3:
+                int uid = user.usuarioID ?? -1;
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => VentanaChat(id: uid)),
+                );
+                break;
+              case 4:
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => VentanaPerfil(
+                        mUser: user,
+                        rUser: user,
+                      )),
+                );
+                break;
+            }
+          },
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home_filled),
+              label: "Inicio",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.gavel_rounded),
+              label: "Subastas",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.add_box_outlined),
+              label: "Añadir",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.chat_rounded),
+              label: "Chat",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person_rounded),
+              label: "Perfil",
+            ),
+          ],
+        ),
+      )) ,
       resizeToAvoidBottomInset: false,
       body: Container(
         color: Colors.black,
@@ -140,83 +223,6 @@ class _ListaProductosState extends State<ListaProductosSubasta>
                     color: Color(0XFF161616),
                   ),
                   child:PujasList(searchResults: _searchResults)),
-                ],
-              ),
-            ),
-            Container(
-              decoration: const BoxDecoration(
-                color: Color(0XFF343434),
-                shape: BoxShape.rectangle,
-                borderRadius: BorderRadius.all(Radius.circular(50)),
-              ),
-              child: BottomNavigationBar(
-                currentIndex: 1,
-                onTap: (int index) {
-                  switch (index) {
-                    case 0:
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                ListaProductos(connected: user)),
-                      );
-                      break;
-                    case 1: //Articulos con me gusta, por implementar
-                      //no hace nada
-                      break;
-                    case 2:
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                VentanaAnadirProducto(user: user)),
-                      );
-                      break;
-                    case 3:
-                      int uid = user.usuarioID ?? -1;
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => VentanaChat(id: uid)),
-                      );
-                      break;
-                    case 4:
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => VentanaPerfil(
-                                  mUser: user,
-                                  rUser: user,
-                                )),
-                      );
-                      break;
-                  }
-                },
-                type: BottomNavigationBarType.fixed,
-                backgroundColor: Color(0XFF343434),
-                selectedItemColor: Color(0XFFB3FF77),
-                unselectedItemColor: Colors.grey,
-                items: const <BottomNavigationBarItem>[
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.home),
-                    label: 'Inicio',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.gavel),
-                    label: 'Subastas',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.add_circle),
-                    label: 'Añadir',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.chat_rounded),
-                    label: 'Chat',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.person),
-                    label: 'Perfil',
-                  ),
                 ],
               ),
             ),
@@ -485,9 +491,9 @@ class ProductoWidget extends StatelessWidget {
                       ),
                       borderRadius: const BorderRadius.only(
                           topLeft: Radius.zero,
-                          topRight: Radius.circular(25),
-                          bottomLeft: Radius.circular(25),
-                          bottomRight: Radius.circular(25)),
+                          topRight: Radius.circular(20),
+                          bottomLeft: Radius.circular(20),
+                          bottomRight: Radius.circular(20)),
                     ),
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -512,7 +518,7 @@ class ProductoWidget extends StatelessWidget {
                                   topLeft: Radius.zero,
                                   topRight: Radius.zero,
                                   bottomLeft: Radius.zero,
-                                  bottomRight: Radius.circular(30)),
+                                  bottomRight: Radius.circular(20)),
                               color: Color(0XFF161616),
                             ),
                             child: Row(
@@ -533,8 +539,13 @@ class ProductoWidget extends StatelessWidget {
                               ],
                             ),
                           ),
-                          const Icon(Icons.favorite_border,
-                              color: Colors.white),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10.0, vertical: 10.0),
+                            child: const Icon(Icons.favorite_border,
+                                color: Colors.white),
+                          )
+
                         ]))),
 
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [

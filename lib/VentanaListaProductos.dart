@@ -67,29 +67,39 @@ class _ListaProductosState extends State<ListaProductos> {
   Widget build(BuildContext context) {
     user = connected;
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: Container(
-        color: Colors.black,
-        child: Column(
-          children: [
-            //SizedBox(height: 20),
-            SearchBar(onSearchResults: (results) {
-              setState(() {
-                _searchResults = results;
-              });
-              if (results.isEmpty) {
-                cargarProductos();
-              }
-            }),
-            const SizedBox(height: 15),
-            Expanded(
-              child: ProductList(searchResults: _searchResults),
-            ),
-          ],
+        extendBody: true,
+        resizeToAvoidBottomInset: false,
+        body: Container(
+          color: Colors.black,
+          child: Column(
+            children: [
+              //SizedBox(height: 20),
+              SearchBar(onSearchResults: (results) {
+                setState(() {
+                  _searchResults = results;
+                });
+                if (results.isEmpty) {
+                  cargarProductos();
+                }
+              }),
+              const SizedBox(height: 15),
+              Expanded(
+                child: ProductList(searchResults: _searchResults),
+              ),
+            ],
+          ),
         ),
-      ),
-      bottomNavigationBar: const NavigationBar(),
-    );
+        bottomNavigationBar: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 0.0),
+              decoration: const BoxDecoration(
+                color: Color(0XFF343434),
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.all(Radius.circular(50)),
+              ),
+              child: const NavigationBar(),
+            )));
   }
 }
 
@@ -397,6 +407,7 @@ class ProductoWidget extends StatelessWidget {
           Flexible(
               flex: 100,
               child: Container(
+                height: 200,
                 decoration: BoxDecoration(
                   shape: BoxShape.rectangle,
                   image: DecorationImage(
@@ -407,32 +418,42 @@ class ProductoWidget extends StatelessWidget {
                   ),
                   borderRadius: BorderRadius.circular(10),
                 ),
+                child:Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
+                      child:const Icon(Icons.favorite_border,
+                          color: Colors.white),
+                    ),
+
+                  ],
+                ),
               )),
           //const Spacer(),
           const SizedBox(height: 7),
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(
-                producto.nombre!,
-                style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    overflow: TextOverflow.ellipsis,
-                    fontFamily: 'Aeonik'),
-              ),
-              Text(
-                "${producto.categoria}",
-                style: const TextStyle(
-                    color: Colors.grey, fontSize: 13, fontFamily: 'Aeonik'),
-              ),
-            ]),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text(
+                    producto.nombre!,
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        overflow: TextOverflow.ellipsis,
+                        fontFamily: 'Aeonik'),
+                  ),
+                  Text(
+                    "${producto.categoria}",
+                    style: const TextStyle(
+                        color: Colors.grey, fontSize: 13, fontFamily: 'Aeonik'),
+                  ),
+                ]),
+                Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
                   Text("${producto.precio} €",
                       style: const TextStyle(
                         color: Color(0XFFB3FF77),
@@ -442,7 +463,7 @@ class ProductoWidget extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       )),
                 ]),
-          ]),
+              ]),
           const Spacer(),
         ],
       ),
@@ -456,10 +477,12 @@ class NavigationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
+      currentIndex: 0,
       type: BottomNavigationBarType.fixed,
-      backgroundColor: Color(0XFF343434),
+      backgroundColor: Colors.transparent,
       selectedItemColor: Color(0XFFB3FF77),
       unselectedItemColor: Colors.grey,
+      selectedIconTheme: const IconThemeData(size: 30),
       onTap: (int index) {
         switch (index) {
           case 0:
@@ -498,17 +521,17 @@ class NavigationBar extends StatelessWidget {
             break;
         }
       },
-      items: const [
+      items: const[
         BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: "Productos",
+          icon: Icon(Icons.home_filled),
+          label: "Inicio",
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.gavel),
+          icon: Icon(Icons.gavel_rounded),
           label: "Subastas",
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.add_circle),
+          icon: Icon(Icons.add_box_outlined),
           label: "Añadir",
         ),
         BottomNavigationBarItem(
@@ -516,7 +539,7 @@ class NavigationBar extends StatelessWidget {
           label: "Chat",
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.person),
+          icon: Icon(Icons.person_rounded),
           label: "Perfil",
         ),
       ],
