@@ -231,7 +231,7 @@ class VentanaProducto extends StatelessWidget {
                         ),
                       ],
                     ),
-
+                  SizedBox(height:20),
                   ElevatedButton(
                     onPressed:() {
                     Conexion().getUsuarioByID(producto.usuarioID!).then((value)
