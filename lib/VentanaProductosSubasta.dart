@@ -98,7 +98,7 @@ class _ListaProductosState extends State<ListaProductosSubasta>
               dragStartBehavior: DragStartBehavior.start,
               dividerColor: const Color(0XFF161616),
               enableFeedback: true,
-              indicatorWeight: 4.0,
+              indicatorWeight: 3.0,
               indicator: const BoxDecoration(
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(15),
