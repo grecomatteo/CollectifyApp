@@ -48,8 +48,9 @@ class _ListaProductosState extends State<ListaProductosSubasta>
   @override
   void initState() {
     super.initState();
-    cargarProductos();
+
     _tabController = TabController(length: 2, vsync: this);
+    _handleTabSelection();
     _tabController.addListener(_handleTabSelection);
     // Inicializa _searchResults con todos los productos al momento de la creación del estado
   }
