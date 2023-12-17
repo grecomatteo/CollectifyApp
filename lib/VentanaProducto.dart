@@ -30,7 +30,7 @@ class VentanaProducto extends StatelessWidget {
       body: Stack(
         children: [
           Container(
-            height: MediaQuery.of(context).size.width * 0.80,
+            height: MediaQuery.of(context).size.height * 0.40,
             decoration: BoxDecoration(
                 image: DecorationImage(
                   image: MemoryImage(

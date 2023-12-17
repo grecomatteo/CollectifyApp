@@ -24,6 +24,7 @@ class Producto {
   int? ultimaOferta;
   int? idUserUltimaPuja;
   String? categoria;
+  String? nombreUsuarioUltimaPuja;
   Producto(
       {this.usuarioID,
       this.productoID,
@@ -789,14 +790,48 @@ class Conexion {
 
     return true;
   }
-  Future<bool> addUltimaPuja(int productID, int userID, int ultimaOferta) async {
+  Future<bool> addUltimaPuja(int productID, int userID, String nombre, int ultimaOferta) async {
     if (conn == null) await conectar();
     await conn?.query(
-        "UPDATE productos_subasta SET idUsuarioUltPuja = $userID, ultimaOferta = $ultimaOferta WHERE idProducto = $productID; "
+        "UPDATE productos_subasta SET idUsuarioUltPuja = $userID, nombreUsuarioUltPuja = '$nombre' ,ultimaOferta = $ultimaOferta WHERE idProducto = $productID; "
     ).then((results) => {print("Puja añadida")});
 
 
     return true;
+  }
+  Future<Producto> getSubastaById( int id) async {
+    if (conn == null) await conectar();
+    Producto producto = Producto();
+    await conn?.query('''SELECT p.*, ps.*,i.image, u.esPremium, u.nick
+        FROM producto p 
+        JOIN productos_subasta ps ON ps.idProducto = p.pruductoID 
+        JOIN usuario u ON p.usuarioID = u.userID 
+        JOIN imagen i ON p.pruductoID = i.id_producto
+        WHERE p.pruductoID = $id;
+    ''').then((results) => {
+      for (var row in results)
+        {
+          producto = Producto(
+            usuarioID: row['usuarioID'],
+            productoID: row['pruductoID'],
+            usuarioNick: row['nick'],
+            nombre: row['nombre'],
+            descripcion: row['descripcion'],
+            precio: row['precio'],
+            image: row['image'],
+            esPremium: row['esPremium'] == 1 ? true : false,
+            esSubasta: row['esSubasta'] == 1 ? true : false,
+            categoria: row['categoria'],
+          ),
+          producto.fechaFin = row['fechaFin'],
+          producto.precioInicial = row['precioInicial'],
+          producto.ultimaOferta = row['ultimaOferta'],
+          producto.idUserUltimaPuja = row['idUsuarioUltPuja'],
+          producto.nombreUsuarioUltimaPuja = row['nombreUsuarioUltPuja']
+
+        }
+    });
+    return producto;
   }
 
   Future<List<Producto>> getProductosSubasta() async {
