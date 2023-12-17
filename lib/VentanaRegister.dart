@@ -778,6 +778,10 @@ class _RegistroFormState extends State<RegistroForm> {
                             Conexion().hacerEmpresa(id!);
                           });
                         }
+                        print("se ha hecho empresa");
+                        Conexion().anadirCategoriasUsuario(tags, nick);
+                        print("se han añadido las categorias");
+
                         Navigator.push(
                             context,
                             MaterialPageRoute(

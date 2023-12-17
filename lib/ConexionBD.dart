@@ -927,4 +927,15 @@ class Conexion {
     eventos = eventosAux;
     return eventos;
   }
+  Future<void> anadirCategoriasUsuario(List<String> categorias, String nick)async {
+
+    if (Conexion.conn == null) await Conexion().conectar();
+    int userID = (await Conexion().getUsuarioByNick(nick))!.usuarioID!;
+    for (String categoria in categorias) {
+      await Conexion.conn?.query(
+          "INSERT INTO categorias_usuario (usuarioID, categoria) "
+              "VALUES ('$userID', '$categoria'); ");
+    }
+  }
 }
+
