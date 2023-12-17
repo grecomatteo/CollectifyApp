@@ -1,7 +1,6 @@
 
 import 'dart:io';
 
-import 'package:collectify/VentanaProducto.dart';
 import 'package:flutter/material.dart';
 import 'package:collectify/ConexionBD.dart';
 import 'package:flutter/services.dart';
@@ -633,7 +632,9 @@ class _AddProductFormState extends State<AddProductForm> {
                         pickedFile?.readAsBytes().then((value1) {
                           prod.image = Blob.fromBytes(value1);
                           Conexion().anadirImagen(productName, newId, value1).then((value) {
-                            Navigator.of(context).pop();
+                            Navigator.pop(context);
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) => ListaProductos(connected: logged)));
                           });
                         });
                       }

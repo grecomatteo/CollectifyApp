@@ -267,9 +267,7 @@ class Conexion {
   }
 
   Future<List<Producto>> getProductosBasadoPreferencias(Usuario user) async {
-    if (productosVentaBasadoPreferencias.isNotEmpty) {
-      return productosVentaBasadoPreferencias;
-    }
+
     if (conn == null) await conectar();
     String categorias = " ";
     List<Producto> productos = [];
