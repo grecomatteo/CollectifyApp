@@ -151,7 +151,7 @@ class VentanaProducto extends StatelessWidget {
                       const SizedBox(height: 10),
                       Center(
                         child: SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.3,
+                            height: MediaQuery.of(context).size.height * 0.27,
                             width: MediaQuery.of(context).size.width * 0.9,
                             child: DefaultTabController(
                               length: 3,
