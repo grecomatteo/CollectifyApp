@@ -18,6 +18,8 @@ class VentanaProductoSubasta extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    user = connected;
+    product = producto;
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(children: [
