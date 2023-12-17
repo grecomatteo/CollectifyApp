@@ -22,6 +22,8 @@ class _RegistroFormState extends State<RegistroForm> {
   String _isValidEmail = "true";
   bool _isValidNick = true;
   bool ok = true;
+  List<String> tags = [];
+  List<bool> pressed = List<bool>.filled(8, false, growable:false);
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -341,6 +343,370 @@ class _RegistroFormState extends State<RegistroForm> {
                                 ),
                               ),
                             ],
+                          ),
+                          Text(
+                            'Indica tus preferencias',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                height: 4,
+                                fontFamily: 'Aeonik',
+                              )
+                          ),
+                          Container(
+                            height: 130,
+                            child: ListView(
+                                scrollDirection: Axis.horizontal,
+                                children: [
+                                  Card(
+                                    margin: EdgeInsets.symmetric(horizontal: 10),
+                                    color: Colors.transparent,
+                                    child: ElevatedButton(
+                                        onPressed: (){
+                                          if(tags.contains("Arte y artesania"))
+                                            {
+                                              tags.remove("Arte y artesania");
+                                            }
+                                          else{ tags.add("Arte y artesanía"); }
+                                          setState((){ pressed[0] = !pressed[0]; });
+                                        },
+                                        child: Column(
+                                            children: <Widget>[
+                                              Expanded(
+                                                child: Image.asset(
+                                                    'lib/assets/tags/Arte_artesania.png',
+                                                    width: 70,
+                                                    height: 70
+                                                ),
+                                              ),
+                                              Text(
+                                                  'Arte y artesanía',
+                                                  textAlign: TextAlign.center,
+                                                  style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontFamily: 'Aeonik',
+                                                  )
+                                              )
+                                            ]
+                                        ),
+
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: pressed[0] ? Colors.lightGreen : Colors.white24,
+                                          padding: EdgeInsets.zero,
+                                          fixedSize: const Size(80, 130),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(5.0),
+                                          ),
+                                        )
+                                    ),
+                                  ),
+                                  Card(
+                                    margin: EdgeInsets.symmetric(horizontal: 10),
+                                    color: Colors.transparent,
+                                    child: ElevatedButton(
+                                        onPressed: (){
+                                          if(tags.contains("Joyas y relojes"))
+                                          {
+                                            tags.remove("Joyas y relojes");
+                                          }
+                                          else{ tags.add("Joyas y relojes"); }
+                                          setState((){ pressed[1] = !pressed[1]; });
+                                        },
+                                        child: Column(
+                                            children: <Widget>[
+                                              Expanded(
+                                                child: Image.asset(
+                                                    'lib/assets/tags/Joyas_relojes.png',
+                                                    width: 70,
+                                                    height: 70
+                                                ),
+                                              ),
+                                              Text(
+                                                  'Joyas y relojes',
+                                                  textAlign: TextAlign.center,
+                                                  style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontFamily: 'Aeonik',
+                                                  )
+                                              )
+                                            ]
+                                        ),
+
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: pressed[1] ? Colors.lightGreen : Colors.white24,
+                                          padding: EdgeInsets.zero,
+                                          fixedSize: const Size(80, 130),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(5.0),
+                                          ),
+                                        )
+                                    ),
+                                  ),
+                                  Card(
+                                    margin: EdgeInsets.symmetric(horizontal: 10),
+                                    color: Colors.transparent,
+                                    child: ElevatedButton(
+                                        onPressed: (){
+                                          if(tags.contains("Juguetes"))
+                                          {
+                                            tags.remove("Juguetes");
+                                          }
+                                          else{ tags.add("Juguetes"); }
+                                          setState((){ pressed[2] = !pressed[2]; });
+                                        },
+                                        child: Column(
+                                            children: <Widget>[
+                                              Expanded(
+                                                child: Image.asset(
+                                                    'lib/assets/tags/Juguetes.png',
+                                                    width: 70,
+                                                    height: 70
+                                                ),
+                                              ),
+                                              Text(
+                                                  'Juguetes',
+                                                  textAlign: TextAlign.center,
+                                                  style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontFamily: 'Aeonik',
+                                                  )
+                                              ),
+                                              Text(
+                                                  ''
+                                              )
+                                            ]
+                                        ),
+
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: pressed[2] ? Colors.lightGreen : Colors.white24,
+                                          padding: EdgeInsets.zero,
+                                          fixedSize: const Size(80, 130),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(5.0),
+                                          ),
+                                        )
+                                    ),
+                                  ),
+                                  Card(
+                                    margin: EdgeInsets.symmetric(horizontal: 10),
+                                    color: Colors.transparent,
+                                    child: ElevatedButton(
+                                        onPressed: (){
+                                          if(tags.contains("Libros y comics"))
+                                          {
+                                            tags.remove("Libros y comics");
+                                          }
+                                          else{ tags.add("Libros y comics"); }
+                                          setState((){ pressed[3] = !pressed[3]; });
+                                        },
+                                        child: Column(
+                                            children: <Widget>[
+                                              Expanded(
+                                                child: Image.asset(
+                                                    'lib/assets/tags/Libros_comics.png',
+                                                    width: 70,
+                                                    height: 70
+                                                ),
+                                              ),
+                                              Text(
+                                                  'Libros y comics',
+                                                  textAlign: TextAlign.center,
+                                                  style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontFamily: 'Aeonik',
+                                                  )
+                                              )
+                                            ]
+                                        ),
+
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: pressed[3] ? Colors.lightGreen : Colors.white24,
+                                          padding: EdgeInsets.zero,
+                                          fixedSize: const Size(80, 130),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(5.0),
+                                          ),
+                                        )
+                                    ),
+                                  ),
+                                  Card(
+                                    margin: EdgeInsets.symmetric(horizontal: 10),
+                                    color: Colors.transparent,
+                                    child: ElevatedButton(
+                                        onPressed: (){
+                                          if(tags.contains("Monedas"))
+                                          {
+                                            tags.remove("Monedas");
+                                          }
+                                          else{ tags.add("Monedas"); }
+                                          setState((){ pressed[4] = !pressed[4]; });
+                                        },
+                                        child: Column(
+                                            children: <Widget>[
+                                              Expanded(
+                                                child: Image.asset(
+                                                    'lib/assets/tags/Monedas_sellos.png',
+                                                    width: 70,
+                                                    height: 70
+                                                ),
+                                              ),
+                                              Text(
+                                                  'Monedas',
+                                                  textAlign: TextAlign.center,
+                                                  style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontFamily: 'Aeonik',
+                                                  )
+                                              ),
+                                              Text(
+                                                  ''
+                                              )
+                                            ]
+                                        ),
+
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: pressed[4] ? Colors.lightGreen : Colors.white24,
+                                          padding: EdgeInsets.zero,
+                                          fixedSize: const Size(80, 130),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(5.0),
+                                          ),
+                                        )
+                                    ),
+                                  ),
+                                  Card(
+                                    margin: EdgeInsets.symmetric(horizontal: 10),
+                                    color: Colors.transparent,
+                                    child: ElevatedButton(
+                                        onPressed: (){
+                                          if(tags.contains("Música"))
+                                          {
+                                            tags.remove("Música");
+                                          }
+                                          else{ tags.add("Música"); }
+                                          setState((){ pressed[5] = !pressed[5]; });
+                                        },
+                                        child: Column(
+                                            children: <Widget>[
+                                              Expanded(
+                                                child: Image.asset(
+                                                    'lib/assets/tags/Musica.png',
+                                                    width: 70,
+                                                    height: 70
+                                                ),
+                                              ),
+                                              Text(
+                                                  'Música',
+                                                  textAlign: TextAlign.center,
+                                                  style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontFamily: 'Aeonik',
+                                                  )
+                                              ),
+                                              Text(
+                                                  ''
+                                              )
+                                            ]
+                                        ),
+
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: pressed[5] ? Colors.lightGreen : Colors.white24,
+                                          padding: EdgeInsets.zero,
+                                          fixedSize: const Size(80, 130),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(5.0),
+                                          ),
+                                        )
+                                    ),
+                                  ),
+                                  Card(
+                                    margin: EdgeInsets.symmetric(horizontal: 10),
+                                    color: Colors.transparent,
+                                    child: ElevatedButton(
+                                        onPressed: (){
+                                          if(tags.contains("Postales y sellos"))
+                                          {
+                                            tags.remove("Postales y sellos");
+                                          }
+                                          else{ tags.add("Postales y sellos"); }
+                                          setState((){ pressed[6] = !pressed[6]; });
+                                        },
+                                        child: Column(
+                                            children: <Widget>[
+                                              Expanded(
+                                                child: Image.asset(
+                                                    'lib/assets/tags/Postales.png',
+                                                    width: 70,
+                                                    height: 70
+                                                ),
+                                              ),
+                                              Text(
+                                                  'Postales y sellos',
+                                                  textAlign: TextAlign.center,
+                                                  style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontFamily: 'Aeonik',
+                                                  )
+                                              )
+                                            ]
+                                        ),
+
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: pressed[6] ? Colors.lightGreen : Colors.white24,
+                                          padding: EdgeInsets.zero,
+                                          fixedSize: const Size(80, 130),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(5.0),
+                                          ),
+                                        )
+                                    ),
+                                  ),
+                                  Card(
+                                    margin: EdgeInsets.symmetric(horizontal: 10),
+                                    color: Colors.transparent,
+                                    child: ElevatedButton(
+                                        onPressed: (){
+                                          if(tags.contains("Ropa"))
+                                          {
+                                            tags.remove("Ropa");
+                                          }
+                                          else{ tags.add("Ropa"); }
+                                          setState((){ pressed[7] = !pressed[7]; });
+                                        },
+                                        child: Column(
+                                            children: <Widget>[
+                                              Expanded(
+                                                child: Image.asset(
+                                                    'lib/assets/tags/Ropa.png',
+                                                    width: 70,
+                                                    height: 70
+                                                ),
+                                              ),
+                                              Text(
+                                                  'Ropa',
+                                                  textAlign: TextAlign.center,
+                                                  style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontFamily: 'Aeonik',
+                                                  )
+                                              ),
+                                              Text(
+                                                  ''
+                                              )
+                                            ]
+                                        ),
+
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: pressed[7] ? Colors.lightGreen : Colors.white24,
+                                          padding: EdgeInsets.zero,
+                                          fixedSize: const Size(80, 130),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(5.0),
+                                          ),
+                                        )
+                                    ),
+                                  ),
+                                ]
+                            ),
                           ),
                         ],
                       )))),
