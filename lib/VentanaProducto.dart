@@ -48,7 +48,7 @@ class VentanaProducto extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Spacer(),
+              const Spacer(),
               Align(
                 alignment: Alignment(
                   0,
@@ -132,7 +132,7 @@ class VentanaProducto extends StatelessWidget {
                                 color: Colors.white,
                               ),
                             ),
-                            Spacer(),
+                            const Spacer(),
                             ElevatedButton(
                               onPressed: () {},
                               style: ElevatedButton.styleFrom(
@@ -150,7 +150,7 @@ class VentanaProducto extends StatelessWidget {
                       ),
                       const SizedBox(height: 10),
                       Center(
-                        child: Container(
+                        child: SizedBox(
                             height: MediaQuery.of(context).size.height * 0.3,
                             width: MediaQuery.of(context).size.width * 0.9,
                             child: DefaultTabController(
@@ -158,7 +158,7 @@ class VentanaProducto extends StatelessWidget {
                               child: Scaffold(
                                 backgroundColor: Colors.black,
                                 appBar: PreferredSize(
-                                  preferredSize: Size.fromHeight(50),
+                                  preferredSize: const Size.fromHeight(50),
                                   child: AppBar(
                                       backgroundColor: Colors.black,
                                       automaticallyImplyLeading: false,
@@ -200,7 +200,7 @@ class VentanaProducto extends StatelessWidget {
                       ),
                     ]),
               ),
-              Container(
+              SizedBox(
                 width: MediaQuery.of(context).size.width * 0.9,
                 height: MediaQuery.of(context).size.height * 0.1,
                 child: Row(
@@ -264,12 +264,12 @@ List<Widget> fixedWidgets(BuildContext context) {
       top: 20,
       left: 20,
       child: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           shape: BoxShape.circle,
           color: Colors.black,
         ),
         child: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -280,12 +280,12 @@ List<Widget> fixedWidgets(BuildContext context) {
       top: 20,
       right: 20,
       child: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           shape: BoxShape.circle,
           color: Colors.black,
         ),
         child: IconButton(
-          icon: Icon(Icons.share, color: Colors.white),
+          icon: const Icon(Icons.share, color: Colors.white),
           onPressed: () {
             final RenderBox box = context.findRenderObject() as RenderBox;
             final String textoCompartir =
@@ -303,12 +303,12 @@ List<Widget> fixedWidgets(BuildContext context) {
       top: 20,
       right: 70,
       child: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           shape: BoxShape.circle,
           color: Colors.black,
         ),
         child: IconButton(
-          icon: Icon(Icons.favorite_border, color: Colors.white),
+          icon: const Icon(Icons.favorite_border, color: Colors.white),
           onPressed: () {
             showDialog(
               context: context,
