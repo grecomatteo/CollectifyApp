@@ -99,8 +99,6 @@ class Valoracion {
 class Conexion {
   static MySqlConnection? conn;
 
-  static List<Producto> productosVentaBasadoPreferencias = [];
-  static List<Producto> productosSubastaBasadoPreferencias = [];
   static List<Evento> eventos = [];
 
   Future<bool> conectar() async {
@@ -271,7 +269,7 @@ class Conexion {
     if (conn == null) await conectar();
     String categorias = " ";
     List<Producto> productos = [];
-    debugPrint("Obteniendo categorias");
+    debugPrint("Obteniendo Productos basado preferencias");
     await getCategoriasUsuario(user).then((result) {
       if (result.isEmpty) return;
       result.forEach((element) {
@@ -307,20 +305,18 @@ class Conexion {
         productos.add(producto);
       }
     });
-    productosVentaBasadoPreferencias = productos;
+
     return productos;
   }
 
   Future<List<Producto>> getProductosSubastaBasadoPreferencias(
       Usuario user) async {
-    if (productosSubastaBasadoPreferencias.isNotEmpty) {
-      return productosSubastaBasadoPreferencias;
-    }
+
     if (conn == null) await conectar();
+    print("Obteniendo Productos subasta basado preferencias");
     String categorias = " ";
     List<Producto> productos = [];
     Producto producto;
-    debugPrint("Obteniendo categorias");
     await getCategoriasUsuario(user).then((result) {
       if (result.isEmpty) return;
       for (var element in result) {
@@ -358,7 +354,6 @@ class Conexion {
               producto.idUserUltimaPuja = row['idUsuarioUltPuja']
             }
         });
-    productosSubastaBasadoPreferencias = productos;
     return productos;
   }
 
