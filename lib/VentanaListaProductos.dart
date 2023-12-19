@@ -392,7 +392,7 @@ class ProductListState extends State<ProductList> {
           } else {
             return GridView.count(
               padding:
-              const EdgeInsets.symmetric(horizontal: 0, vertical: 10.0),
+                  const EdgeInsets.symmetric(horizontal: 0, vertical: 10.0),
               mainAxisSpacing: 5,
               crossAxisSpacing: 4,
               crossAxisCount: 2,
@@ -716,25 +716,46 @@ class NavigationBar extends StatelessWidget {
             break;
         }
       },
-      items: const [
+      items: [
         BottomNavigationBarItem(
-          icon: Icon(Icons.home_filled),
+          icon: Image(
+            color: Color(0XFFB3FF77),
+            image: AssetImage('lib/assets/BottomBar/Home.png'),
+            width: MediaQuery.of(context).size.width * 0.07,
+            height: MediaQuery.of(context).size.height * 0.03,
+          ),
           label: "Inicio",
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.gavel_rounded),
+          icon: Image(
+            image: AssetImage('lib/assets/BottomBar/Subasta.png'),
+            width: MediaQuery.of(context).size.width * 0.07,
+            height: MediaQuery.of(context).size.height * 0.03,
+          ),
           label: "Subastas",
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.add_box_outlined),
+          icon: Image(
+            image: AssetImage('lib/assets/BottomBar/AddProduct.png'),
+            width: MediaQuery.of(context).size.width * 0.07,
+            height: MediaQuery.of(context).size.height * 0.03,
+          ),
           label: "Añadir",
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.chat_rounded),
+          icon: Image(
+            image: AssetImage('lib/assets/BottomBar/Chat.png'),
+            width: MediaQuery.of(context).size.width * 0.07,
+            height: MediaQuery.of(context).size.height * 0.03,
+          ),
           label: "Chat",
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.person_rounded),
+          icon: Image(
+            image: AssetImage('lib/assets/BottomBar/Perfil.png'),
+            width: MediaQuery.of(context).size.width * 0.07,
+            height: MediaQuery.of(context).size.height * 0.03,
+          ),
           label: "Perfil",
         ),
       ],
