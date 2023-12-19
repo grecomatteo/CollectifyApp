@@ -143,31 +143,11 @@ class ChatController {
       messageVarList.add(varList);
     }
     Message m = Message.decompressObject(messageVarList);
-    //Remove m.receiverID or m.senderID's message
-    for(int i = 0; i < messages.length; i++){
-      if(messages[i].senderID == m.senderID && messages[i].receiverID == m.receiverID){
-        messages.removeAt(i);
-        break;
-      }
-      else if(messages[i].senderID == m.receiverID && messages[i].receiverID == m.senderID){
-        messages.removeAt(i);
-        break;
-      }
-    }
+
     messages.add(m);
-    //Change last message list to add the new message and remove the old one
-    for(int i = 0; i < lastMessages.length; i++){
-      if(lastMessages[i].senderID == m.senderID && lastMessages[i].receiverID == m.receiverID){
-        lastMessages.removeAt(i);
-        break;
-      }
-      else if(lastMessages[i].senderID == m.receiverID && lastMessages[i].receiverID == m.senderID){
-        lastMessages.removeAt(i);
-        break;
-      }
-    }
     messageStream.add(messages);
-    lastMessageStream.add(lastMessages);
+
+    getUsersWithCommunication(myID);
   }
 
   void handleGetAllMessages(String message)  {

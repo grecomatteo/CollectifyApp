@@ -19,8 +19,7 @@ class Message {
     var receiverIDBytes = utf8.encode(receiverID.toString());
     var receiverNameBytes = utf8.encode(receiverName);
     var messageBytes = utf8.encode(message);
-    var timeDifference = DateTime.now().timeZoneOffset;
-    var sendDateBytes = utf8.encode(sendDate.add(Duration(hours: timeDifference.inHours)).toString());
+    var sendDateBytes = utf8.encode(sendDate.toString());
 
     //Return a list of all the compressed variables
     return [senderIDBytes, senderNameBytes, receiverIDBytes, receiverNameBytes, messageBytes, sendDateBytes];
