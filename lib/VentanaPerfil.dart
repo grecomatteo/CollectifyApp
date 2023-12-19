@@ -92,7 +92,7 @@ class VentanaPerfil extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ElevatedButton(
+                if(reviewUser == myUser) ElevatedButton(
                   onPressed: () async {
                     if (await Conexion()
                         .esPremium(mUser.usuarioID as int)
@@ -128,11 +128,11 @@ class VentanaPerfil extends StatelessWidget {
                           ));
                     }
                   },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                      Colors.grey,
-                      minimumSize: Size(180, 40),
-                    ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                    Colors.grey,
+                    minimumSize: Size(180, 40),
+                  ),
                   child: const Text("Hazte premium",
                       style: TextStyle(fontFamily: 'Aeonik', fontSize: 15, color: Colors.black)),
                 ),
