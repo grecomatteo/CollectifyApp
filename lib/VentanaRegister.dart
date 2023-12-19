@@ -31,6 +31,20 @@ class _RegistroFormState extends State<RegistroForm> {
       initialDate: selectedDate,
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.dark().copyWith(
+            colorScheme: const ColorScheme.dark(
+              primary: Color(0xFFFE6F1F),
+              onPrimary: Colors.white,
+              surface: Color(0xFFFE6F1F),
+              onSurface: Colors.white,
+            ),
+            dialogBackgroundColor: Color(0xFF343434),
+          ),
+          child: child!,
+        );
+      },
     );
     if (picked != null && picked != selectedDate) {
       setState(() {
