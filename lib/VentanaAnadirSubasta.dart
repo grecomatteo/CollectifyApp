@@ -580,11 +580,6 @@ class _AddProductFormState extends State<AddProductForm> {
                                   Expanded(
                                     child: Container(
                                       padding: const EdgeInsets.only(right: 2),
-                                      decoration: const BoxDecoration(
-                                        color: Color.fromRGBO(52, 52, 52, 1),
-                                        borderRadius:
-                                        BorderRadius.all(Radius.circular(10)),
-                                      ),
                                       child: TextFormField(
                                         controller: fechaFinalController,
                                         style: const TextStyle(
@@ -594,7 +589,11 @@ class _AddProductFormState extends State<AddProductForm> {
                                         ),
                                         readOnly: true,
                                         decoration: InputDecoration(
-                                          labelText: 'Fecha de nacimiento',
+                                          hintText: 'Fecha de nacimiento',
+                                          hintStyle: const TextStyle(
+                                            color: Colors.grey,
+                                            fontFamily: 'Aeonik',
+                                          ),
                                           suffixStyle: const TextStyle(
                                             color: Colors.white,
                                             fontSize: 15,
@@ -614,7 +613,7 @@ class _AddProductFormState extends State<AddProductForm> {
                                               padding: const EdgeInsets.all(20.0),
                                             ),
                                             child: const Text(
-                                              'Seleccionar Fecha',
+                                              '',
                                               style: TextStyle(
                                                 color: Colors.white,
                                                 fontSize: 15,
@@ -626,16 +625,8 @@ class _AddProductFormState extends State<AddProductForm> {
                                           labelStyle: TextStyle(
                                               color: Color.fromRGBO(255, 255, 255, 0.4)),
                                           filled: true,
-                                          fillColor: Color.fromRGBO(52, 52, 52, 1),
-                                          border: const OutlineInputBorder(
-                                            borderRadius:
-                                            BorderRadius.all(Radius.circular(10)),
-                                          ),
-                                          focusedBorder: const OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color: Color.fromRGBO(179, 255, 119, 1),
-                                                width: 2.0),
-                                          ),
+                                          fillColor: Colors.white24,
+                                          border: OutlineInputBorder(),
                                         ),
                                       ),
                                     )
