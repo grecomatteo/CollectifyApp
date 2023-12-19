@@ -27,7 +27,7 @@ class VentanaProducto extends StatelessWidget {
     product = producto;
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Color(0xFF161616),
       body: Stack(
         children: [
           Container(
@@ -115,7 +115,7 @@ class VentanaProducto extends StatelessWidget {
                           fixedSize: Size(
                               MediaQuery.of(context).size.width * 0.95, 65),
                           backgroundColor:
-                              const Color.fromARGB(190, 52, 52, 52),
+                              const Color(0xFF343434),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -157,11 +157,11 @@ class VentanaProducto extends StatelessWidget {
                             child: DefaultTabController(
                               length: 3,
                               child: Scaffold(
-                                backgroundColor: Colors.black,
+                                backgroundColor: Color(0xFF161616),
                                 appBar: PreferredSize(
                                   preferredSize: const Size.fromHeight(50),
                                   child: AppBar(
-                                      backgroundColor: Colors.black,
+                                      backgroundColor: Color(0xFF161616),
                                       automaticallyImplyLeading: false,
                                       bottom: const TabBar(
                                         labelColor: Colors.white,
