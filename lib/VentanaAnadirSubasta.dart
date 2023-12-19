@@ -100,7 +100,7 @@ class _AddProductFormState extends State<AddProductForm> {
                                   'subasta',
                                   style: const TextStyle(
                                     fontSize: 50,
-                                    color: Colors.orange,
+                                    color: Color(0xfffe6f1f),
                                     fontFamily: 'Aeonik',
                                   )
                               ),

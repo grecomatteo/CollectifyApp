@@ -100,7 +100,7 @@ class _AddProductFormState extends State<AddProductForm> {
                                   'artículo',
                                   style: const TextStyle(
                                     fontSize: 50,
-                                    color: Colors.lightGreen,
+                                    color: Color(0xffb3ff77),
                                     fontFamily: 'Aeonik',
                                   )
                               ),
@@ -142,7 +142,7 @@ class _AddProductFormState extends State<AddProductForm> {
                                   controller: nameController,
                                   decoration: InputDecoration(
                                       filled: true,
-                                      fillColor: Colors.white24,
+                                      fillColor: Color(0xff343434),
                                       border: OutlineInputBorder(),
                                       hintText: 'Titulo',
                                       hintStyle: const TextStyle(
@@ -197,7 +197,7 @@ class _AddProductFormState extends State<AddProductForm> {
                                             ),
 
                                             style: ElevatedButton.styleFrom(
-                                              backgroundColor: changeColor==0 ? Colors.lightGreen : Colors.white24,
+                                              backgroundColor: changeColor==0 ? Color(0xffb3ff77) : Color(0xff343434),
                                               padding: EdgeInsets.zero,
                                               fixedSize: const Size(80, 130),
                                               shape: RoundedRectangleBorder(
@@ -235,7 +235,7 @@ class _AddProductFormState extends State<AddProductForm> {
                                             ),
 
                                             style: ElevatedButton.styleFrom(
-                                              backgroundColor: changeColor==1 ? Colors.lightGreen : Colors.white24,
+                                              backgroundColor: changeColor==1 ? Color(0xffb3ff77) : Color(0xff343434),
                                               padding: EdgeInsets.zero,
                                               fixedSize: const Size(80, 130),
                                               shape: RoundedRectangleBorder(
@@ -276,7 +276,7 @@ class _AddProductFormState extends State<AddProductForm> {
                                             ),
 
                                             style: ElevatedButton.styleFrom(
-                                              backgroundColor: changeColor==2 ? Colors.lightGreen : Colors.white24,
+                                              backgroundColor: changeColor==2 ? Color(0xffb3ff77) : Color(0xff343434),
                                               padding: EdgeInsets.zero,
                                               fixedSize: const Size(80, 130),
                                               shape: RoundedRectangleBorder(
@@ -314,7 +314,7 @@ class _AddProductFormState extends State<AddProductForm> {
                                             ),
 
                                             style: ElevatedButton.styleFrom(
-                                              backgroundColor: changeColor==3 ? Colors.lightGreen : Colors.white24,
+                                              backgroundColor: changeColor==3 ? Color(0xffb3ff77) : Color(0xff343434),
                                               padding: EdgeInsets.zero,
                                               fixedSize: const Size(80, 130),
                                               shape: RoundedRectangleBorder(
@@ -355,7 +355,7 @@ class _AddProductFormState extends State<AddProductForm> {
                                             ),
 
                                             style: ElevatedButton.styleFrom(
-                                              backgroundColor: changeColor==4 ? Colors.lightGreen : Colors.white24,
+                                              backgroundColor: changeColor==4 ? Color(0xffb3ff77) : Color(0xff343434),
                                               padding: EdgeInsets.zero,
                                               fixedSize: const Size(80, 130),
                                               shape: RoundedRectangleBorder(
@@ -396,7 +396,7 @@ class _AddProductFormState extends State<AddProductForm> {
                                             ),
 
                                             style: ElevatedButton.styleFrom(
-                                              backgroundColor: changeColor==5 ? Colors.lightGreen : Colors.white24,
+                                              backgroundColor: changeColor==5 ? Color(0xffb3ff77) : Color(0xff343434),
                                               padding: EdgeInsets.zero,
                                               fixedSize: const Size(80, 130),
                                               shape: RoundedRectangleBorder(
@@ -434,7 +434,7 @@ class _AddProductFormState extends State<AddProductForm> {
                                             ),
 
                                             style: ElevatedButton.styleFrom(
-                                              backgroundColor: changeColor==6 ? Colors.lightGreen : Colors.white24,
+                                              backgroundColor: changeColor==6 ? Color(0xffb3ff77) : Color(0xff343434),
                                               padding: EdgeInsets.zero,
                                               fixedSize: const Size(80, 130),
                                               shape: RoundedRectangleBorder(
@@ -475,7 +475,7 @@ class _AddProductFormState extends State<AddProductForm> {
                                             ),
 
                                             style: ElevatedButton.styleFrom(
-                                              backgroundColor: changeColor==7 ? Colors.lightGreen : Colors.white24,
+                                              backgroundColor: changeColor==7 ? Color(0xffb3ff77) : Color(0xff343434),
                                               padding: EdgeInsets.zero,
                                               fixedSize: const Size(80, 130),
                                               shape: RoundedRectangleBorder(
@@ -500,7 +500,7 @@ class _AddProductFormState extends State<AddProductForm> {
                                   textAlignVertical: TextAlignVertical.top,
                                   decoration: InputDecoration(
                                       filled: true,
-                                      fillColor: Colors.white24,
+                                      fillColor: Color(0xff343434),
                                       border: OutlineInputBorder(),
                                       hintText: 'Descripción',
                                       hintStyle: const TextStyle(
@@ -534,7 +534,7 @@ class _AddProductFormState extends State<AddProductForm> {
                                     controller: priceController,
                                     decoration: InputDecoration(
                                         filled: true,
-                                        fillColor: Colors.white24,
+                                        fillColor: Color(0xff343434),
                                         border: OutlineInputBorder(),
                                         hintText: '€',
                                         hintStyle: const TextStyle(
@@ -565,7 +565,7 @@ class _AddProductFormState extends State<AddProductForm> {
                                         MaterialPageRoute(builder: (context) => perfil.VentanaPerfil(mUser: logged, rUser: logged)));
                                   },
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.lightGreen,
+                                    backgroundColor: Color(0xffb3ff77),
                                     fixedSize: const Size(350, 60),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(5.0),
@@ -658,7 +658,7 @@ class _AddProductFormState extends State<AddProductForm> {
                     //Navigator.pop(context);
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange,
+                    backgroundColor: Color(0xfffe6f1f),
                     fixedSize: const Size(350, 50),
                   ),
 
