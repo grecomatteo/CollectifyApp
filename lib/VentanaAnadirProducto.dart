@@ -562,7 +562,7 @@ class _AddProductFormState extends State<AddProductForm> {
                               ElevatedButton(
                                   onPressed: () async {
                                     Navigator.push(context,
-                                        MaterialPageRoute(builder: (context) => perfil.VentanaPerfil(mUser: logged, rUser: null)));
+                                        MaterialPageRoute(builder: (context) => perfil.VentanaPerfil(mUser: logged, rUser: logged)));
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.lightGreen,
