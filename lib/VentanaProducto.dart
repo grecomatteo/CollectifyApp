@@ -105,8 +105,8 @@ class VentanaProducto extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => VentanaPerfil(
-                                        mUser: user,
-                                        rUser: value,
+                                        mUser: value!,
+                                        rUser: user,
                                       )),
                             );
                           });
@@ -206,48 +206,50 @@ class VentanaProducto extends StatelessWidget {
                 height: MediaQuery.of(context).size.height * 0.1,
                 child: Row(
                   children: [
-                    ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => VentanaMensajesChat(
-                                    user.usuarioID!, producto.usuarioID!)),
-                          );
-                        },
+                    if (producto.usuarioID != connected.usuarioID)
+                      ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => VentanaMensajesChat(
+                                      user.usuarioID!, producto.usuarioID!)),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            fixedSize: Size(
+                                MediaQuery.of(context).size.width * 0.42, 60),
+                            backgroundColor:
+                                const Color.fromARGB(255, 52, 52, 52),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(32.0),
+                            ),
+                          ),
+                          child: const Text(
+                            "Contactar",
+                            style: TextStyle(
+                              fontFamily: "Aeonik",
+                              color: Color.fromARGB(255, 179, 255, 119),
+                            ),
+                          )),
+                    const Spacer(flex: 2),
+                    if (connected.usuarioID != producto.usuarioID)
+                      ElevatedButton(
+                        onPressed: () {},
                         style: ElevatedButton.styleFrom(
                           fixedSize: Size(
                               MediaQuery.of(context).size.width * 0.42, 60),
                           backgroundColor:
-                              const Color.fromARGB(255, 52, 52, 52),
+                              const Color.fromARGB(255, 254, 111, 31),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(32.0),
                           ),
                         ),
                         child: const Text(
-                          "Contactar",
-                          style: TextStyle(
-                            fontFamily: "Aeonik",
-                            color: Color.fromARGB(255, 179, 255, 119),
-                          ),
-                        )),
-                    const Spacer(flex: 2),
-                    ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        fixedSize:
-                            Size(MediaQuery.of(context).size.width * 0.42, 60),
-                        backgroundColor:
-                            const Color.fromARGB(255, 254, 111, 31),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(32.0),
+                          "Comprar",
+                          style: TextStyle(color: Colors.white),
                         ),
                       ),
-                      child: const Text(
-                        "Comprar",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
                   ],
                 ),
               )
@@ -313,7 +315,6 @@ List<Widget> fixedWidgets(BuildContext context) {
     ),
   ];
 }
-
 
 class BotonFavorito extends StatefulWidget {
   const BotonFavorito({Key? key}) : super(key: key);
