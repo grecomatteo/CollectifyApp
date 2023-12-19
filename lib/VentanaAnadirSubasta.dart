@@ -16,8 +16,8 @@ String description = "";
 Usuario logged = new Usuario();
 
 
-class VentanaAnadirProducto extends StatelessWidget {
-  const VentanaAnadirProducto({super.key, required this.user});
+class VentanaAnadirSubasta extends StatelessWidget {
+  const VentanaAnadirSubasta({super.key, required this.user});
 
   final Usuario user;
 

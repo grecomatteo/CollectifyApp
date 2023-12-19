@@ -6,6 +6,7 @@ import 'package:google_mlkit_translation/google_mlkit_translation.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'VentanaAnadirProducto.dart';
+import 'VentanaAnadirSubasta.dart';
 import 'VentanaChat.dart';
 import 'package:collectify/ConexionBD.dart';
 
@@ -124,7 +125,7 @@ class _SearchBarState extends State<SearchBar> {
     "Libros y comics",
     "Monedas",
     "Música",
-    "Postales y sellos",
+    "Sellos y postales",
     "Ropa"
   ];
 
@@ -133,6 +134,8 @@ class _SearchBarState extends State<SearchBar> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 20.0),
@@ -253,7 +256,7 @@ class _SearchBarState extends State<SearchBar> {
           child: Row(
             children: categories.map((category) {
               return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                padding: const EdgeInsets.symmetric(horizontal: 4.0),
                 child: ElevatedButton(
                   onPressed: () {
                     toggleCategory(category);
@@ -284,6 +287,28 @@ class _SearchBarState extends State<SearchBar> {
             }).toList(),
           ),
         ),
+        if (selectedCategory != "")
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              SizedBox(height: 20),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                width: MediaQuery.of(context).size.width * 0.6,
+                child: Text(
+                  selectedCategory,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    height: 1,
+                    fontSize: 50,
+                    fontFamily: 'Aeonik',
+                    overflow: TextOverflow.visible,
+                  ),
+                ),
+              )
+            ],
+          )
       ],
     );
   }
@@ -515,31 +540,158 @@ class NavigationBar extends StatelessWidget {
                 context: context,
                 builder: (BuildContext context) {
                   return Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 0.0, vertical: 0.0),
-                        decoration: const BoxDecoration(
-                          color: Color(0XFF161616),
-                          borderRadius: BorderRadius.all(Radius.circular(30)),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 0.0, vertical: 0.0),
+                    decoration: const BoxDecoration(
+                      color: Color(0XFF161616),
+                      borderRadius: BorderRadius.all(Radius.circular(30)),
+                    ),
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height *
+                        0.7, // Ajusta la altura según tus necesidades
+                    child: Column(
+                      children: [
+                        SizedBox(height: 15),
+                        Container(
+                          width: 100,
+                          height: 4,
+                          decoration: const BoxDecoration(
+                            color: Color(0XFF343434),
+                            borderRadius: BorderRadius.all(Radius.circular(30)),
+                          ),
                         ),
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height *
-                            0.5, // Ajusta la altura según tus necesidades
-                        child: Column(
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => VentanaProducto(
-                                          connected: user, producto: product)),
-                                );
-                                //Aqui irá la descripcion detallada de producto
-                              },
-                              child: Text("Hola"),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10.0, vertical: 10.0),
+                            backgroundColor: Colors.transparent,
+                            surfaceTintColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      VentanaAnadirProducto(user: user)),
+                            );
+                            //Aqui irá la descripcion detallada de producto
+                          },
+                          child: Container(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 5.0),
+                            decoration: const BoxDecoration(
+                              color: Color(0XFF343434),
+                              shape: BoxShape.rectangle,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20)),
                             ),
-                          ],
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text("Subir",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 50,
+                                          fontFamily: 'Aeonik',
+                                        )),
+                                  ],
+                                ),
+                                Row(children: [
+                                  Text("artículo",
+                                      style: TextStyle(
+                                        color: Color(0XFFB3FF77),
+                                        fontSize: 50,
+                                        fontFamily: 'Aeonik',
+                                      ))
+                                ]),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Image(
+                                      image: AssetImage(
+                                          'lib/assets/tags/Group 315.png'),
+                                      width: MediaQuery.of(context).size.width *
+                                          0.9,
+                                      height: 58,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10.0, vertical: 10.0),
+                            backgroundColor: Colors.transparent,
+                            surfaceTintColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      VentanaAnadirSubasta(user: user)),
+                            );
+                            //Aqui irá la descripcion detallada de producto
+                          },
+                          child: Container(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 5.0),
+                            decoration: const BoxDecoration(
+                              color: Color(0XFF343434),
+                              shape: BoxShape.rectangle,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20)),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text("Iniciar",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 50,
+                                          fontFamily: 'Aeonik',
+                                        )),
+                                  ],
+                                ),
+                                Row(children: [
+                                  Text("Subasta",
+                                      style: TextStyle(
+                                        color: Color(0XFFFE6F1F),
+                                        fontSize: 50,
+                                        fontFamily: 'Aeonik',
+                                      ))
+                                ]),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Image(
+                                      image: AssetImage(
+                                          'lib/assets/tags/Group 315 (1).png'),
+                                      width: MediaQuery.of(context).size.width *
+                                          0.9,
+                                      height: 58,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   );
                 });
 
