@@ -524,42 +524,29 @@ class _AddProductFormState extends State<AddProductForm> {
                               ),
                               Row(
                                 children: [
-                                  TextFormField(
-                                      controller: precioInicialController,
-                                      decoration: InputDecoration(
-                                          filled: true,
-                                          fillColor: Colors.white24,
-                                          border: OutlineInputBorder(),
-                                          hintText: '€',
-                                          hintStyle: const TextStyle(
-                                              color: Colors.grey
-                                          )
-                                      ),
-                                      style: const TextStyle(
-                                          height: 0.05,
-                                          fontFamily: 'Aeonik',
-                                          color: Colors.white
-                                      ),
-                                      inputFormatters: [priceFormatter], // Applica il formatter per il prezzo
-                                      keyboardType: TextInputType.numberWithOptions(decimal: true)
+                                  Expanded(
+                                    child: TextFormField(
+                                            controller: precioInicialController,
+                                            decoration: InputDecoration(
+                                              filled: true,
+                                                fillColor: Colors.white24,
+                                              border: OutlineInputBorder(),
+                                              hintText: '€',
+                                                hintStyle: const TextStyle(
+                                                color: Colors.grey
+                                              )
+                                            ),
+                                            style: const TextStyle(
+                                                height: 0.05,
+                                                fontFamily: 'Aeonik',
+                                                color: Colors.white
+                                            ),
+                                            inputFormatters: [priceFormatter], // Applica il formatter per il prezzo
+                                            keyboardType: TextInputType.numberWithOptions(decimal: true)
+                                    )
                                   ),
-                                  TextFormField(
-                                      controller: fechaFinalController,
-                                      decoration: InputDecoration(
-                                          filled: true,
-                                          fillColor: Colors.white24,
-                                          border: OutlineInputBorder(),
-                                          hintText: '€',
-                                          hintStyle: const TextStyle(
-                                              color: Colors.grey
-                                          )
-                                      ),
-                                      style: const TextStyle(
-                                          height: 0.05,
-                                          fontFamily: 'Aeonik',
-                                          color: Colors.white
-                                      ),
-                                      keyboardType: TextInputType.numberWithOptions(decimal: true)
+                                  Expanded(
+                                    child: Text('fk you')
                                   )
                                 ]
                               ),
