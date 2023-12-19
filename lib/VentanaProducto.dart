@@ -24,6 +24,7 @@ class VentanaProducto extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     user = connected;
+    product = producto;
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -104,8 +105,8 @@ class VentanaProducto extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => VentanaPerfil(
-                                        mUser: user,
-                                        rUser: value,
+                                        mUser: value!,
+                                        rUser: user,
                                       )),
                             );
                           });
@@ -205,48 +206,50 @@ class VentanaProducto extends StatelessWidget {
                 height: MediaQuery.of(context).size.height * 0.1,
                 child: Row(
                   children: [
-                    ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => VentanaMensajesChat(
-                                    user.usuarioID!, producto.usuarioID!)),
-                          );
-                        },
+                    if (producto.usuarioID != connected.usuarioID)
+                      ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => VentanaMensajesChat(
+                                      user.usuarioID!, producto.usuarioID!)),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            fixedSize: Size(
+                                MediaQuery.of(context).size.width * 0.42, 60),
+                            backgroundColor:
+                                const Color.fromARGB(255, 52, 52, 52),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(32.0),
+                            ),
+                          ),
+                          child: const Text(
+                            "Contactar",
+                            style: TextStyle(
+                              fontFamily: "Aeonik",
+                              color: Color.fromARGB(255, 179, 255, 119),
+                            ),
+                          )),
+                    const Spacer(flex: 2),
+                    if (connected.usuarioID != producto.usuarioID)
+                      ElevatedButton(
+                        onPressed: () {},
                         style: ElevatedButton.styleFrom(
                           fixedSize: Size(
                               MediaQuery.of(context).size.width * 0.42, 60),
                           backgroundColor:
-                              const Color.fromARGB(255, 52, 52, 52),
+                              const Color.fromARGB(255, 254, 111, 31),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(32.0),
                           ),
                         ),
                         child: const Text(
-                          "Contactar",
-                          style: TextStyle(
-                            fontFamily: "Aeonik",
-                            color: Color.fromARGB(255, 179, 255, 119),
-                          ),
-                        )),
-                    const Spacer(flex: 2),
-                    ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        fixedSize:
-                            Size(MediaQuery.of(context).size.width * 0.42, 60),
-                        backgroundColor:
-                            const Color.fromARGB(255, 254, 111, 31),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(32.0),
+                          "Comprar",
+                          style: TextStyle(color: Colors.white),
                         ),
                       ),
-                      child: const Text(
-                        "Comprar",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
                   ],
                 ),
               )
@@ -307,35 +310,35 @@ List<Widget> fixedWidgets(BuildContext context) {
           shape: BoxShape.circle,
           color: Colors.black,
         ),
-        child: IconButton(
-          icon: const Icon(Icons.favorite_border, color: Colors.white),
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (buildcontext) {
-                return AlertDialog(
-                  contentPadding: const EdgeInsets.all(8.0),
-                  title: const Text("¡Error!",
-                      style: TextStyle(color: Colors.red)),
-                  content: const Text(
-                      "tt esperate que esto aun no esta implementao"),
-                  actions: <Widget>[
-                    ElevatedButton(
-                      child: const Text(
-                        "volver pa tras",
-                        style: TextStyle(color: Colors.black),
-                      ),
-                      onPressed: () {
-                        Navigator.of(buildcontext).pop();
-                      },
-                    ),
-                  ],
-                );
-              },
-            );
-          },
-        ),
+        child: BotonFavorito(),
       ),
     ),
   ];
+}
+
+class BotonFavorito extends StatefulWidget {
+  const BotonFavorito({Key? key}) : super(key: key);
+
+  @override
+  State<BotonFavorito> createState() => _BotonFavoritoState();
+}
+
+class _BotonFavoritoState extends State<BotonFavorito> {
+  Icon iconFav = Icon(Icons.favorite_border, color: Colors.white);
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      icon: iconFav,
+      onPressed: () {
+        setState(() {
+          if (iconFav.icon == Icons.favorite_border) {
+            iconFav = const Icon(Icons.favorite, color: Colors.red);
+          } else {
+            iconFav = const Icon(Icons.favorite_border, color: Colors.white);
+          }
+        });
+      },
+    );
+  }
 }
