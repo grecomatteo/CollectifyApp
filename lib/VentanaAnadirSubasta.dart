@@ -52,6 +52,37 @@ class _AddProductFormState extends State<AddProductForm> {
   final TextEditingController precioInicialController = TextEditingController();
   final TextEditingController fechaFinalController = TextEditingController();
 
+  DateTime selectedDate = DateTime.now();
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate,
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.dark().copyWith(
+            colorScheme: const ColorScheme.dark(
+              primary: Color(0xFFFE6F1F),
+              onPrimary: Colors.white,
+              surface: Color(0xFFFE6F1F),
+              onSurface: Colors.white,
+            ),
+            dialogBackgroundColor: Color(0xFF343434),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null && picked != selectedDate) {
+      setState(() {
+        selectedDate = picked;
+        fechaFinalController.text = "${selectedDate.toLocal()}".split(' ')[0];
+      });
+    }
+  }
+
 
 
   final priceFormatter = FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}'));
@@ -545,8 +576,69 @@ class _AddProductFormState extends State<AddProductForm> {
                                             keyboardType: TextInputType.numberWithOptions(decimal: true)
                                     )
                                   ),
+                                  SizedBox(width:5),
                                   Expanded(
-                                    child: Text('fk you')
+                                    child: Container(
+                                      padding: const EdgeInsets.only(right: 2),
+                                      decoration: const BoxDecoration(
+                                        color: Color.fromRGBO(52, 52, 52, 1),
+                                        borderRadius:
+                                        BorderRadius.all(Radius.circular(10)),
+                                      ),
+                                      child: TextFormField(
+                                        controller: fechaFinalController,
+                                        style: const TextStyle(
+                                            height: 0.05,
+                                            fontFamily: 'Aeonik',
+                                            color: Colors.white
+                                        ),
+                                        readOnly: true,
+                                        decoration: InputDecoration(
+                                          labelText: 'Fecha de nacimiento',
+                                          suffixStyle: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.normal,
+                                            fontFamily: 'Aeonik',
+                                          ),
+                                          suffixIcon: ElevatedButton(
+                                            onPressed: () => _selectDate(context),
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                              const Color.fromRGBO(0, 0, 0, 1),
+                                              fixedSize: const Size(30, 20),
+                                              alignment: Alignment.center,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(10),
+                                              ),
+                                              padding: const EdgeInsets.all(20.0),
+                                            ),
+                                            child: const Text(
+                                              'Seleccionar Fecha',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.normal,
+                                                fontFamily: 'Aeonik',
+                                              ),
+                                            ),
+                                          ),
+                                          labelStyle: TextStyle(
+                                              color: Color.fromRGBO(255, 255, 255, 0.4)),
+                                          filled: true,
+                                          fillColor: Color.fromRGBO(52, 52, 52, 1),
+                                          border: const OutlineInputBorder(
+                                            borderRadius:
+                                            BorderRadius.all(Radius.circular(10)),
+                                          ),
+                                          focusedBorder: const OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: Color.fromRGBO(179, 255, 119, 1),
+                                                width: 2.0),
+                                          ),
+                                        ),
+                                      ),
+                                    )
                                   )
                                 ]
                               ),
