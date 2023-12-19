@@ -24,6 +24,7 @@ class VentanaProducto extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     user = connected;
+    product = producto;
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -307,35 +308,36 @@ List<Widget> fixedWidgets(BuildContext context) {
           shape: BoxShape.circle,
           color: Colors.black,
         ),
-        child: IconButton(
-          icon: const Icon(Icons.favorite_border, color: Colors.white),
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (buildcontext) {
-                return AlertDialog(
-                  contentPadding: const EdgeInsets.all(8.0),
-                  title: const Text("¡Error!",
-                      style: TextStyle(color: Colors.red)),
-                  content: const Text(
-                      "tt esperate que esto aun no esta implementao"),
-                  actions: <Widget>[
-                    ElevatedButton(
-                      child: const Text(
-                        "volver pa tras",
-                        style: TextStyle(color: Colors.black),
-                      ),
-                      onPressed: () {
-                        Navigator.of(buildcontext).pop();
-                      },
-                    ),
-                  ],
-                );
-              },
-            );
-          },
-        ),
+        child: BotonFavorito(),
       ),
     ),
   ];
+}
+
+
+class BotonFavorito extends StatefulWidget {
+  const BotonFavorito({Key? key}) : super(key: key);
+
+  @override
+  State<BotonFavorito> createState() => _BotonFavoritoState();
+}
+
+class _BotonFavoritoState extends State<BotonFavorito> {
+  Color colorFav = Colors.white;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      icon:  Icon(Icons.favorite, color: colorFav),
+      onPressed: () {
+        setState(() {
+          if (colorFav == Colors.white) {
+            colorFav = Colors.red;
+          } else {
+            colorFav = Colors.white;
+          }
+        });
+      },
+    );
+  }
 }
