@@ -392,10 +392,11 @@ class ProductListState extends State<ProductList> {
           } else {
             return GridView.count(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 0, vertical: 10.0),
+              const EdgeInsets.symmetric(horizontal: 0, vertical: 10.0),
               mainAxisSpacing: 5,
-              crossAxisSpacing: 0,
+              crossAxisSpacing: 4,
               crossAxisCount: 2,
+              childAspectRatio: 0.7,
               children: _displayedProducts
                   .map((e) => ProductoWidget(producto: e))
                   .toList(),
