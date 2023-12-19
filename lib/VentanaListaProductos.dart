@@ -70,7 +70,7 @@ class _ListaProductosState extends State<ListaProductos> {
         extendBody: true,
         resizeToAvoidBottomInset: false,
         body: Container(
-          color: Colors.black,
+          color: Color(0XFF161616),
           child: Column(
             children: [
               //SizedBox(height: 20),
@@ -90,9 +90,11 @@ class _ListaProductosState extends State<ListaProductos> {
           ),
         ),
         bottomNavigationBar: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 0.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 5.0, vertical: 0.0),
               decoration: const BoxDecoration(
                 color: Color(0XFF343434),
                 shape: BoxShape.rectangle,
@@ -136,7 +138,7 @@ class _SearchBarState extends State<SearchBar> {
           padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 20.0),
           child: Container(
             decoration: const BoxDecoration(
-              color: Color(0XFF161616),
+              color: Color(0XFF343434),
               borderRadius: BorderRadius.all(Radius.circular(30)),
             ),
             child: TextField(
@@ -428,16 +430,16 @@ class ProductoWidget extends StatelessWidget {
                   ),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child:Row(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
-                      child:const Icon(Icons.favorite_border,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 5.0, vertical: 5.0),
+                      child: const Icon(Icons.favorite_border,
                           color: Colors.white),
                     ),
-
                   ],
                 ),
               )),
@@ -502,17 +504,45 @@ class NavigationBar extends StatelessWidget {
             Navigator.push(
               context,
               PageRouteBuilder(
-                  pageBuilder: (context,_,__) => ListaProductosSubasta(connected: user),
-                  transitionDuration: const Duration(seconds: 0)
-              ),
+                  pageBuilder: (context, _, __) =>
+                      ListaProductosSubasta(connected: user),
+                  transitionDuration: const Duration(seconds: 0)),
             );
             break;
           case 2:
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => VentanaAnadirProducto(user: user)),
-            );
+            showBottomSheet(
+                backgroundColor: Colors.transparent,
+                context: context,
+                builder: (BuildContext context) {
+                  return Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 0.0, vertical: 0.0),
+                        decoration: const BoxDecoration(
+                          color: Color(0XFF161616),
+                          borderRadius: BorderRadius.all(Radius.circular(30)),
+                        ),
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height *
+                            0.5, // Ajusta la altura según tus necesidades
+                        child: Column(
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => VentanaProducto(
+                                          connected: user, producto: product)),
+                                );
+                                //Aqui irá la descripcion detallada de producto
+                              },
+                              child: Text("Hola"),
+                            ),
+                          ],
+                        ),
+                  );
+                });
+
             break;
           case 3:
             int uid = user.usuarioID ?? -1;
@@ -533,7 +563,7 @@ class NavigationBar extends StatelessWidget {
             break;
         }
       },
-      items: const[
+      items: const [
         BottomNavigationBarItem(
           icon: Icon(Icons.home_filled),
           label: "Inicio",
