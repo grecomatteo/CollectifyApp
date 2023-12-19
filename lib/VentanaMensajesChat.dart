@@ -218,7 +218,7 @@ class MessageDisplay extends StatelessWidget {
             children: [
               Text(
                 textAlign: TextAlign.end,
-                "${message.sendDate.hour}:${message.sendDate.minute}",
+                "${message.sendDate.hour.toString().padLeft(2, '0')}:${message.sendDate.minute.toString().padLeft(2, '0')}",
                 style: message.senderID != myID
                     ? const TextStyle(fontFamily: 'Aeonik', fontSize: 15, color: Color.fromRGBO(179,	255,	119, 1))
                     : const TextStyle(fontFamily: 'Aeonik', fontSize: 15, color: Colors.black),
