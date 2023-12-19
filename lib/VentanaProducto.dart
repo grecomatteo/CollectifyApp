@@ -323,18 +323,18 @@ class BotonFavorito extends StatefulWidget {
 }
 
 class _BotonFavoritoState extends State<BotonFavorito> {
-  Color colorFav = Colors.white;
+  Icon iconFav = Icon(Icons.favorite_border, color: Colors.white);
 
   @override
   Widget build(BuildContext context) {
     return IconButton(
-      icon:  Icon(Icons.favorite, color: colorFav),
+      icon: iconFav,
       onPressed: () {
         setState(() {
-          if (colorFav == Colors.white) {
-            colorFav = Colors.red;
+          if (iconFav.icon == Icons.favorite_border) {
+            iconFav = const Icon(Icons.favorite, color: Colors.red);
           } else {
-            colorFav = Colors.white;
+            iconFav = const Icon(Icons.favorite_border, color: Colors.white);
           }
         });
       },
