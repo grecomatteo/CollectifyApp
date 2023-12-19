@@ -582,17 +582,20 @@ class _AddProductFormState extends State<AddProductForm> {
                                       padding: const EdgeInsets.only(right: 2),
                                       child: TextFormField(
                                         controller: fechaFinalController,
+
                                         style: const TextStyle(
                                             height: 0.05,
                                             fontFamily: 'Aeonik',
                                             color: Colors.white
                                         ),
                                         readOnly: true,
+
                                         decoration: InputDecoration(
-                                          hintText: 'Fecha de nacimiento',
+                                          hintText: 'Cierre',
                                           hintStyle: const TextStyle(
-                                            color: Colors.grey,
-                                            fontFamily: 'Aeonik',
+                                              height: 0.05,
+                                              fontFamily: 'Aeonik',
+                                              color: Colors.grey
                                           ),
                                           suffixStyle: const TextStyle(
                                             color: Colors.white,
@@ -604,23 +607,18 @@ class _AddProductFormState extends State<AddProductForm> {
                                             onPressed: () => _selectDate(context),
                                             style: ElevatedButton.styleFrom(
                                               backgroundColor:
-                                              const Color.fromRGBO(0, 0, 0, 1),
+                                              const Color(0xff161616),
                                               fixedSize: const Size(30, 20),
                                               alignment: Alignment.center,
                                               shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(10),
+                                                borderRadius: BorderRadius.circular(2),
                                               ),
-                                              padding: const EdgeInsets.all(20.0),
+                                              padding: const EdgeInsets.all(0),
                                             ),
-                                            child: const Text(
-                                              '',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.normal,
-                                                fontFamily: 'Aeonik',
-                                              ),
-                                            ),
+                                            child: const Icon(
+                                              Icons.calendar_month,
+                                              color: Colors.grey
+                                            )
                                           ),
                                           labelStyle: TextStyle(
                                               color: Color.fromRGBO(255, 255, 255, 0.4)),
