@@ -696,6 +696,7 @@ class _AddProductFormState extends State<AddProductForm> {
                     }
                     prod.descripcion = productDescription;
                     prod.categoria = tag;
+                    prod.esSubasta = true;
                     //prod.fechaFin = fechaFinal;
 
                     int productID = 0;
