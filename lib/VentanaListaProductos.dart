@@ -19,6 +19,22 @@ import 'VentanaProductosSubasta.dart';
 Usuario user = Usuario();
 bool isValid = true;
 bool loading = false;
+Evento evento = Evento();
+//Hazme un map con los numeros del mes y su nombre acordado
+Map<int, String> meses = {
+  1: "Ene",
+  2: "Feb",
+  3: "Mar",
+  4: "Abr",
+  5: "May",
+  6: "Jun",
+  7: "Jul",
+  8: "Ago",
+  9: "Sep",
+  10: "Oct",
+  11: "Nov",
+  12: "Dic"
+};
 
 //Labelers para imageenes
 ImageLabelerOptions options = ImageLabelerOptions(confidenceThreshold: 0.76);
@@ -56,6 +72,7 @@ class _ListaProductosState extends State<ListaProductos> {
   }
 
   Future<void> cargarProductos() async {
+    evento = await Conexion().getRandomEvento();
     List<Producto> allProducts =
         await Conexion().getProductosBasadoPreferencias(user);
 
@@ -481,16 +498,153 @@ class ProductListState extends State<ProductList> {
               child: Text('No hay ningún producto con ese nombre'),
             );
           } else {
-            return GridView.count(
+            return GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 0.7,
+              ),
               padding:
                   const EdgeInsets.symmetric(horizontal: 0, vertical: 10.0),
-              mainAxisSpacing: 5,
-              crossAxisSpacing: 4,
-              crossAxisCount: 2,
-              childAspectRatio: 0.7,
-              children: _displayedProducts
-                  .map((e) => ProductoWidget(producto: e))
-                  .toList(),
+              itemCount: _displayedProducts.length,
+              itemBuilder: (BuildContext context, int index) {
+                if (index == 4) {
+                  return Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Color(0xFF000000),
+                    ),
+                    margin: const EdgeInsets.symmetric(
+                        horizontal: 12.0, vertical: 7.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                            decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(10),
+                                  topRight: Radius.circular(10)),
+                              color: Color(0xFFfa7030),
+                            ),
+                            width: MediaQuery.of(context).size.width * 0.8,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 5.0, vertical: 5.0),
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Image(
+                                        image: AssetImage(
+                                            'lib/assets/tags/GrupoPartido.png'),
+                                        height: 58,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                SizedBox(height: 10),
+                                Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        evento.fechaEvento!.day.toString() +
+                                            " " +
+                                            meses[evento.fechaEvento!.month]! +
+                                            " " +
+                                            evento.fechaEvento!.year.toString(),
+                                        style: const TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 11,
+                                          fontFamily: 'Aeonik',
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      )
+                                    ]),
+                                SizedBox(height: 6),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                        child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 5.0,
+                                                vertical: 10.0),
+                                            child: Wrap(
+                                              children: [
+                                                Text(
+                                                  evento.direccion!,
+                                                  style: const TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 12,
+                                                    fontFamily: 'Aeonik',
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                  softWrap: true,
+                                                ),
+                                              ],
+                                            ))),
+                                  ],
+                                ),
+                                SizedBox(height: 10),
+                              ],
+                            )),
+                        Spacer(),
+                        Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                  child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10.0, vertical: 10.0),
+                                      child: Wrap(
+                                        children: [
+                                          Text(
+                                            evento.descripcion!,
+                                            style: const TextStyle(
+                                              color: Color(0xFFFE6F1F),
+                                              fontSize: 11,
+                                              fontFamily: 'Aeonik',
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            softWrap: true,
+                                          ),
+                                        ],
+                                      )))
+                            ]),
+                        const Spacer(),
+                        Row(
+                          children: [
+                            Expanded(
+                                child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 15.0, vertical: 10.0),
+                                      backgroundColor: Color(0xFFFFFFFF),
+                                      surfaceTintColor: Colors.transparent,
+                                      shadowColor: Colors.transparent,
+                                    ),
+                                    onPressed: () {},
+                                    child: const Text("Guardar Evento",
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          //Quiero que esté en negrita
+                                          fontFamily: 'Aeonik',
+
+                                          fontWeight: FontWeight.bold,
+                                        ))))
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+                }
+                if (index > 4) {
+                  return ProductoWidget(
+                      producto: _displayedProducts[index - 1]);
+                } else
+                  return ProductoWidget(producto: _displayedProducts[index]);
+              },
             );
           }
         } else if (snapshot.hasError) {
@@ -570,12 +724,14 @@ class ProductoWidget extends StatelessWidget {
 
                   Text(
                     producto.nombre!,
-                    style: const TextStyle(
+                    style:  TextStyle(
                         color: Colors.white,
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
                         overflow: TextOverflow.ellipsis,
-                        fontFamily: 'Aeonik'),
+                        fontFamily: 'Aeonik',
+                    ),
+
                   ),
                   Text(
                     "${producto.categoria}",

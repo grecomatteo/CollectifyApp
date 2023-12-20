@@ -912,7 +912,7 @@ class Conexion {
           direccion: row['direccion'],
           descripcion: row['descripcion'],
           nombre: row['nombre'],
-          fechaEvento: row['fechaEvento'],
+          fechaEvento: row['fecha'],
         );
         eventosAux.add(evento);
       }
@@ -930,5 +930,27 @@ class Conexion {
               "VALUES ('$userID', '$categoria'); ");
     }
   }
+  Future<Evento> getRandomEvento() async {
+    if (Conexion.conn == null) await Conexion().conectar();
+    Evento? evento;
+    await Conexion.conn?.query(
+        "SELECT * FROM evento ORDER BY RAND() LIMIT 1;"
+    ).then((results){
+      for(var row in results){
+
+        evento = Evento(
+          usuarioID: row['usuarioID'],
+          idEvento: row['idEvento'],
+          direccion: row['direccion'],
+          descripcion: row['descripcion'],
+          nombre: row['nombre'],
+          fechaEvento: row['fecha'],
+        );
+      }
+    });
+    return evento!;
+  }
 }
+
+
 
