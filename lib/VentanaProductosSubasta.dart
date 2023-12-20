@@ -178,14 +178,14 @@ class _SearchBarState extends State<SearchBar> {
   final TextEditingController _controller = TextEditingController();
   final List<String> categories = [
     "Joyas y relojes",
-    "Numismatica",
     "Arte y artesanía",
     "Juguetes",
     "Libros y comics",
-    "Monedas",
+    "Monedas y billetes",
     "Música",
-    "Postales y sellos",
-    "Ropa"
+    "Sellos y postales",
+    "Moda",
+    "Vehículos",
   ];
 
   String selectedCategory = "";

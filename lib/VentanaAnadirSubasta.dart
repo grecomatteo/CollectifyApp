@@ -228,7 +228,7 @@ class _AddProductFormState extends State<AddProductForm> {
                                             ),
 
                                             style: ElevatedButton.styleFrom(
-                                              backgroundColor: changeColor==0 ? Colors.lightGreen : Colors.white24,
+                                              backgroundColor: changeColor==0 ? Color(0xffb3ff77) : Color(0xff343434),
                                               padding: EdgeInsets.zero,
                                               fixedSize: const Size(80, 130),
                                               shape: RoundedRectangleBorder(
@@ -266,7 +266,45 @@ class _AddProductFormState extends State<AddProductForm> {
                                             ),
 
                                             style: ElevatedButton.styleFrom(
-                                              backgroundColor: changeColor==1 ? Colors.lightGreen : Colors.white24,
+                                              backgroundColor: changeColor==1 ? Color(0xffb3ff77) : Color(0xff343434),
+                                              padding: EdgeInsets.zero,
+                                              fixedSize: const Size(80, 130),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(5.0),
+                                              ),
+                                            )
+                                        ),
+                                      ),
+                                      Card(
+                                        margin: EdgeInsets.symmetric(horizontal: 10),
+                                        color: Colors.transparent,
+                                        child: ElevatedButton(
+                                            onPressed: (){
+                                              tag = "Monedas y billetes";
+                                              setState((){changeColor = 2;});
+                                            },
+                                            child: Column(
+                                                children: <Widget>[
+                                                  Expanded(
+                                                    child: Image.asset(
+                                                        'lib/assets/tags/Monedas_sellos.png',
+                                                        width: 70,
+                                                        height: 70
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                      'Monedas y billetes',
+                                                      textAlign: TextAlign.center,
+                                                      style: const TextStyle(
+                                                        color: Colors.white,
+                                                        fontFamily: 'Aeonik',
+                                                      )
+                                                  )
+                                                ]
+                                            ),
+
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: changeColor==2 ? Color(0xffb3ff77) : Color(0xff343434),
                                               padding: EdgeInsets.zero,
                                               fixedSize: const Size(80, 130),
                                               shape: RoundedRectangleBorder(
@@ -281,7 +319,7 @@ class _AddProductFormState extends State<AddProductForm> {
                                         child: ElevatedButton(
                                             onPressed: (){
                                               tag = "Juguetes";
-                                              setState((){changeColor = 2;});
+                                              setState((){changeColor = 3;});
                                             },
                                             child: Column(
                                                 children: <Widget>[
@@ -307,7 +345,7 @@ class _AddProductFormState extends State<AddProductForm> {
                                             ),
 
                                             style: ElevatedButton.styleFrom(
-                                              backgroundColor: changeColor==2 ? Colors.lightGreen : Colors.white24,
+                                              backgroundColor: changeColor==3 ? Color(0xffb3ff77) : Color(0xff343434),
                                               padding: EdgeInsets.zero,
                                               fixedSize: const Size(80, 130),
                                               shape: RoundedRectangleBorder(
@@ -322,7 +360,7 @@ class _AddProductFormState extends State<AddProductForm> {
                                         child: ElevatedButton(
                                             onPressed: (){
                                               tag = "Libros y comics";
-                                              setState((){changeColor = 3;});
+                                              setState((){changeColor = 4;});
                                             },
                                             child: Column(
                                                 children: <Widget>[
@@ -345,48 +383,7 @@ class _AddProductFormState extends State<AddProductForm> {
                                             ),
 
                                             style: ElevatedButton.styleFrom(
-                                              backgroundColor: changeColor==3 ? Colors.lightGreen : Colors.white24,
-                                              padding: EdgeInsets.zero,
-                                              fixedSize: const Size(80, 130),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(5.0),
-                                              ),
-                                            )
-                                        ),
-                                      ),
-                                      Card(
-                                        margin: EdgeInsets.symmetric(horizontal: 10),
-                                        color: Colors.transparent,
-                                        child: ElevatedButton(
-                                            onPressed: (){
-                                              tag = "Monedas";
-                                              setState((){changeColor = 4;});
-                                            },
-                                            child: Column(
-                                                children: <Widget>[
-                                                  Expanded(
-                                                    child: Image.asset(
-                                                        'lib/assets/tags/Monedas_sellos.png',
-                                                        width: 70,
-                                                        height: 70
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                      'Monedas',
-                                                      textAlign: TextAlign.center,
-                                                      style: const TextStyle(
-                                                        color: Colors.white,
-                                                        fontFamily: 'Aeonik',
-                                                      )
-                                                  ),
-                                                  Text(
-                                                      ''
-                                                  )
-                                                ]
-                                            ),
-
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: changeColor==4 ? Colors.lightGreen : Colors.white24,
+                                              backgroundColor: changeColor==4 ? Color(0xffb3ff77) : Color(0xff343434),
                                               padding: EdgeInsets.zero,
                                               fixedSize: const Size(80, 130),
                                               shape: RoundedRectangleBorder(
@@ -427,7 +424,7 @@ class _AddProductFormState extends State<AddProductForm> {
                                             ),
 
                                             style: ElevatedButton.styleFrom(
-                                              backgroundColor: changeColor==5 ? Colors.lightGreen : Colors.white24,
+                                              backgroundColor: changeColor==5 ? Color(0xffb3ff77) : Color(0xff343434),
                                               padding: EdgeInsets.zero,
                                               fixedSize: const Size(80, 130),
                                               shape: RoundedRectangleBorder(
@@ -441,7 +438,7 @@ class _AddProductFormState extends State<AddProductForm> {
                                         color: Colors.transparent,
                                         child: ElevatedButton(
                                             onPressed: (){
-                                              tag = "Postales y sellos";
+                                              tag = "Sellos y postales";
                                               setState((){changeColor = 6;});
                                             },
                                             child: Column(
@@ -454,7 +451,7 @@ class _AddProductFormState extends State<AddProductForm> {
                                                     ),
                                                   ),
                                                   Text(
-                                                      'Postales y sellos',
+                                                      'Sellos y postales',
                                                       textAlign: TextAlign.center,
                                                       style: const TextStyle(
                                                         color: Colors.white,
@@ -465,7 +462,7 @@ class _AddProductFormState extends State<AddProductForm> {
                                             ),
 
                                             style: ElevatedButton.styleFrom(
-                                              backgroundColor: changeColor==6 ? Colors.lightGreen : Colors.white24,
+                                              backgroundColor: changeColor==6 ? Color(0xffb3ff77) : Color(0xff343434),
                                               padding: EdgeInsets.zero,
                                               fixedSize: const Size(80, 130),
                                               shape: RoundedRectangleBorder(
@@ -479,7 +476,7 @@ class _AddProductFormState extends State<AddProductForm> {
                                         color: Colors.transparent,
                                         child: ElevatedButton(
                                             onPressed: (){
-                                              tag = "Ropa";
+                                              tag = "Moda";
                                               setState((){changeColor = 7;});
                                             },
                                             child: Column(
@@ -492,7 +489,7 @@ class _AddProductFormState extends State<AddProductForm> {
                                                     ),
                                                   ),
                                                   Text(
-                                                      'Ropa',
+                                                      'Moda',
                                                       textAlign: TextAlign.center,
                                                       style: const TextStyle(
                                                         color: Colors.white,
@@ -506,7 +503,48 @@ class _AddProductFormState extends State<AddProductForm> {
                                             ),
 
                                             style: ElevatedButton.styleFrom(
-                                              backgroundColor: changeColor==7 ? Colors.lightGreen : Colors.white24,
+                                              backgroundColor: changeColor==7 ? Color(0xffb3ff77) : Color(0xff343434),
+                                              padding: EdgeInsets.zero,
+                                              fixedSize: const Size(80, 130),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(5.0),
+                                              ),
+                                            )
+                                        ),
+                                      ),
+                                      Card(
+                                        margin: EdgeInsets.symmetric(horizontal: 10),
+                                        color: Colors.transparent,
+                                        child: ElevatedButton(
+                                            onPressed: (){
+                                              tag = "Vehículos";
+                                              setState((){changeColor = 8;});
+                                            },
+                                            child: Column(
+                                                children: <Widget>[
+                                                  Expanded(
+                                                    child: Image.asset(
+                                                        'lib/assets/tags/Icono Monedas y Sellos-1.png',
+                                                        width: 70,
+                                                        height: 70
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                      'Vehículos',
+                                                      textAlign: TextAlign.center,
+                                                      style: const TextStyle(
+                                                        color: Colors.white,
+                                                        fontFamily: 'Aeonik',
+                                                      )
+                                                  ),
+                                                  Text(
+                                                      ''
+                                                  )
+                                                ]
+                                            ),
+
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: changeColor==8 ? Color(0xffb3ff77) : Color(0xff343434),
                                               padding: EdgeInsets.zero,
                                               fixedSize: const Size(80, 130),
                                               shape: RoundedRectangleBorder(
