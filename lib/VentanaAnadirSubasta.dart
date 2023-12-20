@@ -58,8 +58,8 @@ class _AddProductFormState extends State<AddProductForm> {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: selectedDate,
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2025),
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.dark().copyWith(
@@ -687,7 +687,7 @@ class _AddProductFormState extends State<AddProductForm> {
                     final String productPrice;
                     DateTime fechaFinal =DateTime.parse(fecha);
                     precioInicial= precioInicialController.text;
-                    productPrice = priceController.text;
+                    productPrice = precioInicialController.text;
                     Producto prod = Producto();
                     prod.nombre = productName;
                     //Los doubles le dan ansiedada Flutter, hay que checkear si es null
