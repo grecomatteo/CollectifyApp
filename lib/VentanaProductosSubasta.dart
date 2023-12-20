@@ -199,6 +199,11 @@ class _SearchBarState extends State<SearchBar> {
             borderRadius: BorderRadius.all(Radius.circular(30)),
           ),
           child: TextField(
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16.0,
+              fontFamily: 'Aeonik',
+            ),
             controller: _controller,
             onChanged: (query) {
               if (query.isEmpty) {
