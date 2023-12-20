@@ -820,7 +820,7 @@ class Conexion {
           producto.precioInicial = row['precioInicial'],
           producto.ultimaOferta = row['ultimaOferta'],
           producto.idUserUltimaPuja = row['idUsuarioUltPuja'],
-          producto.nombreUsuarioUltimaPuja = row['nombreUsuarioUltPuja']
+          producto.nombreUsuarioUltimaPuja = row['nick']
 
         }
     });
