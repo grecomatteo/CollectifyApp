@@ -87,7 +87,12 @@ class VentanaProductoSubastaState extends State<VentanaProductoSubasta> {
                                             fontFamily: "Aeonik",
                                             color: Colors.lightGreenAccent),
                                       ),
-                                      Text("${producto.nombreUsuarioUltimaPuja}"),
+                                      Text("${producto.nombreUsuarioUltimaPuja}",
+                                        style: const TextStyle(
+                                            fontSize: 17,
+                                            fontFamily: "Aeonik",
+                                            color: Colors.white24),
+                                      ),
                                     ],
                                   )
                                 ],
