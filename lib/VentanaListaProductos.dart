@@ -94,7 +94,7 @@ class _ListaProductosState extends State<ListaProductos> {
                 const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
             child: Container(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 5.0, vertical: 0.0),
+                  const EdgeInsets.symmetric(horizontal: 5.0, vertical:0.0),
               decoration: const BoxDecoration(
                 color: Color(0XFF343434),
                 shape: BoxShape.rectangle,
@@ -288,7 +288,8 @@ class _SearchBarState extends State<SearchBar> {
         ),
         if (selectedCategory != "")
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15.0,vertical: 20.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 15.0, vertical: 20.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -312,77 +313,79 @@ class _SearchBarState extends State<SearchBar> {
                     ),
                   ],
                 ),
-                if(selectedCategory == "Joyas y relojes")
+                if (selectedCategory == "Joyas y relojes")
                   const Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: 10.0, vertical: 0.0),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
                     child: Image(
                         height: 50,
                         width: 50,
                         image: AssetImage('lib/assets/tags/Joyas_relojes.png')),
                   ),
-                if(selectedCategory == "Arte y artesanía")
+                if (selectedCategory == "Arte y artesanía")
                   const Padding(
-                  padding: EdgeInsets.symmetric(
-                  horizontal: 10.0, vertical: 0.0),
-                  child: Image(
-                  height: 50,
-                  width: 50,
-                  image: AssetImage('lib/assets/tags/Arte_artesania.png')),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
+                    child: Image(
+                        height: 50,
+                        width: 50,
+                        image:
+                            AssetImage('lib/assets/tags/Arte_artesania.png')),
                   ),
-                if(selectedCategory == "Juguetes")
+                if (selectedCategory == "Juguetes")
                   const Padding(
-                  padding: EdgeInsets.symmetric(
-                  horizontal: 10.0, vertical: 0.0),
-                  child: Image(
-                  height: 50,
-                  width: 50,
-                  image: AssetImage('lib/assets/tags/Juguetes.png')),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
+                    child: Image(
+                        height: 50,
+                        width: 50,
+                        image: AssetImage('lib/assets/tags/Juguetes.png')),
                   ),
-                if(selectedCategory == "Libros y comics")
+                if (selectedCategory == "Libros y comics")
                   const Padding(
-                  padding: EdgeInsets.symmetric(
-                  horizontal: 10.0, vertical: 0.0),
-                  child: Image(
-                  height: 50,
-                  width: 50,
-                  image: AssetImage('lib/assets/tags/Libros_comics.png')),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
+                    child: Image(
+                        height: 50,
+                        width: 50,
+                        image: AssetImage('lib/assets/tags/Libros_comics.png')),
                   ),
-                if(selectedCategory == "Monedas")
+                if (selectedCategory == "Monedas")
                   const Padding(
-                  padding: EdgeInsets.symmetric(
-                  horizontal: 10.0, vertical: 0.0),
-                  child: Image(
-                  height: 50,
-                  width: 50,
-                  image: AssetImage('lib/assets/tags/Monedas_sellos.png')),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
+                    child: Image(
+                        height: 50,
+                        width: 50,
+                        image:
+                            AssetImage('lib/assets/tags/Monedas_sellos.png')),
                   ),
-                if(selectedCategory == "Música")
+                if (selectedCategory == "Música")
                   const Padding(
-                  padding: EdgeInsets.symmetric(
-                  horizontal: 10.0, vertical: 0.0),
-                  child: Image(
-                  height: 50,
-                  width: 50,
-                  image: AssetImage('lib/assets/tags/Musica.png')),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
+                    child: Image(
+                        height: 50,
+                        width: 50,
+                        image: AssetImage('lib/assets/tags/Musica.png')),
                   ),
-                if(selectedCategory == "Sellos y postales")
+                if (selectedCategory == "Sellos y postales")
                   const Padding(
-                  padding: EdgeInsets.symmetric(
-                  horizontal: 10.0, vertical: 0.0),
-                  child: Image(
-                  height: 50,
-                  width: 50,
-                  image: AssetImage('lib/assets/tags/Postales.png')),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
+                    child: Image(
+                        height: 50,
+                        width: 50,
+                        image: AssetImage('lib/assets/tags/Postales.png')),
                   ),
-                if(selectedCategory == "Ropa")
+                if (selectedCategory == "Ropa")
                   const Padding(
-                  padding: EdgeInsets.symmetric(
-                  horizontal: 10.0, vertical: 0.0),
-                  child: Image(
-                  height: 50,
-                  width: 50,
-                  image: AssetImage('lib/assets/tags/Ropa.png')),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
+                    child: Image(
+                        height: 50,
+                        width: 50,
+                        image: AssetImage('lib/assets/tags/Ropa.png')),
                   ),
               ],
             ),
@@ -594,11 +597,13 @@ class NavigationBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return BottomNavigationBar(
       currentIndex: 0,
+      elevation: 0,
       type: BottomNavigationBarType.fixed,
       backgroundColor: Colors.transparent,
       selectedItemColor: Color(0XFFB3FF77),
       unselectedItemColor: Colors.grey,
-      selectedIconTheme: const IconThemeData(size: 30),
+      showSelectedLabels: false,
+      showUnselectedLabels: false,
       onTap: (int index) {
         switch (index) {
           case 0:
@@ -636,45 +641,45 @@ class NavigationBar extends StatelessWidget {
             break;
         }
       },
-      items: [
+      items: const [
         BottomNavigationBarItem(
           icon: Image(
-            color: Color(0XFFB3FF77),
-            image: AssetImage('lib/assets/BottomBar/Home.png'),
-            width: MediaQuery.of(context).size.width * 0.07,
-            height: MediaQuery.of(context).size.height * 0.03,
-          ),
-          label: "Inicio",
+              width: 24,
+              height: 24,
+              color: Color(0XFFB3FF77),
+              image: AssetImage('lib/assets/BottomBar/Home.png'),
+            ),
+          label: "",
         ),
         BottomNavigationBarItem(
           icon: Image(
             image: AssetImage('lib/assets/BottomBar/Subasta.png'),
-            width: MediaQuery.of(context).size.width * 0.07,
-            height: MediaQuery.of(context).size.height * 0.03,
+            width: 24,
+            height: 24,
           ),
           label: "Subastas",
         ),
         BottomNavigationBarItem(
           icon: Image(
             image: AssetImage('lib/assets/BottomBar/AddProduct.png'),
-            width: MediaQuery.of(context).size.width * 0.07,
-            height: MediaQuery.of(context).size.height * 0.03,
+            width: 24,
+            height: 24,
           ),
           label: "Añadir",
         ),
         BottomNavigationBarItem(
           icon: Image(
             image: AssetImage('lib/assets/BottomBar/Chat.png'),
-            width: MediaQuery.of(context).size.width * 0.07,
-            height: MediaQuery.of(context).size.height * 0.03,
+            width: 24,
+            height: 24,
           ),
           label: "Chat",
         ),
         BottomNavigationBarItem(
           icon: Image(
             image: AssetImage('lib/assets/BottomBar/Perfil.png'),
-            width: MediaQuery.of(context).size.width * 0.07,
-            height: MediaQuery.of(context).size.height * 0.03,
+            width: 24,
+            height: 24,
           ),
           label: "Perfil",
         ),
