@@ -199,6 +199,11 @@ class _SearchBarState extends State<SearchBar> {
             borderRadius: BorderRadius.all(Radius.circular(30)),
           ),
           child: TextField(
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16.0,
+              fontFamily: 'Aeonik',
+            ),
             controller: _controller,
             onChanged: (query) {
               if (query.isEmpty) {
@@ -1007,11 +1012,13 @@ class NavigationBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return BottomNavigationBar(
       currentIndex: 1,
+      elevation: 0,
       type: BottomNavigationBarType.fixed,
       backgroundColor: Colors.transparent,
       selectedItemColor: Color(0XFFB3FF77),
       unselectedItemColor: Colors.grey,
-      selectedIconTheme: const IconThemeData(size: 30),
+      showSelectedLabels: false,
+      showUnselectedLabels: false,
       onTap: (int index) {
         switch (index) {
           case 0:
@@ -1054,43 +1061,43 @@ class NavigationBar extends StatelessWidget {
           icon: Image(
 
             image: AssetImage('lib/assets/BottomBar/Home.png'),
-            width: MediaQuery.of(context).size.width * 0.07,
-            height: MediaQuery.of(context).size.height * 0.03,
+            width: 24,
+            height: 24,
           ),
-          label: "Inicio",
+          label: "",
         ),
         BottomNavigationBarItem(
           icon: Image(
             color: Color(0XFFB3FF77),
             image: AssetImage('lib/assets/BottomBar/Subasta.png'),
-            width: MediaQuery.of(context).size.width * 0.07,
-            height: MediaQuery.of(context).size.height * 0.03,
+            width: 24,
+            height: 24,
           ),
-          label: "Subastas",
+          label: "",
         ),
         BottomNavigationBarItem(
           icon: Image(
             image: AssetImage('lib/assets/BottomBar/AddProduct.png'),
-            width: MediaQuery.of(context).size.width * 0.07,
-            height: MediaQuery.of(context).size.height * 0.03,
+            width: 24,
+            height: 24,
           ),
-          label: "Añadir",
+          label: "",
         ),
         BottomNavigationBarItem(
           icon: Image(
             image: AssetImage('lib/assets/BottomBar/Chat.png'),
-            width: MediaQuery.of(context).size.width * 0.07,
-            height: MediaQuery.of(context).size.height * 0.03,
+            width: 24,
+            height: 24,
           ),
-          label: "Chat",
+          label: "",
         ),
         BottomNavigationBarItem(
           icon: Image(
             image: AssetImage('lib/assets/BottomBar/Perfil.png'),
-            width: MediaQuery.of(context).size.width * 0.07,
-            height: MediaQuery.of(context).size.height * 0.03,
+            width: 24,
+            height: 24,
           ),
-          label: "Perfil",
+          label: "",
         ),
       ],
     );
