@@ -111,8 +111,8 @@ class Conexion {
       conn = await MySqlConnection.connect(ConnectionSettings(
         host: "143.47.181.8",
         port: 3306,
-        user: "root",
-        password: "root",
+        user: "pin2023",
+        password: "AsLpqR_23",
         db: "collectifydb",
         //Quiero que sea insensible a mayusculas
         //useCompression: false,
