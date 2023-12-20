@@ -201,7 +201,7 @@ class Conexion {
       FROM producto
       JOIN usuario ON producto.usuarioID = usuario.userID
       JOIN imagen ON producto.pruductoID = imagen.id_producto
-      WHERE producto.categoria = ?
+      WHERE producto.categoria = ? AND esSubasta = false
       ORDER BY usuario.esPremium DESC;
     ''', [categoria]).then((results) {
       for (var row in results) {
