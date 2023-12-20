@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:collectify/ConexionBD.dart';
 import 'VentanaAnadirProducto.dart';
+import 'VentanaAnadirSubasta.dart';
 import 'VentanaChat.dart';
 import 'VentanaListaProductos.dart';
 import 'VentanaPerfil.dart';
@@ -76,111 +77,18 @@ class _ListaProductosState extends State<ListaProductosSubasta>
     return Scaffold(
       extendBody: true,
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
-        child:
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 0.0),
-          decoration: const BoxDecoration(
-          color: Color(0XFF343434),
-          shape: BoxShape.rectangle,
-          borderRadius: BorderRadius.all(Radius.circular(50)),
-        ),
-        child: BottomNavigationBar(
-          currentIndex: 1,
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: Colors.transparent,
-          selectedItemColor: Color(0XFFB3FF77),
-          unselectedItemColor: Colors.grey,
-          selectedIconTheme: const IconThemeData(size: 30),
-          onTap: (int index) {
-            switch (index) {
-              case 0:
-                Navigator.push(
-                  context,
-                  PageRouteBuilder(
-                      pageBuilder: (context,_,__) => ListaProductos(connected: user),
-                      transitionDuration: const Duration(seconds: 0)
-                  ),
+          padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+          child: Container(
+            padding:
+            const EdgeInsets.symmetric(horizontal: 5.0, vertical: 0.0),
+            decoration: const BoxDecoration(
+              color: Color(0XFF343434),
+              shape: BoxShape.rectangle,
+              borderRadius: BorderRadius.all(Radius.circular(50)),
+            ),
+            child: const NavigationBar(),
+          )),
 
-                );
-                break;
-              case 1: //Articulos con me gusta, por implementar
-              //no hace nada
-                break;
-              case 2:
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          VentanaAnadirProducto(user: user)),
-                );
-                break;
-              case 3:
-                int uid = user.usuarioID ?? -1;
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => VentanaChat(id: uid)),
-                );
-                break;
-              case 4:
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => VentanaPerfil(
-                        mUser: user,
-                        rUser: user,
-                      )),
-                );
-                break;
-            }
-          },
-          items:  <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Image(
-
-                image: AssetImage('lib/assets/BottomBar/Home.png'),
-                width: MediaQuery.of(context).size.width * 0.07,
-                height: MediaQuery.of(context).size.height * 0.03,
-              ),
-              label: "Inicio",
-            ),
-            BottomNavigationBarItem(
-              icon: Image(
-                color: Color(0XFFB3FF77),
-                image: AssetImage('lib/assets/BottomBar/Subasta.png'),
-                width: MediaQuery.of(context).size.width * 0.07,
-                height: MediaQuery.of(context).size.height * 0.03,
-              ),
-              label: "Subastas",
-            ),
-            BottomNavigationBarItem(
-              icon: Image(
-                image: AssetImage('lib/assets/BottomBar/AddProduct.png'),
-                width: MediaQuery.of(context).size.width * 0.07,
-                height: MediaQuery.of(context).size.height * 0.03,
-              ),
-              label: "Añadir",
-            ),
-            BottomNavigationBarItem(
-              icon: Image(
-                image: AssetImage('lib/assets/BottomBar/Chat.png'),
-                width: MediaQuery.of(context).size.width * 0.07,
-                height: MediaQuery.of(context).size.height * 0.03,
-              ),
-              label: "Chat",
-            ),
-            BottomNavigationBarItem(
-              icon: Image(
-                image: AssetImage('lib/assets/BottomBar/Perfil.png'),
-                width: MediaQuery.of(context).size.width * 0.07,
-                height: MediaQuery.of(context).size.height * 0.03,
-              ),
-              label: "Perfil",
-            ),
-          ],
-        ),
-      )) ,
       resizeToAvoidBottomInset: false,
       body: Container(
         color: Colors.black,
@@ -239,14 +147,16 @@ class _ListaProductosState extends State<ListaProductosSubasta>
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  Container(decoration: const BoxDecoration(
-                    color: Color(0XFF161616),
-                  ),
-                      child:ProductList(searchResults: _searchResults)),
-                  Container(decoration: const BoxDecoration(
-                    color: Color(0XFF161616),
-                  ),
-                  child:PujasList(searchResults: _searchResults)),
+                  Container(
+                      decoration: const BoxDecoration(
+                        color: Color(0XFF161616),
+                      ),
+                      child: ProductList(searchResults: _searchResults)),
+                  Container(
+                      decoration: const BoxDecoration(
+                        color: Color(0XFF161616),
+                      ),
+                      child: PujasList(searchResults: _searchResults)),
                 ],
               ),
             ),
@@ -491,8 +401,8 @@ class ProductoWidget extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) =>
-                    VentanaProductoSubasta(connected: user, producto: producto)),
+                builder: (context) => VentanaProductoSubasta(
+                    connected: user, producto: producto)),
           );
           //Aqui irá la descripcion detallada de producto
         },
@@ -569,7 +479,6 @@ class ProductoWidget extends StatelessWidget {
                             child: const Icon(Icons.favorite_border,
                                 color: Colors.white),
                           )
-
                         ]))),
 
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
@@ -738,8 +647,8 @@ class PujaWidget extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) =>
-                    VentanaProductoSubasta(connected: user, producto: producto)),
+                builder: (context) => VentanaProductoSubasta(
+                    connected: user, producto: producto)),
           );
           //Aqui irá la descripcion detallada de producto
         },
@@ -749,70 +658,70 @@ class PujaWidget extends StatelessWidget {
           mainAxisSize: MainAxisSize.max,
           children: [
             Flexible(
-              flex: 0,
+                flex: 0,
                 child: Container(
-                height: 180,
-                decoration: BoxDecoration(
-                  shape: BoxShape.rectangle,
-                  image: DecorationImage(
-                    image: Image.memory(const Base64Decoder()
-                            .convert(producto.image.toString()))
-                        .image,
-                    fit: BoxFit.cover,
-                  ),
-                  borderRadius: const BorderRadius.only(
-                      topLeft: Radius.zero,
-                      topRight: Radius.circular(25),
-                      bottomLeft: Radius.circular(25),
-                      bottomRight: Radius.circular(25)),
-                ),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 15.0, vertical: 15.0),
-                        decoration: const BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: Color(0XFF161616),
-                              blurRadius: 10.0,
-                              spreadRadius: 0.0,
-                              offset: Offset(2.0,
-                                  5.0), // shadow direction: bottom right
-                            )
-                          ],
-                          shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.zero,
-                              topRight: Radius.zero,
-                              bottomLeft: Radius.zero,
-                              bottomRight: Radius.circular(30)),
-                          color: Color(0XFF161616),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("Finaliza en   ",
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 13,
-                                    fontFamily: 'Aeonik')),
-                            Text(Temporizador(),
-                                style: const TextStyle(
-                                    color: Color(0XFFFE6F1F),
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily: 'Aeonik'))
-                          ],
-                        ),
+                    height: 180,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.rectangle,
+                      image: DecorationImage(
+                        image: Image.memory(const Base64Decoder()
+                                .convert(producto.image.toString()))
+                            .image,
+                        fit: BoxFit.cover,
                       ),
-                      const Icon(Icons.favorite_border, color: Colors.white),
-                    ]))),
-
+                      borderRadius: const BorderRadius.only(
+                          topLeft: Radius.zero,
+                          topRight: Radius.circular(25),
+                          bottomLeft: Radius.circular(25),
+                          bottomRight: Radius.circular(25)),
+                    ),
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 15.0, vertical: 15.0),
+                            decoration: const BoxDecoration(
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Color(0XFF161616),
+                                  blurRadius: 10.0,
+                                  spreadRadius: 0.0,
+                                  offset: Offset(2.0,
+                                      5.0), // shadow direction: bottom right
+                                )
+                              ],
+                              shape: BoxShape.rectangle,
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.zero,
+                                  topRight: Radius.zero,
+                                  bottomLeft: Radius.zero,
+                                  bottomRight: Radius.circular(30)),
+                              color: Color(0XFF161616),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text("Finaliza en   ",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 13,
+                                        fontFamily: 'Aeonik')),
+                                Text(Temporizador(),
+                                    style: const TextStyle(
+                                        color: Color(0XFFFE6F1F),
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: 'Aeonik'))
+                              ],
+                            ),
+                          ),
+                          const Icon(Icons.favorite_border,
+                              color: Colors.white),
+                        ]))),
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 const SizedBox(
@@ -875,6 +784,315 @@ class PujaWidget extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+void showAnadirOptions(BuildContext context) {
+  showBottomSheet(
+      backgroundColor: Colors.transparent,
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
+          decoration: const BoxDecoration(
+            color: Color(0XFF161616),
+            borderRadius: BorderRadius.all(Radius.circular(30)),
+          ),
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height *
+              0.77, // Ajusta la altura según tus necesidades
+          child: Column(
+            children: [
+              SizedBox(height: 15),
+              Container(
+                width: 100,
+                height: 4,
+                decoration: const BoxDecoration(
+                  color: Color(0XFF343434),
+                  borderRadius: BorderRadius.all(Radius.circular(30)),
+                ),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 15.0, vertical: 10.0),
+                  backgroundColor: Colors.transparent,
+                  surfaceTintColor: Colors.transparent,
+                  shadowColor: Colors.transparent,
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            VentanaAnadirProducto(user: user)),
+                  );
+                  //Aqui irá la descripcion detallada de producto
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 0.0, vertical: 0.0),
+                  decoration: const BoxDecoration(
+                    color: Color(0XFF343434),
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20.0, vertical: 10.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text("Subir",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 50,
+                                        height: 1.2,
+                                        fontFamily: 'Aeonik',
+                                      )),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 5.0, vertical: 5.0),
+                                    decoration: const BoxDecoration(
+                                      color: Colors.white10,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(
+                                      Icons.keyboard_arrow_right,
+                                      color: Color(0XFFB3FF77),
+                                      size: 25,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const Text(
+                                "artículo",
+                                style: TextStyle(
+                                  color: Color(0XFFB3FF77),
+                                  fontSize: 50,
+                                  height: 0.5,
+                                  fontFamily: 'Aeonik',
+                                ),
+                              ),
+                            ],
+                          )),
+                      SizedBox(height: 26),
+                      const Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Image(
+                              image:
+                                  AssetImage('lib/assets/tags/Group 315.png'),
+                              height: 58,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 15.0, vertical: 10.0),
+                  backgroundColor: Colors.transparent,
+                  surfaceTintColor: Colors.transparent,
+                  shadowColor: Colors.transparent,
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => VentanaAnadirSubasta(user: user)),
+                  );
+                  //Aqui irá la descripcion detallada de producto
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 0.0, vertical: 0.0),
+                  decoration: const BoxDecoration(
+                    color: Color(0XFF343434),
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20.0, vertical: 10.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text("Iniciar",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 50,
+                                        height: 1.2,
+                                        fontFamily: 'Aeonik',
+                                      )),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 5.0, vertical: 5.0),
+                                    decoration: const BoxDecoration(
+                                      color: Colors.white10,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(
+                                      Icons.keyboard_arrow_right,
+                                      color: Color(0XFFFE6F1F),
+                                      size: 25,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const Text(
+                                "Subasta",
+                                style: TextStyle(
+                                  color: Color(0XFFFE6F1F),
+                                  fontSize: 50,
+                                  height: 0.5,
+                                  fontFamily: 'Aeonik',
+                                ),
+                              ),
+                            ],
+                          )),
+                      SizedBox(height: 26),
+                      const Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Image(
+                              image: AssetImage(
+                                  'lib/assets/tags/Group 315 (1).png'),
+                              height: 58,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      });
+}
+
+class NavigationBar extends StatelessWidget {
+  const NavigationBar({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BottomNavigationBar(
+      currentIndex: 1,
+      type: BottomNavigationBarType.fixed,
+      backgroundColor: Colors.transparent,
+      selectedItemColor: Color(0XFFB3FF77),
+      unselectedItemColor: Colors.grey,
+      selectedIconTheme: const IconThemeData(size: 30),
+      onTap: (int index) {
+        switch (index) {
+          case 0:
+            Navigator.push(
+              context,
+              PageRouteBuilder(
+                  pageBuilder: (context, _, __) =>
+                      ListaProductos(connected: user),
+                  transitionDuration: const Duration(seconds: 0)),
+            );
+            break;
+
+          case 1: //Articulos con me gusta, por implementar
+
+          case 2:
+            showAnadirOptions(context);
+
+            break;
+          case 3:
+            int uid = user.usuarioID ?? -1;
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => VentanaChat(id: uid)),
+            );
+            break;
+          case 4:
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => VentanaPerfil(
+                    mUser: user,
+                    rUser: user,
+                  )),
+            );
+            break;
+        }
+      },
+      items: [
+        BottomNavigationBarItem(
+          icon: Image(
+
+            image: AssetImage('lib/assets/BottomBar/Home.png'),
+            width: MediaQuery.of(context).size.width * 0.07,
+            height: MediaQuery.of(context).size.height * 0.03,
+          ),
+          label: "Inicio",
+        ),
+        BottomNavigationBarItem(
+          icon: Image(
+            color: Color(0XFFB3FF77),
+            image: AssetImage('lib/assets/BottomBar/Subasta.png'),
+            width: MediaQuery.of(context).size.width * 0.07,
+            height: MediaQuery.of(context).size.height * 0.03,
+          ),
+          label: "Subastas",
+        ),
+        BottomNavigationBarItem(
+          icon: Image(
+            image: AssetImage('lib/assets/BottomBar/AddProduct.png'),
+            width: MediaQuery.of(context).size.width * 0.07,
+            height: MediaQuery.of(context).size.height * 0.03,
+          ),
+          label: "Añadir",
+        ),
+        BottomNavigationBarItem(
+          icon: Image(
+            image: AssetImage('lib/assets/BottomBar/Chat.png'),
+            width: MediaQuery.of(context).size.width * 0.07,
+            height: MediaQuery.of(context).size.height * 0.03,
+          ),
+          label: "Chat",
+        ),
+        BottomNavigationBarItem(
+          icon: Image(
+            image: AssetImage('lib/assets/BottomBar/Perfil.png'),
+            width: MediaQuery.of(context).size.width * 0.07,
+            height: MediaQuery.of(context).size.height * 0.03,
+          ),
+          label: "Perfil",
+        ),
+      ],
     );
   }
 }

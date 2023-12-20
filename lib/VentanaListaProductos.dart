@@ -536,223 +536,7 @@ class NavigationBar extends StatelessWidget {
             );
             break;
           case 2:
-            showBottomSheet(
-                backgroundColor: Colors.transparent,
-                context: context,
-                builder: (BuildContext context) {
-                  return Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 0.0, vertical: 0.0),
-                    decoration: const BoxDecoration(
-                      color: Color(0XFF161616),
-                      borderRadius: BorderRadius.all(Radius.circular(30)),
-                    ),
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height *
-                        0.77, // Ajusta la altura según tus necesidades
-                    child: Column(
-                      children: [
-                        SizedBox(height: 15),
-                        Container(
-                          width: 100,
-                          height: 4,
-                          decoration: const BoxDecoration(
-                            color: Color(0XFF343434),
-                            borderRadius: BorderRadius.all(Radius.circular(30)),
-                          ),
-                        ),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 15.0, vertical: 10.0),
-                            backgroundColor: Colors.transparent,
-                            surfaceTintColor: Colors.transparent,
-                            shadowColor: Colors.transparent,
-                          ),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      VentanaAnadirProducto(user: user)),
-                            );
-                            //Aqui irá la descripcion detallada de producto
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 0.0, vertical: 0.0),
-                            decoration: const BoxDecoration(
-                              color: Color(0XFF343434),
-                              shape: BoxShape.rectangle,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(20)),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 20.0, vertical: 10.0),
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            const Text("Subir",
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 50,
-                                                  height: 1.2,
-                                                  fontFamily: 'Aeonik',
-                                                )),
-                                            Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 5.0,
-                                                      vertical: 5.0),
-                                              decoration: const BoxDecoration(
-                                                color: Colors.white10,
-                                                shape: BoxShape.circle,
-                                              ),
-                                              child: const Icon(
-                                                Icons.keyboard_arrow_right,
-                                                color: Color(0XFFB3FF77),
-                                                size: 25,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        const Text(
-                                          "artículo",
-                                          style: TextStyle(
-                                            color: Color(0XFFB3FF77),
-                                            fontSize: 50,
-                                            height: 0.5,
-                                            fontFamily: 'Aeonik',
-                                          ),
-                                        ),
-                                      ],
-                                    )),
-                                SizedBox(height: 26),
-                                const Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Expanded(
-                                      child: Image(
-                                        image: AssetImage(
-                                            'lib/assets/tags/Group 315.png'),
-                                        height: 58,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 15.0, vertical: 10.0),
-                            backgroundColor: Colors.transparent,
-                            surfaceTintColor: Colors.transparent,
-                            shadowColor: Colors.transparent,
-                          ),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      VentanaAnadirSubasta(user: user)),
-                            );
-                            //Aqui irá la descripcion detallada de producto
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 0.0, vertical: 0.0),
-                            decoration: const BoxDecoration(
-                              color: Color(0XFF343434),
-                              shape: BoxShape.rectangle,
-                              borderRadius:
-                              BorderRadius.all(Radius.circular(20)),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 20.0, vertical: 10.0),
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            const Text("Iniciar",
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 50,
-                                                  height: 1.2,
-                                                  fontFamily: 'Aeonik',
-                                                )),
-                                            Container(
-                                              padding:
-                                              const EdgeInsets.symmetric(
-                                                  horizontal: 5.0,
-                                                  vertical: 5.0),
-                                              decoration: const BoxDecoration(
-                                                color: Colors.white10,
-                                                shape: BoxShape.circle,
-                                              ),
-                                              child: const Icon(
-                                                Icons.keyboard_arrow_right,
-                                                color: Color(0XFFFE6F1F),
-                                                size: 25,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        const Text(
-                                          "Subasta",
-                                          style: TextStyle(
-                                            color: Color(0XFFFE6F1F),
-                                            fontSize: 50,
-                                            height: 0.5,
-                                            fontFamily: 'Aeonik',
-                                          ),
-                                        ),
-                                      ],
-                                    )),
-                                SizedBox(height: 26),
-                                const Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Expanded(
-                                      child: Image(
-                                        image: AssetImage(
-                                            'lib/assets/tags/Group 315 (1).png'),
-                                        height: 58,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                });
+            showAnadirOptions(context);
 
             break;
           case 3:
@@ -855,6 +639,218 @@ void showError(BuildContext context) {
                 },
                 child: const Text("OK"))
           ],
+        );
+      });
+}
+
+void showAnadirOptions(BuildContext context) {
+  showBottomSheet(
+      backgroundColor: Colors.transparent,
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
+          decoration: const BoxDecoration(
+            color: Color(0XFF161616),
+            borderRadius: BorderRadius.all(Radius.circular(30)),
+          ),
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height *
+              0.77, // Ajusta la altura según tus necesidades
+          child: Column(
+            children: [
+              SizedBox(height: 15),
+              Container(
+                width: 100,
+                height: 4,
+                decoration: const BoxDecoration(
+                  color: Color(0XFF343434),
+                  borderRadius: BorderRadius.all(Radius.circular(30)),
+                ),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 15.0, vertical: 10.0),
+                  backgroundColor: Colors.transparent,
+                  surfaceTintColor: Colors.transparent,
+                  shadowColor: Colors.transparent,
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            VentanaAnadirProducto(user: user)),
+                  );
+                  //Aqui irá la descripcion detallada de producto
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 0.0, vertical: 0.0),
+                  decoration: const BoxDecoration(
+                    color: Color(0XFF343434),
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20.0, vertical: 10.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text("Subir",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 50,
+                                        height: 1.2,
+                                        fontFamily: 'Aeonik',
+                                      )),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 5.0, vertical: 5.0),
+                                    decoration: const BoxDecoration(
+                                      color: Colors.white10,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(
+                                      Icons.keyboard_arrow_right,
+                                      color: Color(0XFFB3FF77),
+                                      size: 25,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const Text(
+                                "artículo",
+                                style: TextStyle(
+                                  color: Color(0XFFB3FF77),
+                                  fontSize: 50,
+                                  height: 0.5,
+                                  fontFamily: 'Aeonik',
+                                ),
+                              ),
+                            ],
+                          )),
+                      SizedBox(height: 26),
+                      const Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Image(
+                              image:
+                                  AssetImage('lib/assets/tags/Group 315.png'),
+                              height: 58,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 15.0, vertical: 10.0),
+                  backgroundColor: Colors.transparent,
+                  surfaceTintColor: Colors.transparent,
+                  shadowColor: Colors.transparent,
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => VentanaAnadirSubasta(user: user)),
+                  );
+                  //Aqui irá la descripcion detallada de producto
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 0.0, vertical: 0.0),
+                  decoration: const BoxDecoration(
+                    color: Color(0XFF343434),
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20.0, vertical: 10.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text("Iniciar",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 50,
+                                        height: 1.2,
+                                        fontFamily: 'Aeonik',
+                                      )),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 5.0, vertical: 5.0),
+                                    decoration: const BoxDecoration(
+                                      color: Colors.white10,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(
+                                      Icons.keyboard_arrow_right,
+                                      color: Color(0XFFFE6F1F),
+                                      size: 25,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const Text(
+                                "Subasta",
+                                style: TextStyle(
+                                  color: Color(0XFFFE6F1F),
+                                  fontSize: 50,
+                                  height: 0.5,
+                                  fontFamily: 'Aeonik',
+                                ),
+                              ),
+                            ],
+                          )),
+                      SizedBox(height: 26),
+                      const Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Image(
+                              image: AssetImage(
+                                  'lib/assets/tags/Group 315 (1).png'),
+                              height: 58,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         );
       });
 }
