@@ -13,86 +13,99 @@ class VentanaPerfil extends StatelessWidget {
 
   Usuario mUser;
   Usuario? rUser;
-  bool visibility =  false;
+  bool visibility = false;
 
   @override
   Widget build(BuildContext context) {
     myUser = mUser;
     reviewUser = rUser;
-    if (mUser.esEmpresa == 1){
-      visibility =  true;
+    if (mUser.esEmpresa == 1) {
+      visibility = true;
     }
     return Scaffold(
       backgroundColor: const Color(0xff161616),
       appBar: AppBar(
-          iconTheme: const IconThemeData(
-            color: Colors.white,
-            size: 40,
-          ),
-          backgroundColor: Colors.black,
-          title: const Text(
-              "Perfil",
-            style: TextStyle(fontFamily: 'Aeonik', fontSize: 50, color: Colors.white),
-          ),
+        iconTheme: const IconThemeData(
+          color: Colors.white,
+          size: 40,
         ),
-        bottomNavigationBar: const NavigationBar(),
-        body: Center(
-            child: Column(
-              children: [
-                const SizedBox(height: 12),
-                Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Text(mUser.nombre.toString() + " " + mUser.apellidos.toString(),
-                  style: const TextStyle(fontFamily: 'Aeonik', fontSize: 25, color: Color(0xffb3ff77), fontWeight: FontWeight.bold),),
-                Container(
-                  width: 90,
-                  height: 90,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white,
-                  ),
-                  child: Icon(
-                    Icons.person,
-                    size: 60, // Imposta la dimensione dell'icona come desiderato
-                    color: Color.fromARGB(255, 34, 34, 34), // Imposta il colore dell'icona
-                  ),
+        backgroundColor: Colors.black,
+        title: const Text(
+          "Perfil",
+          style: TextStyle(
+              fontFamily: 'Aeonik', fontSize: 50, color: Colors.white),
+        ),
+      ),
+      bottomNavigationBar: const NavigationBar(),
+      body: Center(
+          child: Column(
+        children: [
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Text(
+                mUser.nombre.toString() + " " + mUser.apellidos.toString(),
+                style: const TextStyle(
+                    fontFamily: 'Aeonik',
+                    fontSize: 25,
+                    color: Color(0xffb3ff77),
+                    fontWeight: FontWeight.bold),
+              ),
+              Container(
+                width: 90,
+                height: 90,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white,
                 ),
-              ],
-            ),
-                const SizedBox(height: 20),
-                Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+                child: Icon(
+                  Icons.person,
+                  size: 60, // Imposta la dimensione dell'icona come desiderato
+                  color: Color.fromARGB(
+                      255, 34, 34, 34), // Imposta il colore dell'icona
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xffb3ff77),
+                  minimumSize: Size(180, 40),
+                ),
+                onPressed: () {},
+                child: const Text("24 Seguidores",
+                    style: TextStyle(
+                        fontFamily: 'Aeonik',
+                        fontSize: 15,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold)),
+              ),
+              const SizedBox(width: 12),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xffb3ff77),
+                  minimumSize: Size(180, 40),
+                ),
+                onPressed: () {},
+                child: const Text("40 Seguiendo",
+                    style: TextStyle(
+                        fontFamily: 'Aeonik',
+                        fontSize: 15,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold)),
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (reviewUser == myUser)
                 ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                     Color(0xffb3ff77),
-                    minimumSize: Size(180, 40),
-                  ),
-                  onPressed: () {  },
-                  child: const Text("24 Seguidores",
-                      style: TextStyle(fontFamily: 'Aeonik', fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold)),
-
-                ),
-                const SizedBox(width: 12),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                    Color(0xffb3ff77),
-                    minimumSize: Size(180, 40),
-                  ),
-                  onPressed: () {  },
-                  child: const Text("40 Seguiendo",
-                      style: TextStyle(fontFamily: 'Aeonik', fontSize: 15, color: Colors.black, fontWeight: FontWeight.bold)),
-                ),
-
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if(reviewUser == myUser) ElevatedButton(
                   onPressed: () async {
                     if (await Conexion()
                         .esPremium(mUser.usuarioID as int)
@@ -101,77 +114,80 @@ class VentanaPerfil extends StatelessWidget {
                       showDialog(
                           context: context,
                           builder: (BuildContext context) => AlertDialog(
-                            title: const Text("Error"),
-                            content: const Text("Ya eres premium"),
-                            actions: [
-                              TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text("OK"))
-                            ],
-                          ));
+                                title: const Text("Error"),
+                                content: const Text("Ya eres premium"),
+                                actions: [
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: const Text("OK"))
+                                ],
+                              ));
                     } else {
                       Conexion().hacerPremium(mUser.usuarioID as int);
                       showDialog(
                           context: context,
                           builder: (BuildContext context) => AlertDialog(
-                            title: const Text("¡Enhorabuena!"),
-                            content: const Text("Ahora eres premium"),
-                            actions: [
-                              TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text("OK"))
-                            ],
-                          ));
+                                title: const Text("¡Enhorabuena!"),
+                                content: const Text("Ahora eres premium"),
+                                actions: [
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: const Text("OK"))
+                                ],
+                              ));
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                    Colors.grey,
+                    backgroundColor: Colors.grey,
                     minimumSize: Size(180, 40),
                   ),
                   child: const Text("Hazte premium",
-                      style: TextStyle(fontFamily: 'Aeonik', fontSize: 15, color: Colors.black)),
+                      style: TextStyle(
+                          fontFamily: 'Aeonik',
+                          fontSize: 15,
+                          color: Colors.black)),
                 ),
-                const SizedBox(width: 12),
-                Visibility(
-                  visible: visibility
-                  ,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => VentanaAnadirEvento(user : mUser)),
-                      );
-                    },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                        Colors.grey,
-                        minimumSize: Size(180, 40),
-                      ),
-                    child: const Text("Crear nuevo evento",
-                        style: TextStyle(fontFamily: 'Aeonik', fontSize: 15, color: Colors.black)),
-
+              const SizedBox(width: 12),
+              Visibility(
+                visible: visibility,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              VentanaAnadirEvento(user: mUser)),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey,
+                    minimumSize: Size(180, 40),
                   ),
-                  ),
-
-
-              ],
-            ),
-            const Spacer(),
-                const Text("Valoraciones",style: TextStyle(fontFamily: 'Aeonik', fontSize: 25,
-                color: Color(0xffb3ff77))),
-            const UserValoracion(),
-          ],
-        )),
+                  child: const Text("Crear nuevo evento",
+                      style: TextStyle(
+                          fontFamily: 'Aeonik',
+                          fontSize: 15,
+                          color: Colors.black)),
+                ),
+              ),
+            ],
+          ),
+          const Spacer(),
+          const Text("Valoraciones",
+              style: TextStyle(
+                  fontFamily: 'Aeonik',
+                  fontSize: 25,
+                  color: Color(0xffb3ff77))),
+          const UserValoracion(),
+        ],
+      )),
     );
   }
 }
-
-
 
 class UserValoracion extends StatefulWidget {
   const UserValoracion({Key? key}) : super(key: key);
@@ -181,7 +197,8 @@ class UserValoracion extends StatefulWidget {
 }
 
 class _UserValoracionState extends State<UserValoracion> {
-  static StreamController<List<Valoracion>> _streamController = StreamController<List<Valoracion>>.broadcast();
+  static StreamController<List<Valoracion>> _streamController =
+      StreamController<List<Valoracion>>.broadcast();
 
   @override
   void initState() {
@@ -191,7 +208,8 @@ class _UserValoracionState extends State<UserValoracion> {
   }
 
   static void refresh() async {
-    List<Valoracion> valoraciones = await Conexion().getValoraciones(reviewUser!.usuarioID!);
+    List<Valoracion> valoraciones =
+        await Conexion().getValoraciones(reviewUser!.usuarioID!);
     _streamController.add(valoraciones);
   }
 
@@ -200,9 +218,10 @@ class _UserValoracionState extends State<UserValoracion> {
     refresh();
     return StreamBuilder(
         stream: _streamController.stream,
-        builder: (BuildContext context, AsyncSnapshot<List<Valoracion>> snapshot) {
+        builder:
+            (BuildContext context, AsyncSnapshot<List<Valoracion>> snapshot) {
           if (snapshot.hasData) {
-            if(snapshot.data!.isEmpty){
+            if (snapshot.data!.isEmpty) {
               return const Center(
                 child: Text("No hay valoraciones"),
               );
@@ -215,10 +234,12 @@ class _UserValoracionState extends State<UserValoracion> {
                   return Column(
                     children: [
                       //Calcular media de valoraciones de cada usuario
-                      Text("Media de valoraciones: ${snapshot.data!.map((e) => e.valoracion!).reduce((a, b) => a + b) / snapshot.data!.length}"),
+                      Text(
+                          "Media de valoraciones: ${snapshot.data!.map((e) => e.valoracion!).reduce((a, b) => a + b) / snapshot.data!.length}"),
                       Card(
                         child: ListTile(
-                          title: Text(snapshot.data![index].nickUsuarioReviewer as String),
+                          title: Text(snapshot.data![index].nickUsuarioReviewer
+                              as String),
                           subtitle: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -226,10 +247,20 @@ class _UserValoracionState extends State<UserValoracion> {
                               Text(snapshot.data![index].comentario as String),
                               Row(
                                 children: [
-                                  for(int i = 0; i < snapshot.data![index].valoracion!; i++)
-                                    const Icon(Icons.star, color: Color(0xfffe6f1f),),
-                                  for(int i = 0; i < 5 - snapshot.data![index].valoracion!; i++)
-                                    const Icon(Icons.star_border, color: Color(0xfffe6f1f),),
+                                  for (int i = 0;
+                                      i < snapshot.data![index].valoracion!;
+                                      i++)
+                                    const Icon(
+                                      Icons.star,
+                                      color: Color(0xfffe6f1f),
+                                    ),
+                                  for (int i = 0;
+                                      i < 5 - snapshot.data![index].valoracion!;
+                                      i++)
+                                    const Icon(
+                                      Icons.star_border,
+                                      color: Color(0xfffe6f1f),
+                                    ),
                                 ],
                               ),
                             ],
@@ -250,7 +281,6 @@ class _UserValoracionState extends State<UserValoracion> {
   }
 }
 
-
 class NavigationBar extends StatefulWidget {
   const NavigationBar({Key? key}) : super(key: key);
 
@@ -260,7 +290,8 @@ class NavigationBar extends StatefulWidget {
 
 class _NavigationBarState extends State<NavigationBar> {
   Future<void> sendMessage(int userID) async {
-    Conexion().anadirValoracion(userID, myUser!.usuarioID!, toSendMessage, valoracion);
+    Conexion().anadirValoracion(
+        userID, myUser!.usuarioID!, toSendMessage, valoracion);
     valoracion = 0;
 
     //Refresh ProductValoracion
@@ -273,42 +304,45 @@ class _NavigationBarState extends State<NavigationBar> {
 
   @override
   Widget build(BuildContext context) {
-    if(reviewUser == null) {
+    if (reviewUser == null) {
       return const SizedBox.shrink();
     } else {
-      if(reviewUser!.usuarioID == myUser!.usuarioID) {
+      if (reviewUser!.usuarioID == myUser!.usuarioID) {
         return const SizedBox.shrink();
       }
     }
     return Container(
       //Make height of NavigationBar the same as the height of the keyboard
-      height: MediaQuery
-          .of(context)
-          .viewInsets
-          .bottom + 70 + 46,
+      height: MediaQuery.of(context).viewInsets.bottom + 70 + 46,
       alignment: Alignment.bottomCenter,
       color: Colors.grey[200],
       child: Column(
         children: [
           Row(
             children: [
-              for(int i = 0; i < valoracion; i++)
+              for (int i = 0; i < valoracion; i++)
                 IconButton(
                   onPressed: () {
                     setState(() {
                       valoracion = i + 1;
                     });
                   },
-                  icon: const Icon(Icons.star, color: Color(0xfffe6f1f),),
+                  icon: const Icon(
+                    Icons.star,
+                    color: Color(0xfffe6f1f),
+                  ),
                 ),
-              for(int i = valoracion; i < 5; i++)
+              for (int i = valoracion; i < 5; i++)
                 IconButton(
                   onPressed: () {
                     setState(() {
                       valoracion = i + 1;
                     });
                   },
-                  icon: const Icon(Icons.star_border, color: Color(0xfffe6f1f),),
+                  icon: const Icon(
+                    Icons.star_border,
+                    color: Color(0xfffe6f1f),
+                  ),
                 ),
             ],
           ),
@@ -318,8 +352,7 @@ class _NavigationBarState extends State<NavigationBar> {
               color: Colors.white,
               borderRadius: BorderRadius.circular(20),
             ),
-            child:
-            Row(
+            child: Row(
               children: [
                 const SizedBox(width: 10),
                 Expanded(
@@ -337,11 +370,9 @@ class _NavigationBarState extends State<NavigationBar> {
                 const SizedBox(width: 10),
                 IconButton(
                   onPressed: () {
-                    if (toSendMessage
-                        .replaceAll(' ', '')
-                        .isEmpty) return;
+                    if (toSendMessage.replaceAll(' ', '').isEmpty) return;
 
-                    if(valoracion == 0) return;
+                    if (valoracion == 0) return;
                     //send message, clear text field, scroll to the bottom, close keyboard and refresh the page
                     setState(() {
                       sendMessage(reviewUser!.usuarioID!);
