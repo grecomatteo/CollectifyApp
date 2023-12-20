@@ -118,14 +118,14 @@ class _SearchBarState extends State<SearchBar> {
   final TextEditingController _controller = TextEditingController();
   final List<String> categories = [
     "Joyas y relojes",
-    "Numismatica",
     "Arte y artesanía",
     "Juguetes",
     "Libros y comics",
-    "Monedas",
+    "Monedas y billetes",
     "Música",
     "Sellos y postales",
-    "Ropa"
+    "Moda",
+    "Vehículos",
   ];
 
   String selectedCategory = "";
@@ -350,7 +350,7 @@ class _SearchBarState extends State<SearchBar> {
                         width: 50,
                         image: AssetImage('lib/assets/tags/Libros_comics.png')),
                   ),
-                if (selectedCategory == "Monedas")
+                if (selectedCategory == "Monedas y billetes")
                   const Padding(
                     padding:
                         EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
@@ -378,7 +378,7 @@ class _SearchBarState extends State<SearchBar> {
                         width: 50,
                         image: AssetImage('lib/assets/tags/Postales.png')),
                   ),
-                if (selectedCategory == "Ropa")
+                if (selectedCategory == "Moda")
                   const Padding(
                     padding:
                         EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
@@ -386,6 +386,16 @@ class _SearchBarState extends State<SearchBar> {
                         height: 50,
                         width: 50,
                         image: AssetImage('lib/assets/tags/Ropa.png')),
+                  ),
+                if (selectedCategory == "Vehículos")
+                  const Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
+                    child: Image(
+                        height: 50,
+                        width: 50,
+                        image:
+                            AssetImage('lib/assets/tags/Icono Monedas y Sellos-1.png')),
                   ),
               ],
             ),
@@ -557,6 +567,7 @@ class ProductoWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+
                   Text(
                     producto.nombre!,
                     style: const TextStyle(
