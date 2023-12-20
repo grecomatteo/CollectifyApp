@@ -23,7 +23,7 @@ class VentanaPerfil extends StatelessWidget {
       visibility =  true;
     }
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 34, 34, 34),
+      backgroundColor: const Color(0xff161616),
       appBar: AppBar(
           iconTheme: const IconThemeData(
             color: Colors.white,
@@ -44,7 +44,7 @@ class VentanaPerfil extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Text(mUser.nombre.toString() + " " + mUser.apellidos.toString(),
-                  style: const TextStyle(fontFamily: 'Aeonik', fontSize: 25, color: Colors.green, fontWeight: FontWeight.bold),),
+                  style: const TextStyle(fontFamily: 'Aeonik', fontSize: 25, color: Color(0xffb3ff77), fontWeight: FontWeight.bold),),
                 Container(
                   width: 90,
                   height: 90,
@@ -67,7 +67,7 @@ class VentanaPerfil extends StatelessWidget {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor:
-                     Colors.green,
+                     Color(0xffb3ff77),
                     minimumSize: Size(180, 40),
                   ),
                   onPressed: () {  },
@@ -79,7 +79,7 @@ class VentanaPerfil extends StatelessWidget {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor:
-                    Colors.green,
+                    Color(0xffb3ff77),
                     minimumSize: Size(180, 40),
                   ),
                   onPressed: () {  },
@@ -163,7 +163,7 @@ class VentanaPerfil extends StatelessWidget {
             ),
             const Spacer(),
                 const Text("Valoraciones",style: TextStyle(fontFamily: 'Aeonik', fontSize: 25,
-                color: Colors.green)),
+                color: Color(0xffb3ff77))),
             const UserValoracion(),
           ],
         )),
@@ -227,9 +227,9 @@ class _UserValoracionState extends State<UserValoracion> {
                               Row(
                                 children: [
                                   for(int i = 0; i < snapshot.data![index].valoracion!; i++)
-                                    const Icon(Icons.star, color: Colors.orangeAccent,),
+                                    const Icon(Icons.star, color: Color(0xfffe6f1f),),
                                   for(int i = 0; i < 5 - snapshot.data![index].valoracion!; i++)
-                                    const Icon(Icons.star_border, color: Colors.orangeAccent,),
+                                    const Icon(Icons.star_border, color: Color(0xfffe6f1f),),
                                 ],
                               ),
                             ],
@@ -299,8 +299,7 @@ class _NavigationBarState extends State<NavigationBar> {
                       valoracion = i + 1;
                     });
                   },
-                  icon: const Icon(Icons.star, color: Colors
-                      .orangeAccent,),
+                  icon: const Icon(Icons.star, color: Color(0xfffe6f1f),),
                 ),
               for(int i = valoracion; i < 5; i++)
                 IconButton(
@@ -309,8 +308,7 @@ class _NavigationBarState extends State<NavigationBar> {
                       valoracion = i + 1;
                     });
                   },
-                  icon: const Icon(Icons.star_border, color: Colors
-                      .orangeAccent,),
+                  icon: const Icon(Icons.star_border, color: Color(0xfffe6f1f),),
                 ),
             ],
           ),

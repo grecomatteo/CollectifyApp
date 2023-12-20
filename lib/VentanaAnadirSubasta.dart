@@ -640,7 +640,7 @@ class _AddProductFormState extends State<AddProductForm> {
                                         MaterialPageRoute(builder: (context) => perfil.VentanaPerfil(mUser: logged, rUser: null)));
                                   },
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.lightGreen,
+                                    backgroundColor: Color(0xffb3ff77),
                                     fixedSize: const Size(350, 60),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(5.0),
@@ -734,7 +734,7 @@ class _AddProductFormState extends State<AddProductForm> {
                     //Navigator.pop(context);
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange,
+                    backgroundColor: Color(0xfffe6f1f),
                     fixedSize: const Size(350, 50),
                   ),
 
