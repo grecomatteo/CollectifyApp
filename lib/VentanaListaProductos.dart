@@ -83,7 +83,6 @@ class _ListaProductosState extends State<ListaProductos> {
                   cargarProductos();
                 }
               }),
-              const SizedBox(height: 15),
               Expanded(
                 child: ProductList(searchResults: _searchResults),
               ),
@@ -288,27 +287,106 @@ class _SearchBarState extends State<SearchBar> {
           ),
         ),
         if (selectedCategory != "")
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              SizedBox(height: 20),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                width: MediaQuery.of(context).size.width * 0.6,
-                child: Text(
-                  selectedCategory,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    height: 1,
-                    fontSize: 50,
-                    fontFamily: 'Aeonik',
-                    overflow: TextOverflow.visible,
-                  ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15.0,vertical: 20.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.6,
+                      child: Text(
+                        selectedCategory,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 50,
+                          height: 1,
+                          fontFamily: 'Aeonik',
+                          overflow: TextOverflow.visible,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              )
-            ],
-          )
+                if(selectedCategory == "Joyas y relojes")
+                  const Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 10.0, vertical: 0.0),
+                    child: Image(
+                        height: 50,
+                        width: 50,
+                        image: AssetImage('lib/assets/tags/Joyas_relojes.png')),
+                  ),
+                if(selectedCategory == "Arte y artesanía")
+                  const Padding(
+                  padding: EdgeInsets.symmetric(
+                  horizontal: 10.0, vertical: 0.0),
+                  child: Image(
+                  height: 50,
+                  width: 50,
+                  image: AssetImage('lib/assets/tags/Arte_artesania.png')),
+                  ),
+                if(selectedCategory == "Juguetes")
+                  const Padding(
+                  padding: EdgeInsets.symmetric(
+                  horizontal: 10.0, vertical: 0.0),
+                  child: Image(
+                  height: 50,
+                  width: 50,
+                  image: AssetImage('lib/assets/tags/Juguetes.png')),
+                  ),
+                if(selectedCategory == "Libros y comics")
+                  const Padding(
+                  padding: EdgeInsets.symmetric(
+                  horizontal: 10.0, vertical: 0.0),
+                  child: Image(
+                  height: 50,
+                  width: 50,
+                  image: AssetImage('lib/assets/tags/Libros_comics.png')),
+                  ),
+                if(selectedCategory == "Monedas")
+                  const Padding(
+                  padding: EdgeInsets.symmetric(
+                  horizontal: 10.0, vertical: 0.0),
+                  child: Image(
+                  height: 50,
+                  width: 50,
+                  image: AssetImage('lib/assets/tags/Monedas_sellos.png')),
+                  ),
+                if(selectedCategory == "Música")
+                  const Padding(
+                  padding: EdgeInsets.symmetric(
+                  horizontal: 10.0, vertical: 0.0),
+                  child: Image(
+                  height: 50,
+                  width: 50,
+                  image: AssetImage('lib/assets/tags/Musica.png')),
+                  ),
+                if(selectedCategory == "Sellos y postales")
+                  const Padding(
+                  padding: EdgeInsets.symmetric(
+                  horizontal: 10.0, vertical: 0.0),
+                  child: Image(
+                  height: 50,
+                  width: 50,
+                  image: AssetImage('lib/assets/tags/Postales.png')),
+                  ),
+                if(selectedCategory == "Ropa")
+                  const Padding(
+                  padding: EdgeInsets.symmetric(
+                  horizontal: 10.0, vertical: 0.0),
+                  child: Image(
+                  height: 50,
+                  width: 50,
+                  image: AssetImage('lib/assets/tags/Ropa.png')),
+                  ),
+              ],
+            ),
+          ),
       ],
     );
   }
