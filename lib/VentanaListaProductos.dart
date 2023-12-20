@@ -541,7 +541,7 @@ class ProductListState extends State<ProductList> {
                                     )
                                   ],
                                 ),
-                                SizedBox(height: 10),
+                                SizedBox(height: 1),
                                 Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
@@ -559,7 +559,7 @@ class ProductListState extends State<ProductList> {
                                         ),
                                       )
                                     ]),
-                                SizedBox(height: 6),
+                                SizedBox(height: 2),
                                 Row(
                                   children: [
                                     Expanded(
@@ -583,7 +583,7 @@ class ProductListState extends State<ProductList> {
                                             ))),
                                   ],
                                 ),
-                                SizedBox(height: 10),
+                                SizedBox(height: 1),
                               ],
                             )),
                         Spacer(),
@@ -600,7 +600,7 @@ class ProductListState extends State<ProductList> {
                                             evento.descripcion!,
                                             style: const TextStyle(
                                               color: Color(0xFFFE6F1F),
-                                              fontSize: 11,
+                                              fontSize: 10,
                                               fontFamily: 'Aeonik',
                                               fontWeight: FontWeight.bold,
                                             ),
@@ -635,6 +635,7 @@ class ProductListState extends State<ProductList> {
                                         ))))
                           ],
                         ),
+
                       ],
                     ),
                   );
@@ -670,9 +671,12 @@ class ProductoWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
         padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
-        backgroundColor: Colors.transparent,
-        surfaceTintColor: Colors.transparent,
+        backgroundColor: Color(0xFF161616),
+        surfaceTintColor: Color(0xFF161616),
         shadowColor: Colors.transparent,
       ),
       onPressed: () {
