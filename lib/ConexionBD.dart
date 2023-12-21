@@ -236,7 +236,7 @@ class Conexion {
       JOIN usuario ON p.usuarioID = usuario.userID
       JOIN imagen ON p.pruductoID = imagen.id_producto
       WHERE p.categoria = ?
-      ORDER BY usuario.esPremium DESC;
+      ORDER BY usuario.esPremium DESC, ps.fechaFin ASC;
     ''', [categoria]).then((results) {
       for (var row in results) {
         Producto producto = Producto(
@@ -331,7 +331,7 @@ class Conexion {
         JOIN productos_subasta ps ON ps.idProducto = p.pruductoID 
         JOIN usuario u ON p.usuarioID = u.userID 
         JOIN imagen i ON p.pruductoID = i.id_producto
-        ORDER BY FIELD(categoria,$categorias) DESC, u.esPremium ASC;
+        ORDER BY FIELD(categoria,$categorias) DESC, u.esPremium ASC, ps.fechaFin ASC;
     ''').then((results) => {
           for (var row in results)
             {
