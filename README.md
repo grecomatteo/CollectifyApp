@@ -1,4 +1,8 @@
-# Collectify
+ 
+<p align="center">
+  <img src="lib/assets/collectify.png" alt="Collectify">
+</p>
+
 
 **Collectify** is a marketplace application designed for buying and selling art objects or similar items. This project was developed as part of the "Software Engineering Projects" course during my Erasmus exchange at the Polytechnic University of Valencia. The app allows users to either purchase items directly or place bids in auctions, providing a flexible platform for collectors and sellers alike.
 
@@ -18,10 +22,17 @@ This project was a collaborative effort involving a diverse team of six students
 - **Dart**: The primary programming language used for the app's development.
 - **C++**: Utilized for performance-critical components and backend services.
 - **Flutter**: The app's frontend was built using Flutter, leveraging Dart's strengths for cross-platform development.
+  
+### Login Page
 
-## Project Impact
+Here is a screenshot of the login page:
 
-Working on Collectify has significantly contributed to my growth in software engineering, allowing me to deepen my understanding of application development and team collaboration. The experience also enhanced my proficiency in English and Spanish, enriching my overall Erasmus journey.
+<img src="lib/assets/login_screenshot.png" alt="Login Page" width="200">
+
+## Demonstration Video
+Check out the demonstration video of the Collectify application:
+
+[Watch the video](https://youtube.com/shorts/CgKHJart9wI)
 
 ## Getting Started
 
