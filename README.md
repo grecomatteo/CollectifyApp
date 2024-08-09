@@ -25,7 +25,7 @@ Working on Collectify has significantly contributed to my growth in software eng
 
 ## Getting Started
 
-To get started with Collectify, clone the repository and follow the installation instructions provided in the `INSTALL.md` file.
+To get started with Collectify, clone the repository and try to compile and install the app in your Android Studio environment.
 
 ```bash
 git clone https://github.com/grecomatteo/CollectifyApp.git
